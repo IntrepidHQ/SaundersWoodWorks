@@ -1,0 +1,1131 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Agent Brain — Saunders Wood Works</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://use.typekit.net" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400;1,600&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://use.typekit.net/syk8hlp.css"/>
+  <style>
+    :root {
+      --font-body:    degular, "degular-text", system-ui, sans-serif;
+      --font-display: "minerva-modern", Georgia, serif;
+      --font-mono:    "Monaco", "Menlo", "Consolas", monospace;
+      --track-tight:  0.02em;
+      --track-caps:   0.12em;
+      --lh-body:      1.65;
+      --lh-heading:   1.08;
+      --gold:         #C9A44C;
+      --gold-light:   #e0bc70;
+      --green:        #2e3a2f;
+    }
+    [data-theme="light"] {
+      --bg:           #f4f0e8;
+      --bg2:          #ede8de;
+      --surface:      #faf7f2;
+      --surface2:     #f0ebe0;
+      --border:       rgba(46,58,47,0.14);
+      --border-gold:  rgba(201,164,76,0.28);
+      --text:         #1a1c18;
+      --text-muted:   rgba(26,28,24,0.55);
+      --text-subtle:  rgba(26,28,24,0.38);
+      --card-bg:      #ffffff;
+      --code-bg:      #1a1c18;
+      --code-text:    #e8e4dc;
+      --footer-bg:    #0a0a08;
+      --shadow-sm:    0 1px 3px rgba(0,0,0,0.06);
+      --shadow-md:    0 4px 16px rgba(0,0,0,0.09);
+      --shadow-lg:    0 8px 32px rgba(0,0,0,0.12);
+    }
+    [data-theme="dark"] {
+      --bg:           #0d0f0b;
+      --bg2:          #111310;
+      --surface:      #1a1d17;
+      --surface2:     #21241e;
+      --border:       rgba(201,164,76,0.13);
+      --border-gold:  rgba(201,164,76,0.26);
+      --text:         #f0ede6;
+      --text-muted:   rgba(240,237,230,0.56);
+      --text-subtle:  rgba(240,237,230,0.34);
+      --card-bg:      rgba(255,255,255,0.04);
+      --code-bg:      #0a0c08;
+      --code-text:    #c8d4b8;
+      --footer-bg:    #000000;
+      --shadow-sm:    0 1px 3px rgba(0,0,0,0.3);
+      --shadow-md:    0 4px 16px rgba(0,0,0,0.4);
+      --shadow-lg:    0 8px 32px rgba(0,0,0,0.5);
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { font-size: 16px; scroll-behavior: smooth; }
+    body {
+      font-family: var(--font-body);
+      background: var(--bg);
+      color: var(--text);
+      line-height: var(--lh-body);
+      transition: background 0.2s, color 0.2s;
+    }
+    main {
+      margin-top: 60px;
+      padding: 64px 5% 80px;
+      max-width: 1300px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    /* Hero */
+    .brain-hero { margin-bottom: 52px; }
+    .brain-hero-top {
+      display: flex; align-items: flex-start;
+      justify-content: space-between; gap: 2rem; flex-wrap: wrap;
+    }
+    .brain-hero h1 {
+      font-family: var(--font-display);
+      font-size: clamp(2.4rem, 4vw, 3.6rem);
+      font-weight: 400; letter-spacing: var(--track-tight);
+      line-height: var(--lh-heading); color: var(--text);
+    }
+    .brain-hero h1 span { color: var(--gold); }
+    .brain-hero p {
+      margin-top: 0.75rem; font-size: 1.05rem;
+      color: var(--text-muted); max-width: 600px;
+    }
+    .hero-actions {
+      display: flex; gap: 0.75rem; align-items: center;
+      flex-shrink: 0; padding-top: 0.5rem;
+    }
+
+    /* Buttons */
+    .btn {
+      display: inline-flex; align-items: center; gap: 0.4rem;
+      padding: 0.6rem 1.2rem;
+      border: 1.5px solid var(--border-gold);
+      background: transparent; color: var(--text-muted);
+      font-family: var(--font-body); font-size: 0.82rem;
+      font-weight: 600; letter-spacing: var(--track-caps);
+      text-transform: uppercase; cursor: pointer;
+      border-radius: 2px; transition: all 0.18s;
+      text-decoration: none; white-space: nowrap;
+    }
+    .btn:hover { border-color: var(--gold); color: var(--gold); }
+    .btn.btn-gold {
+      background: var(--gold); border-color: var(--gold); color: #1a1c18;
+    }
+    .btn.btn-gold:hover { background: var(--gold-light); }
+    .btn.btn-lock-on {
+      background: var(--gold); border-color: var(--gold); color: #1a1c18;
+    }
+
+    /* Stats strip */
+    .stats-strip {
+      display: flex; gap: 0;
+      border: 1px solid var(--border); background: var(--surface);
+      margin-bottom: 40px; overflow: hidden;
+    }
+    .stat-item {
+      flex: 1; padding: 1.25rem 1.5rem;
+      border-right: 1px solid var(--border); text-align: center;
+    }
+    .stat-item:last-child { border-right: none; }
+    .stat-num {
+      font-family: var(--font-display); font-size: 2.2rem;
+      font-weight: 400; color: var(--gold);
+      line-height: 1; margin-bottom: 0.3rem;
+    }
+    .stat-lbl {
+      font-size: 0.75rem; font-weight: 700;
+      letter-spacing: var(--track-caps); text-transform: uppercase;
+      color: var(--text-muted);
+    }
+
+    /* Toolbar */
+    .toolbar {
+      display: flex; gap: 0.75rem; align-items: center;
+      margin-bottom: 28px; flex-wrap: wrap;
+    }
+    .search-wrap { position: relative; flex: 1; min-width: 200px; }
+    .search-icon {
+      position: absolute; left: 12px; top: 50%;
+      transform: translateY(-50%); color: var(--text-muted);
+      pointer-events: none; font-size: 0.95rem;
+    }
+    .search-input {
+      width: 100%; padding: 0.6rem 1rem 0.6rem 2.5rem;
+      border: 1.5px solid var(--border); background: var(--surface);
+      color: var(--text); font-family: var(--font-body);
+      font-size: 0.9rem; border-radius: 2px; outline: none;
+      transition: border-color 0.18s;
+    }
+    .search-input:focus { border-color: var(--gold); }
+    .search-input::placeholder { color: var(--text-subtle); }
+    .filter-select {
+      padding: 0.6rem 1rem;
+      border: 1.5px solid var(--border); background: var(--surface);
+      color: var(--text); font-family: var(--font-body);
+      font-size: 0.85rem; border-radius: 2px; outline: none;
+      cursor: pointer; transition: border-color 0.18s;
+    }
+    .filter-select:focus { border-color: var(--gold); }
+    .view-toggle {
+      display: flex; border: 1.5px solid var(--border);
+      border-radius: 2px; overflow: hidden;
+    }
+    .view-btn {
+      padding: 0.55rem 0.9rem; border: none;
+      background: var(--surface); color: var(--text-muted);
+      cursor: pointer; font-size: 1rem; transition: all 0.15s;
+    }
+    .view-btn + .view-btn { border-left: 1.5px solid var(--border); }
+    .view-btn.active { background: var(--gold); color: #1a1c18; }
+    .view-btn:hover:not(.active) { background: var(--surface2); }
+
+    /* Section headings */
+    .section-heading {
+      font-family: var(--font-display); font-size: 1.5rem;
+      font-weight: 400; letter-spacing: var(--track-tight);
+      color: var(--text); margin-bottom: 20px; padding-bottom: 12px;
+      border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; gap: 0.75rem;
+    }
+    .section-count {
+      font-family: var(--font-body); font-size: 0.78rem;
+      font-weight: 700; letter-spacing: var(--track-caps);
+      text-transform: uppercase; color: var(--text-muted);
+      background: var(--bg2); padding: 0.2rem 0.6rem; border-radius: 2px;
+    }
+
+    /* Category badges */
+    .cat-badge {
+      display: inline-block; padding: 0.22rem 0.65rem;
+      font-size: 0.7rem; font-weight: 700; letter-spacing: 0.06em;
+      text-transform: uppercase; border-radius: 2px; white-space: nowrap;
+    }
+    .cat-business  { background: rgba(107,142,35,0.15); color: #4a6b1a; }
+    .cat-products  { background: rgba(201,164,76,0.18); color: #8a6100; }
+    .cat-processes { background: rgba(70,130,180,0.14); color: #1a5280; }
+    .cat-reference { background: rgba(128,128,128,0.14); color: #555; }
+    [data-theme="dark"] .cat-business  { background: rgba(107,142,35,0.2);  color: #9dc050; }
+    [data-theme="dark"] .cat-products  { background: rgba(201,164,76,0.2);  color: #c9a44c; }
+    [data-theme="dark"] .cat-processes { background: rgba(70,130,180,0.2);  color: #6ab0e0; }
+    [data-theme="dark"] .cat-reference { background: rgba(200,200,200,0.1); color: #aaa; }
+
+    /* Table view */
+    #viewTable { display: block; }
+    #viewGrid  { display: none; }
+    .doc-table { width: 100%; border-collapse: collapse; margin-bottom: 60px; }
+    .doc-table thead th {
+      padding: 0.6rem 1rem; text-align: left;
+      font-size: 0.72rem; font-weight: 700;
+      letter-spacing: var(--track-caps); text-transform: uppercase;
+      color: var(--text-muted); background: var(--surface2);
+      border-bottom: 1.5px solid var(--border); white-space: nowrap;
+    }
+    .doc-table tbody tr {
+      border-bottom: 1px solid var(--border);
+      transition: background 0.15s; cursor: pointer;
+    }
+    .doc-table tbody tr:hover { background: var(--surface2); }
+    .doc-table tbody td { padding: 0.85rem 1rem; vertical-align: middle; }
+    .col-name { font-weight: 600; color: var(--text); font-size: 0.95rem; }
+    .col-name small {
+      display: block; font-size: 0.75rem; font-weight: 400;
+      color: var(--text-muted); margin-top: 0.2rem;
+      font-family: var(--font-mono);
+    }
+    .col-desc { font-size: 0.88rem; color: var(--text-muted); max-width: 360px; line-height: 1.45; }
+    .col-meta { font-size: 0.8rem; color: var(--text-subtle); white-space: nowrap; text-align: right; }
+    .col-action { text-align: right; white-space: nowrap; }
+    .row-btn {
+      padding: 0.35rem 0.8rem;
+      border: 1px solid var(--border-gold); background: transparent;
+      color: var(--gold); font-family: var(--font-body);
+      font-size: 0.78rem; font-weight: 600; letter-spacing: 0.04em;
+      cursor: pointer; border-radius: 2px; transition: all 0.15s;
+    }
+    .row-btn:hover { background: var(--gold); color: #1a1c18; border-color: var(--gold); }
+
+    /* Grid view */
+    .file-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 1.25rem; margin-bottom: 60px;
+    }
+    .file-card {
+      background: var(--card-bg); border: 1px solid var(--border);
+      padding: 1.5rem; cursor: pointer; transition: all 0.18s;
+      display: flex; flex-direction: column; gap: 0.6rem;
+    }
+    .file-card:hover {
+      border-color: var(--gold); box-shadow: var(--shadow-md);
+      transform: translateY(-2px);
+    }
+    .file-card-top {
+      display: flex; align-items: flex-start;
+      justify-content: space-between; gap: 0.5rem;
+    }
+    .file-icon {
+      width: 38px; height: 38px; background: var(--bg2);
+      border: 1px solid var(--border); border-radius: 3px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.05rem; flex-shrink: 0;
+    }
+    .file-card h3 {
+      font-family: var(--font-display); font-size: 1.15rem;
+      font-weight: 400; letter-spacing: var(--track-tight);
+      color: var(--text); line-height: 1.25;
+    }
+    .file-path {
+      font-family: var(--font-mono); font-size: 0.72rem;
+      color: var(--text-subtle);
+    }
+    .file-desc {
+      font-size: 0.87rem; color: var(--text-muted);
+      line-height: 1.5; flex: 1;
+    }
+    .file-card-footer {
+      display: flex; align-items: center;
+      justify-content: space-between; gap: 0.5rem;
+      margin-top: auto; padding-top: 0.75rem;
+      border-top: 1px solid var(--border);
+    }
+    .file-card-meta { font-size: 0.76rem; color: var(--text-subtle); }
+    .open-btn {
+      padding: 0.35rem 0.85rem; background: var(--gold); border: none;
+      color: #1a1c18; font-family: var(--font-body);
+      font-size: 0.76rem; font-weight: 700;
+      letter-spacing: 0.04em; text-transform: uppercase;
+      cursor: pointer; border-radius: 2px; transition: background 0.15s;
+    }
+    .open-btn:hover { background: var(--gold-light); }
+
+    /* PDF section */
+    .pdf-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 1.25rem; margin-bottom: 60px;
+    }
+    .pdf-card {
+      background: var(--card-bg); border: 1px solid var(--border);
+      padding: 1.5rem; display: flex; flex-direction: column;
+      gap: 0.75rem; transition: all 0.18s;
+    }
+    .pdf-card:hover { border-color: var(--gold); box-shadow: var(--shadow-md); }
+    .pdf-header { display: flex; align-items: center; gap: 0.75rem; }
+    .pdf-icon-wrap {
+      width: 44px; height: 44px;
+      background: rgba(201,164,76,0.1);
+      border: 1px solid var(--border-gold); border-radius: 4px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.3rem; flex-shrink: 0;
+    }
+    .pdf-title { font-weight: 600; font-size: 0.95rem; color: var(--text); line-height: 1.3; }
+    .pdf-desc { font-size: 0.85rem; color: var(--text-muted); line-height: 1.5; }
+    .pdf-pills { display: flex; flex-wrap: wrap; gap: 4px; margin-top: auto; }
+    .related-pill {
+      display: inline-block; padding: 0.18rem 0.5rem;
+      background: var(--bg2); border: 1px solid var(--border);
+      border-radius: 20px; font-size: 0.68rem; color: var(--text-muted);
+    }
+    .pdf-footer {
+      display: flex; justify-content: space-between; align-items: center;
+      font-size: 0.78rem; color: var(--text-subtle);
+      padding-top: 0.5rem; border-top: 1px solid var(--border);
+    }
+    .pdf-link {
+      display: inline-flex; align-items: center; gap: 0.3rem;
+      padding: 0.38rem 0.8rem;
+      border: 1px solid var(--border-gold); background: transparent;
+      color: var(--gold); font-family: var(--font-body);
+      font-size: 0.76rem; font-weight: 600;
+      text-decoration: none; border-radius: 2px; cursor: pointer;
+      transition: all 0.15s;
+    }
+    .pdf-link:hover { background: var(--gold); color: #1a1c18; border-color: var(--gold); }
+
+    /* CTA */
+    .cta-bar {
+      border: 1px solid var(--border); background: var(--surface);
+      padding: 2rem 2.5rem;
+      display: flex; align-items: center;
+      justify-content: space-between; gap: 1.5rem;
+      margin-bottom: 80px; flex-wrap: wrap;
+    }
+    .cta-bar p { font-size: 1rem; color: var(--text-muted); margin: 0; }
+
+    /* Footer */
+    footer {
+      background: var(--footer-bg); padding: 36px 5%;
+      display: flex; justify-content: space-between;
+      align-items: center; flex-wrap: wrap; gap: 16px;
+      border-top: 1px solid rgba(201,164,76,0.18);
+    }
+    .ftr-brand { display: flex; align-items: center; gap: 10px; }
+    .ftr-brand .logo-icon { width: 36px; height: 36px; overflow: hidden; flex-shrink: 0; }
+    .ftr-brand .logo-icon img {
+      width: 36px; height: 36px; object-fit: contain;
+      object-position: center top; display: block;
+      transform: scale(1.7); transform-origin: center top;
+    }
+    .ftr-name { font-family: var(--font-display); font-size: 1.05rem; color: #fff; }
+    .ftr-name span { color: var(--gold); }
+    footer p { font-size: 0.82rem; color: rgba(255,255,255,.38); margin: 0; }
+
+    /* Preview Modal */
+    .modal-overlay {
+      display: none; position: fixed; inset: 0;
+      background: rgba(0,0,0,0.55); z-index: 2000;
+      align-items: center; justify-content: center; padding: 1.5rem;
+    }
+    .modal-overlay.open { display: flex; }
+    .modal-box {
+      background: var(--surface); border: 1px solid var(--border-gold);
+      width: 100%; max-width: 800px; max-height: 90vh;
+      display: flex; flex-direction: column;
+      box-shadow: var(--shadow-lg);
+    }
+    .modal-head {
+      padding: 1.25rem 1.5rem;
+      border-bottom: 1px solid var(--border);
+      display: flex; align-items: flex-start;
+      justify-content: space-between; gap: 1rem;
+      background: var(--surface); flex-shrink: 0;
+    }
+    .modal-head-info { flex: 1; min-width: 0; }
+    .modal-head h2 {
+      font-family: var(--font-display); font-size: 1.6rem;
+      font-weight: 400; letter-spacing: var(--track-tight);
+      color: var(--text); line-height: 1.15; margin-bottom: 0.4rem;
+    }
+    .modal-meta-row {
+      display: flex; align-items: center;
+      gap: 0.65rem; flex-wrap: wrap; margin-bottom: 0.4rem;
+    }
+    .modal-meta-txt { font-size: 0.8rem; color: var(--text-subtle); }
+    .modal-desc { font-size: 0.88rem; color: var(--text-muted); line-height: 1.5; }
+    .modal-close {
+      background: none; border: none; font-size: 1.4rem;
+      cursor: pointer; color: var(--text-muted); line-height: 1;
+      padding: 0.25rem; transition: color 0.15s; flex-shrink: 0;
+    }
+    .modal-close:hover { color: var(--gold); }
+    .modal-toolbar {
+      padding: 0.65rem 1.5rem; border-bottom: 1px solid var(--border);
+      display: flex; gap: 0.6rem; align-items: center;
+      background: var(--surface); flex-shrink: 0;
+    }
+    .modal-path {
+      font-family: var(--font-mono); font-size: 0.76rem;
+      color: var(--text-subtle); margin-left: auto;
+    }
+    .modal-body { flex: 1; overflow-y: auto; padding: 2rem 2rem; }
+
+    /* Markdown renderer */
+    .md-render h1 {
+      font-family: var(--font-display); font-size: 1.9rem;
+      font-weight: 400; color: var(--text); margin: 0 0 1rem;
+      padding-bottom: 0.6rem; border-bottom: 1px solid var(--border);
+      letter-spacing: var(--track-tight);
+    }
+    .md-render h2 {
+      font-family: var(--font-display); font-size: 1.35rem;
+      font-weight: 400; color: var(--text); margin: 1.8rem 0 0.65rem;
+      letter-spacing: var(--track-tight);
+    }
+    .md-render h3 {
+      font-size: 0.9rem; font-weight: 700; color: var(--text);
+      margin: 1.3rem 0 0.45rem; text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+    .md-render h4 {
+      font-size: 0.88rem; font-weight: 700; color: var(--gold);
+      margin: 1rem 0 0.3rem; letter-spacing: 0.04em;
+    }
+    .md-render p { margin: 0 0 0.9rem; color: var(--text); line-height: var(--lh-body); }
+    .md-render ul, .md-render ol { margin: 0 0 0.9rem 1.6rem; color: var(--text); }
+    .md-render li { margin-bottom: 0.3rem; line-height: var(--lh-body); }
+    .md-render strong { font-weight: 700; }
+    .md-render em { font-style: italic; color: var(--text-muted); }
+    .md-render code {
+      font-family: var(--font-mono); font-size: 0.83em;
+      background: var(--code-bg); color: var(--code-text);
+      padding: 0.15em 0.45em; border-radius: 3px;
+    }
+    .md-render pre {
+      background: var(--code-bg); color: var(--code-text);
+      padding: 1.25rem; border-radius: 4px; overflow-x: auto;
+      margin: 0 0 1rem; font-family: var(--font-mono);
+      font-size: 0.84rem; line-height: 1.55;
+    }
+    .md-render pre code { background: none; padding: 0; font-size: inherit; color: inherit; }
+    .md-render blockquote {
+      border-left: 3px solid var(--gold); padding: 0.5rem 1rem;
+      margin: 0 0 0.9rem; color: var(--text-muted); font-style: italic;
+    }
+    .md-render hr { border: none; border-top: 1px solid var(--border); margin: 1.5rem 0; }
+    .md-render a { color: var(--gold); text-decoration: none; }
+    .md-render a:hover { text-decoration: underline; }
+    .md-render table {
+      width: 100%; border-collapse: collapse; margin: 0 0 1rem; font-size: 0.88rem;
+    }
+    .md-render th {
+      background: var(--bg2); padding: 0.5rem 0.8rem; text-align: left;
+      font-size: 0.75rem; font-weight: 700; letter-spacing: 0.07em;
+      text-transform: uppercase; color: var(--text-muted);
+      border-bottom: 1.5px solid var(--border);
+    }
+    .md-render td {
+      padding: 0.5rem 0.8rem; border-bottom: 1px solid var(--border);
+      color: var(--text); vertical-align: top; line-height: 1.45;
+    }
+    .md-render tr:last-child td { border-bottom: none; }
+    .md-render tr:nth-child(even) td { background: rgba(0,0,0,0.02); }
+    [data-theme="dark"] .md-render tr:nth-child(even) td { background: rgba(255,255,255,0.02); }
+
+    /* Auth modal */
+    .auth-box { max-width: 420px; }
+    .auth-body { padding: 2rem; }
+    .auth-body label {
+      display: block; font-size: 0.8rem; font-weight: 700;
+      letter-spacing: var(--track-caps); text-transform: uppercase;
+      color: var(--text-muted); margin-bottom: 0.5rem;
+    }
+    .auth-input {
+      width: 100%; padding: 0.7rem 1rem;
+      border: 1.5px solid var(--border); background: var(--bg);
+      color: var(--text); font-family: var(--font-body);
+      font-size: 0.95rem; border-radius: 2px; outline: none;
+      margin-bottom: 1rem; transition: border-color 0.18s;
+    }
+    .auth-input:focus { border-color: var(--gold); }
+    .auth-error { font-size: 0.84rem; color: #c0392b; margin-bottom: 0.75rem; display: none; }
+    .auth-actions { display: flex; gap: 0.75rem; justify-content: flex-end; }
+
+
+    /* PDF category headings */
+    .pdf-cat-heading {
+      font-family: var(--font-display);
+      font-size: 1.1rem; font-weight: 400;
+      letter-spacing: var(--track-tight);
+      color: var(--text-muted); margin-bottom: 14px;
+      padding-bottom: 8px; border-bottom: 1px solid var(--border);
+      text-transform: uppercase; letter-spacing: 0.1em;
+      font-size: 0.82rem;
+    }
+    .pdf-card-clickable { cursor: pointer; }
+    .pdf-card-clickable:hover { border-color: var(--gold); box-shadow: var(--shadow-md); }
+    /* Responsive */
+    @media (max-width: 900px) {
+      .stats-strip { flex-wrap: wrap; }
+      .stat-item { flex: 1 1 50%; border-right: none; border-bottom: 1px solid var(--border); }
+      .doc-table .col-desc { display: none; }
+    }
+    @media (max-width: 640px) {
+      main { padding: 48px 4% 60px; }
+      .brain-hero-top { flex-direction: column; }
+      .cta-bar { flex-direction: column; text-align: center; }
+      .modal-box { max-height: 95vh; }
+      .modal-body { padding: 1.25rem; }
+      .doc-table .col-meta { display: none; }
+    }
+    @media (max-width: 480px) {
+      footer { flex-direction: column; text-align: center; }
+    }
+  </style>
+</head>
+<body>
+  <div id="site-header-root"></div>
+
+  <main>
+    <!-- Hero -->
+    <div class="brain-hero">
+      <div class="brain-hero-top">
+        <div>
+          <h1>Agent <span>Brain</span></h1>
+          <p>Every training file and source document the AI uses — organized, searchable, and fully readable.</p>
+        </div>
+        <div class="hero-actions">
+          <button class="btn" id="authBtn" onclick="handleAuthToggle()">&#128274; Unlock Editor</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Stats -->
+    <div class="stats-strip">
+      <div class="stat-item">
+        <div class="stat-num" id="statFiles">&#8212;</div>
+        <div class="stat-lbl">Training Files</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-num" id="statPdfs">&#8212;</div>
+        <div class="stat-lbl">Source Docs</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-num" id="statWords">&#8212;</div>
+        <div class="stat-lbl">Words Indexed</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-num" id="statUpdated">&#8212;</div>
+        <div class="stat-lbl">Last Updated</div>
+      </div>
+    </div>
+
+    <!-- Toolbar -->
+    <div class="toolbar">
+      <div class="search-wrap">
+        <span class="search-icon">&#128269;</span>
+        <input type="text" class="search-input" id="searchInput"
+               placeholder="Search files, descriptions&#8230;"
+               oninput="handleSearch()" />
+      </div>
+      <select class="filter-select" id="catFilter" onchange="handleSearch()">
+        <option value="">All categories</option>
+        <option value="business">Business &amp; Strategy</option>
+        <option value="products">Products &amp; Catalog</option>
+        <option value="processes">Processes &amp; Systems</option>
+        <option value="reference">Reference &amp; Meta</option>
+      </select>
+      <div class="view-toggle">
+        <button class="view-btn active" id="viewBtnTable" onclick="setView('table')" title="Table view">&#9776;</button>
+        <button class="view-btn" id="viewBtnGrid" onclick="setView('grid')" title="Grid view">&#10697;</button>
+      </div>
+    </div>
+
+    <!-- Table view -->
+    <div id="viewTable">
+      <h2 class="section-heading">
+        Training Files <span class="section-count" id="fileCount">0</span>
+      </h2>
+      <table class="doc-table">
+        <thead>
+          <tr>
+            <th style="width:130px">Category</th>
+            <th>File</th>
+            <th class="col-desc">Description</th>
+            <th class="col-meta" style="width:80px">Words</th>
+            <th class="col-meta" style="width:90px">Updated</th>
+            <th style="width:90px"></th>
+          </tr>
+        </thead>
+        <tbody id="fileTableBody"></tbody>
+      </table>
+    </div>
+
+    <!-- Grid view -->
+    <div id="viewGrid">
+      <h2 class="section-heading">
+        Training Files <span class="section-count" id="fileCountGrid">0</span>
+      </h2>
+      <div class="file-grid" id="fileGridBody"></div>
+    </div>
+
+    <!-- Source Documents -->
+    <h2 class="section-heading">
+      Source Documents <span class="section-count" id="pdfCount">0</span>
+    </h2>
+    <div class="pdf-grid" id="pdfSection"></div>
+
+    <!-- CTA -->
+    <div class="cta-bar">
+      <p>Ready to use this knowledge in a new project?</p>
+      <a href="intake.html" class="btn btn-gold">Open Intake Form &#8594;</a>
+    </div>
+  </main>
+
+  <footer>
+    <div class="ftr-brand">
+      <div class="logo-icon"><img src="./logo.webp" alt="Saunders Wood Works"/></div>
+      <div class="ftr-name">Saunders <span>Wood Works</span> LLC</div>
+    </div>
+    <p>Agent Brain &mdash; internal knowledge base &copy; 2026</p>
+  </footer>
+
+  <!-- Preview Modal -->
+  <div class="modal-overlay" id="fileModal" onclick="handleModalBg(event)">
+    <div class="modal-box">
+      <div class="modal-head">
+        <div class="modal-head-info">
+          <h2 id="modalTitle"></h2>
+          <div class="modal-meta-row">
+            <span id="modalCat"></span>
+            <span class="modal-meta-txt" id="modalMeta"></span>
+          </div>
+          <p class="modal-desc" id="modalDesc"></p>
+        </div>
+        <button class="modal-close" onclick="closeModal()" aria-label="Close preview">&#10005;</button>
+      </div>
+      <div class="modal-toolbar">
+        <button class="btn btn-gold" onclick="downloadCurrentFile()" style="font-size:0.78rem;padding:0.4rem 0.9rem;">
+          &#8595; Download .md
+        </button>
+        <span class="modal-path" id="modalPath"></span>
+      </div>
+      <div class="modal-body">
+        <div class="md-render" id="modalContent"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Auth Modal -->
+  <div class="modal-overlay" id="authModal" onclick="handleAuthBg(event)">
+    <div class="modal-box auth-box">
+      <div class="modal-head">
+        <div class="modal-head-info">
+          <h2>Editor Access</h2>
+          <p class="modal-desc" style="margin-top:0.35rem">Enter your access code to unlock editor mode.</p>
+        </div>
+        <button class="modal-close" onclick="closeAuthModal()" aria-label="Close">&#10005;</button>
+      </div>
+      <div class="auth-body">
+        <label for="authPwInput">Access Code</label>
+        <input type="password" class="auth-input" id="authPwInput"
+               placeholder="&#9679;&#9679;&#9679;&#9679;&#9679;&#9679;&#9679;&#9679;"
+               onkeydown="if(event.key==='Enter')submitAuth()" />
+        <div class="auth-error" id="authError">Incorrect code. Please try again.</div>
+        <div class="auth-actions">
+          <button class="btn" onclick="closeAuthModal()">Cancel</button>
+          <button class="btn btn-gold" onclick="submitAuth()">Unlock</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="./shared-header.js"></script>
+  <script>
+    /* ── Embedded data (no fetch needed — works on file://) ───────────── */
+    const BRAIN_INDEX   = {"version": "1.0", "lastUpdated": "2026-04-17", "files": [{"id": "00-project", "name": "Project Overview", "path": "00-project.md", "category": "business", "description": "Business context for Saunders Wood Works, operating pains, solution design, and 4-layer automation strategy", "relatedFiles": ["01-suppliers", "08-agent-playbook", "06-intake-form"], "importance": 5, "lastUpdated": "2026-04-17", "wordCount": 507}, {"id": "01-suppliers", "name": "Suppliers & Vendors", "path": "01-suppliers.md", "category": "business", "description": "Primary and secondary material suppliers. Decore.com is the main source for doors, hardware, finishes; secondary supplier TBD", "relatedFiles": ["02-decore-doors", "03-decore-finishes", "04-decore-hardware"], "importance": 4, "lastUpdated": "2026-04-17", "wordCount": 476}, {"id": "02-decore-doors", "name": "Decore Door Styles", "path": "02-decore-doors.md", "category": "products", "description": "40+ door and drawer-front styles from Decore, organized by construction method (butt, miter, veneer, deco-form) with exact model codes", "relatedFiles": ["03-decore-finishes", "04-decore-hardware", "05-decore-order-form"], "sources": ["doors-brochure.pdf", "deco-form-styles-brochure.pdf"], "importance": 5, "lastUpdated": "2026-04-17", "wordCount": 1190}, {"id": "03-decore-finishes", "name": "Decore Finishes & Paint", "path": "03-decore-finishes.md", "category": "products", "description": "Complete finishing palette including paint colors (Sherwin-Williams codes), stains, sheens, primers, and lead times for finished vs. unfinished", "relatedFiles": ["02-decore-doors", "04-decore-hardware"], "sources": ["finishing-brochure.pdf"], "importance": 5, "lastUpdated": "2026-04-17", "wordCount": 526}, {"id": "04-decore-hardware", "name": "Decore Hardware & Drawer Boxes", "path": "04-decore-hardware.md", "category": "products", "description": "Salice hinges, glides, and specialty hardware; Decore-made drawer box models (659, 649, 613) with specs", "relatedFiles": ["02-decore-doors", "03-decore-finishes", "05-decore-order-form"], "importance": 4, "lastUpdated": "2026-04-17", "wordCount": 341}, {"id": "05-decore-order-form", "name": "Decore Order Form Spec", "path": "05-decore-order-form.md", "category": "processes", "description": "Field mapping of Decore's standard order form (LDN1-1003d-20) for understanding what data is needed to submit orders", "relatedFiles": ["02-decore-doors", "03-decore-finishes", "04-decore-hardware", "06-intake-form"], "sources": ["standard-order-form.pdf"], "importance": 4, "lastUpdated": "2026-04-17", "wordCount": 797}, {"id": "06-intake-form", "name": "Intake Form Architecture", "path": "06-intake-form.md", "category": "processes", "description": "Documentation of intake.html — 9 sections, Supabase save, appliance PDF upload, Decore catalog mapping, state shape, and v2/v3/v4 roadmap", "relatedFiles": ["00-project", "05-decore-order-form", "07-proposal-site", "09-database"], "importance": 5, "lastUpdated": "2026-04-17", "wordCount": 620}, {"id": "07-proposal-site", "name": "Proposal Site (index.html)", "path": "07-proposal-site.md", "category": "processes", "description": "index.html — 10 proposal sections + invoice desk, shared-header.js, visual system, asset inventory, and tech decisions", "relatedFiles": ["00-project", "06-intake-form"], "importance": 3, "lastUpdated": "2026-04-17", "wordCount": 590}, {"id": "08-agent-playbook", "name": "Agent Playbook", "path": "08-agent-playbook.md", "category": "processes", "description": "Protocol for AI agent to answer product questions about Decore doors, finishes, hardware, lead times, and specifications accurately", "relatedFiles": ["02-decore-doors", "03-decore-finishes", "04-decore-hardware"], "importance": 5, "lastUpdated": "2026-04-17", "wordCount": 650}, {"id": "README", "name": "Brain Index & Protocol", "path": "README.md", "category": "reference", "description": "Introductory guide to the Agent Brain folder, file index, and how to keep it updated", "relatedFiles": ["00-project", "CHANGELOG"], "importance": 4, "lastUpdated": "2026-04-17", "wordCount": 495}, {"id": "CHANGELOG", "name": "Brain Changelog", "path": "CHANGELOG.md", "category": "reference", "description": "Record of all material changes to the brain folder with dates and summaries", "relatedFiles": ["README"], "importance": 2, "lastUpdated": "2026-04-17", "wordCount": 318}, {"id": "products", "name": "Products Catalog (JSON)", "path": "products.json", "category": "products", "description": "Machine-readable catalog of all Decore products: doors, finishes, hardware, with SKUs and specifications. Authoritative source — update intake.html consts when this changes.", "relatedFiles": ["02-decore-doors", "03-decore-finishes", "04-decore-hardware"], "importance": 5, "lastUpdated": "2026-04-17", "wordCount": 1500}, {"id": "09-database", "name": "Database & Infrastructure", "path": "09-database.md", "category": "processes", "description": "Supabase project details (usdenbguhahvzmufwvgo), intake_submissions table schema, appliance-packets storage bucket, upload flow, and planned future schema", "relatedFiles": ["06-intake-form", "00-project"], "importance": 4, "lastUpdated": "2026-04-17", "wordCount": 380}], "pdfs": [{"id": "saunders-wood-works-llc---monday-automation-strategy", "name": "Saunders Automation Strategy", "filename": "Saunders Wood Works LLC — Monday Automation Strategy.pdf", "localPath": "docs/Saunders Wood Works LLC — Monday Automation Strategy.pdf", "category": "internal", "relatedTo": [], "description": "Full automation strategy proposal for Saunders Wood Works — Monday.com integration, intake form, and Claude AI.", "uploadedAt": "2026-04-17", "size": "215 KB", "sourceUrl": "https://decore.com"}, {"id": "applied-molding-order-form", "name": "Applied Molding Order Form", "filename": "applied-molding-order-form.pdf", "localPath": "docs/applied-molding-order-form.pdf", "category": "order-forms", "relatedTo": ["05-decore-order-form"], "description": "Decore order form for applied molding products.", "uploadedAt": "2026-04-17", "size": "45 KB", "sourceUrl": "https://decore.com"}, {"id": "corner-drawer-box-order-form", "name": "Corner Drawer Box Order Form", "filename": "corner-drawer-box-order-form.pdf", "localPath": "docs/corner-drawer-box-order-form.pdf", "category": "order-forms", "relatedTo": ["04-decore-hardware", "05-decore-order-form"], "description": "Decore order form for corner drawer box configurations.", "uploadedAt": "2026-04-17", "size": "478 KB", "sourceUrl": "https://decore.com"}, {"id": "deco-form-accessory-order-form", "name": "Deco-Form Accessory Order Form", "filename": "deco-form-accessory-order-form.pdf", "localPath": "docs/deco-form-accessory-order-form.pdf", "category": "order-forms", "relatedTo": ["02-decore-doors", "05-decore-order-form"], "description": "Decore order form for Deco-Form accessories.", "uploadedAt": "2026-04-17", "size": "47 KB", "sourceUrl": "https://decore.com"}, {"id": "deco-form-doors-drawer-fronts", "name": "Deco-Form Doors & Drawer Fronts Catalog", "filename": "deco-form-doors-drawer-fronts.pdf", "localPath": "docs/deco-form-doors-drawer-fronts.pdf", "category": "brochures", "relatedTo": ["02-decore-doors"], "description": "Full Deco-Form door and drawer front style catalog with model specs.", "uploadedAt": "2026-04-17", "size": "177 KB", "sourceUrl": "https://decore.com"}, {"id": "deco-form-order-form", "name": "Deco-Form Order Form", "filename": "deco-form-order-form.pdf", "localPath": "docs/deco-form-order-form.pdf", "category": "order-forms", "relatedTo": ["02-decore-doors", "05-decore-order-form"], "description": "Standard Decore order form for Deco-Form door products.", "uploadedAt": "2026-04-17", "size": "109 KB", "sourceUrl": "https://decore.com"}, {"id": "deco-form-refacing-order-form", "name": "Deco-Form Refacing Order Form", "filename": "deco-form-refacing-order-form.pdf", "localPath": "docs/deco-form-refacing-order-form.pdf", "category": "order-forms", "relatedTo": ["05-decore-order-form"], "description": "Decore order form for cabinet refacing with Deco-Form materials.", "uploadedAt": "2026-04-17", "size": "74 KB", "sourceUrl": "https://decore.com"}, {"id": "deco-form-shelf-order-form", "name": "Deco-Form Shelf Order Form", "filename": "deco-form-shelf-order-form.pdf", "localPath": "docs/deco-form-shelf-order-form.pdf", "category": "order-forms", "relatedTo": ["05-decore-order-form"], "description": "Decore order form for Deco-Form shelf products.", "uploadedAt": "2026-04-17", "size": "51 KB", "sourceUrl": "https://decore.com"}, {"id": "digital-form-directions", "name": "Digital Form Directions", "filename": "digital-form-directions.pdf", "localPath": "docs/digital-form-directions.pdf", "category": "reference", "relatedTo": ["05-decore-order-form"], "description": "Instructions for completing Decore digital order forms.", "uploadedAt": "2026-04-17", "size": "33 KB", "sourceUrl": "https://decore.com"}, {"id": "drawer-box-order-form-2", "name": "Drawer Box Order Form (Alt)", "filename": "drawer-box-order-form-2.pdf", "localPath": "docs/drawer-box-order-form-2.pdf", "category": "order-forms", "relatedTo": ["04-decore-hardware", "05-decore-order-form"], "description": "Alternate Decore drawer box order form.", "uploadedAt": "2026-04-17", "size": "73 KB", "sourceUrl": "https://decore.com"}, {"id": "drawer-box-order-form", "name": "Drawer Box Order Form", "filename": "drawer-box-order-form.pdf", "localPath": "docs/drawer-box-order-form.pdf", "category": "order-forms", "relatedTo": ["04-decore-hardware", "05-decore-order-form"], "description": "Standard Decore order form for dovetail and doweled drawer boxes.", "uploadedAt": "2026-04-17", "size": "44 KB", "sourceUrl": "https://decore.com"}, {"id": "face-frame-order-form", "name": "Face Frame Order Form", "filename": "face-frame-order-form.pdf", "localPath": "docs/face-frame-order-form.pdf", "category": "order-forms", "relatedTo": ["05-decore-order-form"], "description": "Decore order form for face frame components.", "uploadedAt": "2026-04-17", "size": "0.5 MB", "sourceUrl": "https://decore.com"}, {"id": "finishing-brochure-3", "name": "Decore Finishing Brochure", "filename": "finishing-brochure-3.pdf", "localPath": "docs/finishing-brochure-3.pdf", "category": "brochures", "relatedTo": ["03-decore-finishes"], "description": "Complete finishing palette — paint colors (SW codes), stains, sheens, primers, and lead times.", "uploadedAt": "2026-04-17", "size": "477 KB", "sourceUrl": "https://decore.com"}, {"id": "hardware-blum-order-form", "name": "Blum Hardware Order Form", "filename": "hardware-blum-order-form.pdf", "localPath": "docs/hardware-blum-order-form.pdf", "category": "order-forms", "relatedTo": ["04-decore-hardware", "05-decore-order-form"], "description": "Decore order form for Blum brand hinges and hardware.", "uploadedAt": "2026-04-17", "size": "44 KB", "sourceUrl": "https://decore.com"}, {"id": "hardware-salice-order-form", "name": "Salice Hardware Order Form", "filename": "hardware-salice-order-form.pdf", "localPath": "docs/hardware-salice-order-form.pdf", "category": "order-forms", "relatedTo": ["04-decore-hardware", "05-decore-order-form"], "description": "Decore order form for Salice hinges, glides, and specialty hardware.", "uploadedAt": "2026-04-17", "size": "45 KB", "sourceUrl": "https://decore.com"}, {"id": "knobs-pulls-order-form", "name": "Knobs & Pulls Order Form", "filename": "knobs-pulls-order-form.pdf", "localPath": "docs/knobs-pulls-order-form.pdf", "category": "order-forms", "relatedTo": ["04-decore-hardware", "05-decore-order-form"], "description": "Decore order form for knobs, pulls, and decorative hardware.", "uploadedAt": "2026-04-17", "size": "43 KB", "sourceUrl": "https://decore.com"}, {"id": "multi-family-housing-brochure", "name": "Multi-Family Housing Guide", "filename": "multi-family-housing-brochure.pdf", "localPath": "docs/multi-family-housing-brochure.pdf", "category": "brochures", "relatedTo": ["04-decore-hardware", "02-decore-doors"], "description": "Decore specs for multi-family housing — hardware standards and bulk ordering.", "uploadedAt": "2026-04-17", "size": "1.3 MB", "sourceUrl": "https://decore.com"}, {"id": "new-deco-form-styles-brochure", "name": "Deco-Form Styles Brochure", "filename": "new-deco-form-styles-brochure.pdf", "localPath": "docs/new-deco-form-styles-brochure.pdf", "category": "brochures", "relatedTo": ["02-decore-doors"], "description": "New Deco-Form door style catalog with full model and specification listings.", "uploadedAt": "2026-04-17", "size": "0.5 MB", "sourceUrl": "https://decore.com"}, {"id": "new-wood-styles-brochure", "name": "Wood Styles Brochure", "filename": "new-wood-styles-brochure.pdf", "localPath": "docs/new-wood-styles-brochure.pdf", "category": "brochures", "relatedTo": ["02-decore-doors"], "description": "Official Decore wood door style catalog — all species, joint types, and model codes.", "uploadedAt": "2026-04-17", "size": "3.3 MB", "sourceUrl": "https://decore.com"}, {"id": "radius-concave-order-form", "name": "Radius Concave Order Form", "filename": "radius-concave-order-form.pdf", "localPath": "docs/radius-concave-order-form.pdf", "category": "order-forms", "relatedTo": ["02-decore-doors", "05-decore-order-form"], "description": "Decore order form for radius concave door profiles.", "uploadedAt": "2026-04-17", "size": "68 KB", "sourceUrl": "https://decore.com"}, {"id": "radius-convex-order-form", "name": "Radius Convex Order Form", "filename": "radius-convex-order-form.pdf", "localPath": "docs/radius-convex-order-form.pdf", "category": "order-forms", "relatedTo": ["02-decore-doors", "05-decore-order-form"], "description": "Decore order form for radius convex door profiles.", "uploadedAt": "2026-04-17", "size": "68 KB", "sourceUrl": "https://decore.com"}, {"id": "radius-ff-concave-order-form", "name": "Radius FF Concave Order Form", "filename": "radius-ff-concave-order-form.pdf", "localPath": "docs/radius-ff-concave-order-form.pdf", "category": "order-forms", "relatedTo": ["02-decore-doors", "05-decore-order-form"], "description": "Decore order form for face-frame radius concave products.", "uploadedAt": "2026-04-17", "size": "470 KB", "sourceUrl": "https://decore.com"}, {"id": "radius-ff-convex-order-form", "name": "Radius FF Convex Order Form", "filename": "radius-ff-convex-order-form.pdf", "localPath": "docs/radius-ff-convex-order-form.pdf", "category": "order-forms", "relatedTo": ["02-decore-doors", "05-decore-order-form"], "description": "Decore order form for face-frame radius convex products.", "uploadedAt": "2026-04-17", "size": "91 KB", "sourceUrl": "https://decore.com"}, {"id": "standard-order-form", "name": "Standard Order Form", "filename": "standard-order-form.pdf", "localPath": "docs/standard-order-form.pdf", "category": "order-forms", "relatedTo": ["05-decore-order-form", "02-decore-doors", "03-decore-finishes"], "description": "Official Decore standard order form (LDN1-1003d-20) — primary form for all wood door orders.", "uploadedAt": "2026-04-17", "size": "421 KB", "sourceUrl": "https://decore.com"}, {"id": "u-shape-drawer-box-order-form", "name": "U-Shape Drawer Box Order Form", "filename": "u-shape-drawer-box-order-form.pdf", "localPath": "docs/u-shape-drawer-box-order-form.pdf", "category": "order-forms", "relatedTo": ["04-decore-hardware", "05-decore-order-form"], "description": "Decore order form for U-shaped drawer box configurations.", "uploadedAt": "2026-04-17", "size": "47 KB", "sourceUrl": "https://decore.com"}, {"id": "wood-accessory-order-form", "name": "Wood Accessory Order Form", "filename": "wood-accessory-order-form.pdf", "localPath": "docs/wood-accessory-order-form.pdf", "category": "order-forms", "relatedTo": ["05-decore-order-form"], "description": "Decore order form for wood accessory components.", "uploadedAt": "2026-04-17", "size": "422 KB", "sourceUrl": "https://decore.com"}, {"id": "wood-doors-drawer-fronts", "name": "Wood Doors & Drawer Fronts Catalog", "filename": "wood-doors-drawer-fronts.pdf", "localPath": "docs/wood-doors-drawer-fronts.pdf", "category": "brochures", "relatedTo": ["02-decore-doors"], "description": "Wood door and drawer front product catalog with style and species options.", "uploadedAt": "2026-04-17", "size": "175 KB", "sourceUrl": "https://decore.com"}, {"id": "wood-molding-order-form", "name": "Wood Molding Order Form", "filename": "wood-molding-order-form.pdf", "localPath": "docs/wood-molding-order-form.pdf", "category": "order-forms", "relatedTo": ["05-decore-order-form"], "description": "Decore order form for wood molding products.", "uploadedAt": "2026-04-17", "size": "419 KB", "sourceUrl": "https://decore.com"}, {"id": "wood-sheet-goods-order-form", "name": "Wood Sheet Goods Order Form", "filename": "wood-sheet-goods-order-form.pdf", "localPath": "docs/wood-sheet-goods-order-form.pdf", "category": "order-forms", "relatedTo": ["05-decore-order-form"], "description": "Decore order form for sheet goods (plywood, panels, etc.).", "uploadedAt": "2026-04-17", "size": "425 KB", "sourceUrl": "https://decore.com"}, {"id": "wood-specialty-valance-form", "name": "Wood Specialty Valance Form", "filename": "wood-specialty-valance-form.pdf", "localPath": "docs/wood-specialty-valance-form.pdf", "category": "order-forms", "relatedTo": ["05-decore-order-form"], "description": "Decore order form for wood specialty valance components.", "uploadedAt": "2026-04-17", "size": "54 KB", "sourceUrl": "https://decore.com"}, {"id": "wood-warranty-2", "name": "Decore Wood Warranty", "filename": "wood-warranty-2.pdf", "localPath": "docs/wood-warranty-2.pdf", "category": "reference", "relatedTo": [], "description": "Decore warranty documentation for wood products.", "uploadedAt": "2026-04-17", "size": "71 KB", "sourceUrl": "https://decore.com"}], "relationships": [{"from": "02-decore-doors", "to": "03-decore-finishes", "label": "doors are finished with", "type": "contains"}, {"from": "03-decore-finishes", "to": "04-decore-hardware", "label": "coordinated with", "type": "related"}, {"from": "02-decore-doors", "to": "04-decore-hardware", "label": "installed with", "type": "contains"}, {"from": "02-decore-doors", "to": "05-decore-order-form", "label": "ordered via", "type": "references"}, {"from": "03-decore-finishes", "to": "05-decore-order-form", "label": "specified in", "type": "references"}, {"from": "04-decore-hardware", "to": "05-decore-order-form", "label": "specified in", "type": "references"}, {"from": "06-intake-form", "to": "02-decore-doors", "label": "collects data for", "type": "uses"}, {"from": "06-intake-form", "to": "03-decore-finishes", "label": "collects data for", "type": "uses"}, {"from": "06-intake-form", "to": "04-decore-hardware", "label": "collects data for", "type": "uses"}, {"from": "08-agent-playbook", "to": "02-decore-doors", "label": "references", "type": "uses"}, {"from": "08-agent-playbook", "to": "03-decore-finishes", "label": "references", "type": "uses"}, {"from": "08-agent-playbook", "to": "04-decore-hardware", "label": "references", "type": "uses"}, {"from": "00-project", "to": "01-suppliers", "label": "identifies", "type": "references"}, {"from": "00-project", "to": "06-intake-form", "label": "includes", "type": "contains"}, {"from": "00-project", "to": "08-agent-playbook", "label": "enables", "type": "references"}], "categories": [{"id": "business", "name": "Business & Strategy", "color": "#6b8e23", "description": "Project context, suppliers, and strategic decisions"}, {"id": "products", "name": "Products & Catalog", "color": "#daa520", "description": "Decore product lines, specifications, and pricing"}, {"id": "processes", "name": "Processes & Systems", "color": "#f5f5dc", "description": "Forms, workflows, and operational procedures"}, {"id": "reference", "name": "Reference & Meta", "color": "#fffaf0", "description": "Documentation indices and change logs"}]};
+    const BRAIN_CONTENT = {"00-project": "# Project Overview\n\n## The client\n\n**Saunders Wood Works LLC** — Mount Pleasant, SC. High-end custom cabinetry, built-ins, kitchens, wine rooms, and fine woodworking for residential and boutique commercial jobs.\n\n- **Owner / primary contact:** Matt Price\n- **Billing address:** 859 Coleman Blvd, Mount Pleasant, SC 29464\n- **Tech baseline:** QuickBooks Online (already in use). No current Monday.com, no AI tooling, no structured intake process. Email + phone + memory.\n\n## The operating pains (why we were hired)\n\n1. **No real-time project visibility.** Nothing surfaces which projects are on track, behind schedule, or burning margin until it's too late.\n2. **Linear-foot pricing leaks margin.** Flat LF rates don't account for hardware, finish complexity, or design time. High-end hardware silently erases profit.\n3. **Appliance packets derail design.** PDFs arrive mid-project; model numbers and cut-out specs get hunted manually. Designer waits.\n4. **Builder time isn't tied to profitability.** Most-worked project may not be the most profitable. Best crew hours can disappear on small jobs.\n5. **No daily operating system.** No structured morning view of risks, idle crew, pending quotes.\n6. **Communication runs on memory.** Email threads, verbal updates, missed follow-ups.\n\n## What we're building (the solution)\n\nMonday.com as the system of record, with four automation layers:\n\n1. **Monday.com Pro workspace** — 4 boards: Customers CRM, Projects (with Gantt + health score), Leads & Intake, CEO Command Center dashboard.\n2. **n8n workflows** — QuickBooks milestone invoicing, Gmail draft assistant, Otter action-item capture. Human approval gates on money + measurements.\n3. **Appliance Extractor (custom app)** — Upload PDF appliance packet → AI pulls model numbers + cut-out W/H/D → emails Matt + designer for review before AutoCAD.\n4. **Email Draft Assistant** — Incoming client emails matched to the right Monday project; context-aware reply drafts appear in Gmail for one-tap approval.\n\n## Build phases & pricing\n\n| Phase | Scope | Price | Timeline |\n|---|---|---|---|\n| Phase 1 | Operations system implementation (Monday Pro, health score, CRM, intake form v1, n8n automations, training & 30-day support) | $6,000 | 20 working days |\n| Phase 2 | Appliance extractor + email assistant + meeting intelligence | $4,500 | Follow-on |\n| Phase 3 | Custom dashboard layer (Supabase-backed) | TBD | Growth-triggered |\n\n**Ongoing monthly run rate:** ~$535/mo  (Monday Pro, Otter.ai, n8n, Supabase, Claude API usage)\n\n## Current deliverables (live in this repo)\n\n| File | Purpose |\n|---|---|\n| `index.html` | Client-facing proposal site — animated hero, scrolling pitch, interactive invoice desk |\n| `intake.html` | Client intake form v1 — dimensions, Decore door/finish/hardware selection, appliance PDF upload, Supabase save |\n| `shared-header.js` | Shared fixed site header (logo, nav, theme toggle) used by both HTML files |\n| `utils/supabase/client.js` | Browser Supabase client (`window.SaundersDB`) — Saunders project at `usdenbguhahvzmufwvgo.supabase.co` |\n| `supabase/migrations/001_saunders_initial.sql` | DB schema — `intake_submissions` table + `appliance-packets` storage bucket |\n| `brain/` | This agent-context folder (you are here) |\n\n## Scope rules\n\n- **Do not** add features outside the 4 automation layers without Matt's approval.\n- **Do not** swap suppliers. Decore.com is primary; the secondary is named in `01-suppliers.md`.\n- **Do not** invent prices for materials — all pricing is either Decore-quoted or entered manually on the intake form.\n- **All user-facing copy** must match the tone of the existing proposal site: confident, specific, quiet, no marketing fluff.\n", "01-suppliers": "# Suppliers\n\nSaunders sources material from **two** primary component suppliers. Decore.com is the main one; the second is currently unconfirmed in writing and should be added here once Matt names it.\n\n---\n\n## 1. Decore-ative Specialties (decore.com) — **Primary**\n\nDoors, drawer fronts, drawer boxes, hardware, and finishing.\n\n| Field | Value |\n|---|---|\n| Website | https://decore.com |\n| Orders phone | 800.729.7277 |\n| Fax | 800.338.0852 |\n| Customer service email | customerservice@decore.com |\n| Manufacturing | California & North Carolina (the finishing brochure calls out Monroe, NC) |\n| Made in | USA (exclusively since 1965) |\n| Payment note | 2.5% surcharge on all credit card transactions |\n| Shipping options | Our Truck · Small Parcel · Freight · Will Call |\n\n### Product lines relevant to Saunders\n\n- **WOOD doors & drawer fronts** — butt joint, miter joint, veneer. Species: Maple, White Oak, Rift White Oak, Walnut, Alder, Cherry, Red Oak, plus Maple/Hardwood paint grade. See `02-decore-doors.md`.\n- **DECO-FORM®** — thermofoil / Supermatte / Suedette routed or solid drawer fronts. See `02-decore-doors.md` (Deco-Form section).\n- **Finishing** — Solvent-based clear, stain, primer, paint (Sherwin-Williams palette). See `03-decore-finishes.md`.\n- **Drawer boxes** — Dovetail plywood (659), Doweled plywood (649), Dovetail solid maple (613). See `04-decore-hardware.md`.\n- **Hardware** — Salice soft-close undermount & side-mount glides, Salice compact & traditional hinges, knobs & pulls. See `04-decore-hardware.md`.\n\n### Lead times & warranty\n\n| Line | Lead time | Warranty |\n|---|---|---|\n| DECO-FORM | 6 working days | 5-Year Limited |\n| WOOD (unfinished) | 6 working days | 1-Year Limited |\n| WOOD (finished) | 15 working days | 1-Year Limited |\n\n### Quality notes\n\n- Decore recommends ordering a **ColorFirmation sample block** before committing a paint color to a full order — catalog printing and natural wood variation mean the real finish won't match the brochure exactly.\n- Rubber glass stops are standard on glass-door variants (e.g., `520X`, `521X`, `508G`).\n- Hardware is Salice; model codes and sizes are documented in `04-decore-hardware.md`.\n\n---\n\n## 2. Secondary supplier — **Not yet confirmed**\n\nMatt has mentioned a second supplier but has not named it in writing. Placeholder until confirmed:\n\n| Field | Value |\n|---|---|\n| Name | _TODO — ask Matt_ |\n| Website | _TODO_ |\n| Contact | _TODO_ |\n| Product overlap with Decore | _TODO — likely used as backup for lead-time or species not stocked by Decore_ |\n\n**Action for next agent:** confirm the secondary supplier's name, contacts, and product lines, and update this file. Add CHANGELOG entry.\n\n---\n\n## Ordering protocol (end-state)\n\nWhen the automation is live, an order to Decore will be assembled from intake-form data following the fields in `05-decore-order-form.md`, reviewed by Matt, and either submitted via email or direct API (Decore does not publish an API — email or fax to customerservice@decore.com is the current path).\n", "02-decore-doors": "# Decore.com — Doors & Drawer Fronts\n\nEvery door and drawer-front style Decore sells that is relevant to Saunders Wood Works. Grouped by construction method. Model codes in parentheses are the exact codes on Decore's standard order form.\n\n> **Glass variants.** A suffix of `G` (wood) or `X` (miter-joint) indicates a glass-door version with rubber glass stops. The base style is otherwise identical. Example: `520X` = glass version of `520` (Newbury).\n> **French Lite variants.** Suffix `F` on a wood style (e.g., `841F`) indicates a French-lite variant. The order form asks how many lites.\n\n---\n\n## 1. Wood — Butt Joint\n\n3/4\" thick. 5-Piece drawer front is standard unless the model lists \"Solid Drawer Front\" (on `G` glass variants, the drawer front is solid).\n\n| Model | Name | Default species / grade | Panel / notes | Drawer front |\n|---|---|---|---|---|\n| **513** | Georgia 3/4\" | White Oak Select | — | 5-Piece |\n| **913** | Isabella 3/4\" | White Oak Select | — | 5-Piece |\n| **913G** | Isabella 3/4\" Glass | White Oak Select | Rubber glass stops | Solid |\n| **510** | Owen 3/4\" | Maple Select | 3/8\" Solid P1 Panel | 5-Piece |\n| **910** | Alpine 3/4\" | Maple Select | — | 5-Piece |\n| **910G** | Alpine 3/4\" Glass | Maple Select | Rubber glass stops | Solid |\n| **508** | Oakley 3/4\" | Walnut Select | 1/2\" Solid P1 Panel | 5-Piece |\n| **508G** | Oakley 3/4\" Glass | Walnut Select | Rubber glass stops | Solid |\n| **908** | Nolan 3/4\" | Walnut Select | — | 5-Piece |\n| **515** | Zion 3/4\" | Alder Select | — | 5-Piece |\n| **915** | Graham 3/4\" | Alder Select | — | 5-Piece |\n| **915G** | Graham 3/4\" Glass | Alder Select | Rubber glass stops | Solid |\n| **841** | Mitchell 3/4\" | Maple Select | — | 5-Piece |\n| **841F** | Mitchell 3/4\" French Lite | Maple Select | French lite — specify # of lites on order | Solid |\n| **831** | Shaker 3/4\" | Maple Select | — | 5-Piece |\n| **514** | Glacier 3/4\" | Alder Select | — | 5-Piece |\n| **914** | Josephine 3/4\" | Alder Select | — | 5-Piece |\n| **914G** | Josephine 3/4\" Glass | Alder Select | Rubber glass stops | Solid |\n| **511** | Indiana 3/4\" | Maple Select | 3/8\" Solid P1 Panel | 5-Piece |\n| **911** | Jasper 3/4\" | Maple Select | — | 5-Piece |\n| **911G** | Jasper 3/4\" Glass | Maple Select | Rubber glass stops | Solid |\n\n---\n\n## 2. Wood — Miter Joint\n\n7/8\" thick. Face detail, frame width, and panel thickness are spec'd per style.\n\n| Model | Name | Face / frame | Panel | Default species | Drawer front |\n|---|---|---|---|---|---|\n| **720** | Journey 7/8\" | 3/4\" Face Detail, 2\" Frame | Recessed Panel | Rift White Oak | 5-Piece |\n| **520** | Newbury 7/8\" | 3/4\" Face Detail, 2\" Frame | 1/2\" Solid Panel | Maple Select | 5-Piece |\n| **520X** | Newbury 7/8\" Glass | 3/4\" Face Detail, 2\" Frame | Rubber Glass Stops | Maple Select | Solid |\n| **721** | Kennedy 7/8\" | 1\" Face Detail, 2-1/4\" Frame | Recessed Panel | Walnut Select | 5-Piece |\n| **521** | Dylan 7/8\" | 1\" Face Detail, 2-1/4\" Frame | 1/2\" Solid Panel | White Oak Select | 5-Piece |\n| **521X** | Dylan 7/8\" Glass | 1\" Face Detail, 2-1/4\" Frame | Rubber Glass Stops | White Oak Select | Solid |\n\n---\n\n## 3. Wood — Veneer\n\n| Model | Name | Edge detail | Default species | Drawer front |\n|---|---|---|---|---|\n| **79** | Vienna 3/4\" | 3/8\" Bead Face Solid Molding Edge | Alder Select | Solid DF includes molding |\n| **84** | Quincy 3/4\" | 3/4\" Face Solid Molding Edge | Maple Select | Solid DF includes molding |\n| **93** | Aries 3/4\" | — | Rift White Oak Veneer | Veneer DF |\n\n---\n\n## 4. DECO-FORM® (thermofoil / Supermatte / Suedette)\n\nRouted or solid-face drawer fronts. 6-day lead time, 5-year warranty.\n\n| Model | Name | Construction | Signature colors |\n|---|---|---|---|\n| **218** | DSS218 3/4\" | Shallow Depth Shaker, Routed DF | 949T White · Mojave |\n| **218G** | DSS218 3/4\" Glass | Shallow Depth Shaker | 949T White (Solid DF) |\n| **223** | DT223 3/4\" | Shallow Depth Bevel, Routed DF | Mysterious Supermatte · Fashion Grey |\n| **223G** | DT223 3/4\" Glass | Shallow Depth Bevel | Fashion Grey (Solid DF) |\n| **917** | DN917 3/4\" | 7/8\" Face Detail, Shallow Depth Skinny Shaker, Routed DF | Feather White Suedette · Beach Glass Supermatte · Satin Black |\n| **917G** | DN917 3/4\" Glass | 7/8\" Face Detail Skinny Shaker, 2-1/4\" Frame | Feather White Suedette (Solid DF) |\n| **766** | AR766 3/4\" | Routed DF | Light Italian Walnut |\n| **756** | AR756 3/4\" | Routed DF | Fashion Grey |\n| **816** | DBQ 3/4\" | Solid DF | Mojave |\n\n### Deco-Form color palette (top colors)\n\n`949T White` · `Feather White Suedette` · `Fashion Grey` · `Cool Grey` · `Mysterious Supermatte` · `Alabaster` · `Mojave` · `Light Italian Walnut Taction` · `Natural Maple Taction` · `Chocolate Pear` · `Oak Walnut` · `Beach Glass Supermatte` · `Satin Black`\n\nDeco-Form colors are finish-integrated (not paints applied in the shop) and therefore not cross-compatible with the Sherwin-Williams paint palette in `03-decore-finishes.md`.\n\n---\n\n## 5. Material / grade options (for WOOD styles)\n\nWhen a WOOD style is ordered, you must pick a **Face** material and a **Frame** material. Possible options on the Decore order form:\n\n- Maple Select\n- Maple Paint Grade (MDF Panel / Hardwood Frame)\n- White Oak Select\n- Rift White Oak\n- Walnut Select\n- Alder Select\n- Cherry Select\n- Red Oak Select\n- Hardwood Paint Grade (MDF Panel / Hardwood Frame)\n- Aspen\n- Rift White Oak Veneer\n\nPanel and frame can differ — e.g., a paint-grade panel with a hardwood-frame build is the standard way to order a painted shaker.\n\n---\n\n## 6. Spec fields that apply to every WOOD order\n\nThese are on the order form and must be captured in any intake that feeds Decore:\n\n- **Panel Detail** — Standard (default) or Other (specify)\n- **Inside Edge Detail** — Standard (default) or Other (specify)\n- **Outside Face Edge Detail** — Standard (default) · Square Face Edge · Other\n- **Outside Back Edge Detail** — Square Back Edge (default) · Other\n- **Bore Pattern** — Bore A (5mm tab) · Bore B (3mm tab) · Other · None\n- **Bore Position** — Left · Center · Right · None\n- **DF Grain Direction** — Standard (default) · Vertical *(Clear and Stain finishes only)*\n- **Size** — products manufactured to the **actual** sizes provided (no allowance math by Decore)\n\nSee `05-decore-order-form.md` for the full field map.\n", "03-decore-finishes": "# Decore.com — Finishing\n\nAll wood styles can be ordered Finished or Unfinished. Finished adds **~9 working days** to the lead time (21 total vs. 6). Finishing is solvent-based, done at Decore's facility (Monroe, NC).\n\n> **Always recommend a ColorFirmation sample block** before committing a paint color. Natural wood variation + catalog printing means the final doors won't perfectly match the brochure.\n\nOrder-form selection is: **Finish Type → Finish Name → Sheen**.\n\n---\n\n## Sheens (pick one per order)\n\n| Finish type | Available sheens |\n|---|---|\n| Clear / Stain | Matte 10 Sheen · Satin 35 Sheen |\n| Paint | Matte 10 Sheen · Satin 30 Sheen |\n| SBF | Satin Sheen SBF · Matte 10 Sheen SBF (callouts on the order form) |\n\n---\n\n## 1. Clear (Natural)\n\nApplied to Maple Finish Grade only.\n\n- **Clear** — brings out the natural grain; no pigment.\n\n---\n\n## 2. Stains — \"Spray to Color\"\n\nAll stains are formulated for **Maple Finish Grade**. Matte 10 or Satin 35 sheens.\n\n| Stain name |\n|---|\n| Amber |\n| Coal |\n| Copper |\n| Limestone |\n| Onyx |\n| Pumice |\n| Ruby |\n| Smokey Quartz |\n| Tigers Eye |\n| Topaz |\n\n---\n\n## 3. Primer (paint base)\n\nApplied under a paint finish on Hardwood Paint Grade. Available tones:\n\n- White\n- Gray\n- Black\n\nPrimer choice affects final paint opacity and depth — dark paints typically use gray or black primer.\n\n---\n\n## 4. Paint — Sherwin-Williams palette\n\nApplied to Hardwood Paint Grade (MDF panel + hardwood frame) or Maple Paint Grade. Matte 10 or Satin 30 sheens. The first entry below is Decore's own white; the rest are Sherwin-Williams colors identified by SW code.\n\n| Paint name | Code |\n|---|---|\n| White Extra | Sher-Wood H66WH73-20 |\n| Pure White | SW 7005 |\n| Alabaster | SW 7008 |\n| Creamy | SW 7012 |\n| Antique White | SW 6119 |\n| Accessible Beige | SW 7036 |\n| Repose Gray | SW 7015 |\n| Silver Strand | SW 7057 |\n| Mindful Gray | SW 7016 |\n| Eventide | SW 9643 |\n| Dorian Gray | SW 7017 |\n| Poolhouse | SW 7603 |\n| Software | SW 7074 |\n| Retreat | SW 6207 |\n| Anonymous | SW 7046 |\n| Smoky Blue | SW 7604 |\n| Pewter Green | SW 6208 |\n| Cyberspace | SW 7076 |\n| Gale Force | SW 7605 |\n| Naval | SW 6244 |\n| Tricorn Black | SW 6258 |\n\nAny Sherwin-Williams color **outside** this palette can also be ordered as a custom match — add a note on the Decore order form under Special Instructions and include the SW code.\n\n---\n\n## 5. Combination reference\n\nDecore publishes example combos on their marketing — useful sanity checks for what looks good on which style:\n\n- **Journey 720** in MDF panel / Hardwood paint grade, painted **Retreat (SW 6207)**\n- **Graham 915** in MDF panel / Hardwood paint grade, painted **Smoky Blue (SW 7604)**\n\nFor available combinations, defer to `decore.com/products/finishes`.\n", "04-decore-hardware": "# Decore.com — Hardware & Drawer Boxes\n\nAll Decore-supplied hardware is **Salice**. Drawer boxes are made by Decore.\n\n---\n\n## Drawer boxes\n\n| Model | Type | Sides | Bottom | Material |\n|---|---|---|---|---|\n| **659** | Dovetail Plywood | 1/2\" | 1/4\" | Prefinished 9-Ply Birch |\n| **649** | Doweled Plywood | 1/2\" | 1/4\" | Prefinished 9-Ply Birch |\n| **613** | Dovetail Solid | 5/8\" | 1/4\" | Preferred Maple |\n\n**Top materials available for drawer-box construction:**\n9-Ply Birch · Maple · Aspen\n\n---\n\n## Drawer glides (all Salice, soft-close)\n\n### Undermount\n\n**Salice Soft Close Undermount Glide, 21\" with socket.**\nStandard sizes on the order form:\n\n- 12\"\n- 15\"\n- 18\"\n- 23-5/8\"\n\n### Side-mount\n\n**Salice Side Mount Glide, 20\".**\nStandard sizes:\n\n- 12\"\n- 14\"\n- 16\"\n- 18\"\n- 22\"\n- 24\"\n\n---\n\n## Hinges (all Salice, soft-close)\n\n| Model | Type | Notes |\n|---|---|---|\n| **7802** | Salice Soft Close Compact Hinge | Default for most face-frame and frameless cabs |\n| **7821** | Salice Soft Close Traditional Hinge | For inset / traditional applications |\n| **7111** | Salice Hinge Plate | Paired with the hinges above |\n\n---\n\n## Knobs & pulls (Satin Nickel)\n\nDecore's catalog selection — extra finishes are available on request. Sizes given are center-to-center.\n\n| Model | Type | Size | Finish |\n|---|---|---|---|\n| **7275** | Round Knob | — | Satin Nickel |\n| **7185** | T-Bar Pull | 96mm | Satin Nickel |\n| **1691** | Mandara Pull | 96mm | Satin Nickel |\n\n---\n\n## Ordering rules of thumb\n\n- Match glide length to drawer-box depth (not face width). A 22\" drawer box uses a 22\" side-mount or 23-5/8\" undermount.\n- Traditional / inset doors use the `7821` hinge; everything else defaults to `7802`.\n- For prefinished drawer boxes, confirm the edge-banding direction before order submission — it matters on taller boxes.\n- Hardware SKUs should be captured on the intake so the automation can line-match them when the quote goes out.\n", "05-decore-order-form": "# Decore.com — Standard Order Form Field Map\n\nSource: `standard-order-form.pdf` (Decore form number `LDN1-1003d-20`).\n\nThis is the **authoritative field list** for any automation that generates Decore orders. The client intake form (`intake.html`) should collect data that can one-to-one translate to these fields.\n\n---\n\n## Header block\n\n| Form field | Required | Notes |\n|---|---|---|\n| Customer Code | Yes | Decore-assigned account code |\n| Date | Yes | Order-submission date |\n| Job Name / PO | Yes | Client/project identifier Saunders tracks |\n| Company | Yes | Billing company (Saunders Wood Works LLC) |\n| City | Yes | Billing city |\n| Contact Name | Yes | Matt or his designee |\n| Phone | Yes | |\n| Ship To Address | Yes | May differ from billing |\n| Ship To City, State, Zip | Yes | |\n| Page N of M | Yes | For multi-page faxed orders |\n| **Quote Only** (checkbox) | — | Check to get pricing without committing the order |\n\n---\n\n## Door-identity block (per order — all items on one order share these unless noted)\n\n| Form field | Options | Notes |\n|---|---|---|\n| Door Name or Number | See `02-decore-doors.md` | e.g., `520X` (Newbury Glass) |\n| Finished / Unfinished | One | |\n| Material | See list below | Required for WOOD |\n| Face | Material | |\n| Frame | Material | May differ from Face for paint grade |\n| Finish Name | See `03-decore-finishes.md` | Paint / Stain / Clear / Primer / Deco-Form color |\n| Sheen | Matte 10 · Satin 30/35 · Sheen SBF · Matte 10 Sheen SBF | |\n\n**Material options:**\nMaple Select · Maple Paint Grade · White Oak Select · Rift White Oak · Walnut Select · Alder Select · Cherry Select · Red Oak Select · Hardwood Paint Grade (MDF Panel / Hardwood Frame) · Aspen · Rift White Oak Veneer · Deco-Form thermofoil\n\n---\n\n## Per-line-item table (up to 22 rows per page)\n\nEach row captures one door or drawer front.\n\n| Column | Meaning |\n|---|---|\n| **Row #** | 1–22 |\n| **S / DF** | `S` (Single Door), `DF` (Drawer Front), `Special` (Lazy Susan, Glass, French Lite — note quantity of lites), `Bore` (specify boring pattern) |\n| **Qty** | Quantity at these dimensions |\n| **Width** | Actual finished width |\n| **Height** | Actual finished height |\n| **Special** | Free-text notes (bore overrides, grain direction, mullion lites, etc.) |\n\n> **Important:** Decore builds to the *actual* sizes provided. No allowance math on their end — Saunders is responsible for any reveal / overlay math.\n\n---\n\n## Door-details block (applies to all WOOD line items unless overridden)\n\n| Field | Options |\n|---|---|\n| Drawer Front style | Solid · Routed · 5-Piece · Vertical Grain |\n| Panel Detail (Wood Only) | Standard (default) · Other (specify) |\n| Inside Edge Detail (Wood Only) | Standard (default) · Other (specify) |\n| Outside Face Edge Detail | Standard (default) · Square Face Edge · Other |\n| Outside Back Edge Detail | Square Back Edge (default) · Other |\n| Bore Pattern | Bore A (5mm tab) · Bore B (3mm tab) · Other · None |\n| Bore Position | Left · Center · Right · None |\n| DF Grain Direction | Standard · Vertical *(Clear and Stain finishes only)* |\n\n---\n\n## Footer block\n\n| Field | Options |\n|---|---|\n| Special Instructions | Free text — glass type, custom colors, mullion layouts, etc. |\n| Requested Ship Date | MM/DD/YYYY |\n| Shipping Method | Our Truck · Small Parcel · Freight · Will Call |\n| Office Use Only — CSR | (Decore fills) |\n\n---\n\n## Submission channels\n\n| Channel | Value |\n|---|---|\n| Phone | 800.729.7277 |\n| Fax | 800.338.0852 |\n| Email | customerservice@decore.com |\n\nCredit-card payments carry a **2.5% surcharge** per transaction.\n\n---\n\n## JSON shape for automation\n\nWhen the intake form generates a Decore order, serialize it to the following structure. Match this to the fields above:\n\n```json\n{\n  \"header\": {\n    \"customerCode\": \"\",\n    \"date\": \"YYYY-MM-DD\",\n    \"jobName\": \"\",\n    \"company\": \"Saunders Wood Works LLC\",\n    \"contactName\": \"\",\n    \"phone\": \"\",\n    \"shipTo\": { \"address\": \"\", \"city\": \"\", \"state\": \"\", \"zip\": \"\" },\n    \"quoteOnly\": false\n  },\n  \"doorIdentity\": {\n    \"modelCode\": \"\",\n    \"doorName\": \"\",\n    \"finished\": true,\n    \"material\": \"\",\n    \"face\": \"\",\n    \"frame\": \"\",\n    \"finishName\": \"\",\n    \"sheen\": \"\"\n  },\n  \"details\": {\n    \"drawerFrontStyle\": \"5-Piece\",\n    \"panelDetail\": \"Standard\",\n    \"insideEdge\": \"Standard\",\n    \"outsideFaceEdge\": \"Standard\",\n    \"outsideBackEdge\": \"Square Back Edge\",\n    \"borePattern\": \"None\",\n    \"borePosition\": \"None\",\n    \"dfGrainDirection\": \"Standard\"\n  },\n  \"lineItems\": [\n    { \"type\": \"S\", \"qty\": 2, \"width\": 17.875, \"height\": 30.5, \"special\": \"\" }\n  ],\n  \"footer\": {\n    \"specialInstructions\": \"\",\n    \"requestedShipDate\": \"YYYY-MM-DD\",\n    \"shipping\": \"Our Truck\"\n  }\n}\n```\n", "06-intake-form": "# Intake Form — `intake.html`\n\n_Last updated: 2026-04-17_\n\nVersion 1 of Matt's client-intake tool. First deliverable of the Monday Automation Strategy.\n\n---\n\n## Purpose\n\nA single, shareable, link-based form that lets Matt collect everything he needs to price a job — project vision, dimensions, Decore door/finish/hardware selection, materials, appliance packets, and budget tolerances — in one sitting, replacing email back-and-forth. Submissions save directly to the Saunders Supabase database.\n\n---\n\n## Current section architecture (v1)\n\n```\nintake.html\n├── Supabase CDN + utils/supabase/client.js (SaundersDB)\n├── shared-header.js (fixed nav bar, shared with index.html)\n├── V1 banner — \"Intake Form · Deliverable · V1\" callout\n├── 1. Project Basics\n│      name, email, phone, address, project type, target date, vision, site notes\n├── 2. Dimensions\n│      Component table (L × W × H × D per piece), unit toggle in/ft\n│      Seeds: Island · Lower Cabinets · Upper Cabinets\n├── 3. Doors & Drawer Fronts  [Decore]\n│      Style (model code), type (S/DF/Special/Bore), qty, W, H, finish, sheen, quoted $\n│      Order-level spec panel: panel detail, edge details, bore pattern/position, grain, ship method\n│      Special instructions textarea\n├── 4. Materials  [Saunders-sourced]\n│      Hardwood lumber, sheet goods, deck & outdoor, shop finishes\n│      Market vs. quoted price delta tracking\n├── 5. Hardware  [Decore / Salice]\n│      Salice glides (Undermount / Side-mount, all sizes), hinges (7802/7821/7111)\n│      Decore pulls (7275/7185/1691), fasteners, specialty\n├── 6. Drawer Boxes  [Decore]\n│      Models 659 (dovetail ply) · 649 (doweled ply) · 613 (dovetail solid maple)\n│      W × D × H per box, qty, quoted $\n├── 7. Budget Controls\n│      Target $, labor $, contingency %, wiggle threshold, project tolerance %, drops toggle\n├── 8. Appliance Packets  ← Supabase Storage\n│      Drag-and-drop PDF upload zone\n│      Uploads to bucket: appliance-packets/{client-name}/{timestamp}-{filename}.pdf\n│      Shows linked list of uploaded files with remove button\n├── 9. Save & Share\n│      \"Save to Saunders DB\" → intake_submissions table (returns record ID)\n│      Print / Save as PDF\n│      Export JSON · Import JSON · Reset\n└── Sticky footer — live totals: Doors+Boxes (Decore) · Materials · Hardware · Grand Total · Status pill\n```\n\n---\n\n## Supabase integration\n\n| Resource | Details |\n|---|---|\n| Project | Saunders — `https://usdenbguhahvzmufwvgo.supabase.co` |\n| Client | `window.SaundersDB` (initialized by `utils/supabase/client.js`) |\n| Storage bucket | `appliance-packets` (public) |\n| Table | `intake_submissions` — see `09-database.md` for full schema |\n| Auth | No login required for intake. Anonymous insert RLS policy. |\n\nMigration SQL: `supabase/migrations/001_saunders_initial.sql`\n\n---\n\n## In-page JS catalogs\n\nAll catalog constants are defined at the top of the `<script>` block. When a product changes in Decore's line, update **both** the relevant `brain/` doc and the matching constant here.\n\n| Constant | Source of truth |\n|---|---|\n| `DECORE_DOORS` | `brain/02-decore-doors.md` + `brain/products.json#/doors` |\n| `DECORE_FINISHES` | `brain/03-decore-finishes.md` + `brain/products.json#/finishes` |\n| `DRAWER_BOX_CATALOG` | `brain/04-decore-hardware.md` + `brain/products.json#/drawerBoxes` |\n| `HARDWARE_CATALOG` | `brain/04-decore-hardware.md` + `brain/products.json#/hardware` |\n| `PRICE_CATALOG` | Saunders shop prices — no Decore source; update manually or via future live feed |\n\n---\n\n## State shape\n\nThe full form state is a single JS object persisted to localStorage and saved as `state_json` in Supabase:\n\n```json\n{\n  \"basics\":    { \"name\", \"email\", \"phone\", \"address\", \"projectType\", \"targetDate\", \"narrative\", \"siteNotes\" },\n  \"dims\":      { \"unit\": \"in\" },\n  \"components\":   [{ \"id\", \"label\", \"L\", \"W\", \"H\", \"D\", \"notes\" }],\n  \"doors\":        [{ \"id\", \"componentId\", \"styleKey\", \"type\", \"qty\", \"width\", \"height\", \"finish\", \"sheen\", \"unitPrice\" }],\n  \"drawerBoxes\":  [{ \"id\", \"componentId\", \"modelKey\", \"width\", \"depth\", \"height\", \"qty\", \"unitPrice\" }],\n  \"materials\":    [{ \"id\", \"componentId\", \"materialKey\", \"qty\", \"L\", \"W\", \"H\", \"quotedPrice\" }],\n  \"hardware\":     [{ \"id\", \"category\", \"itemKey\", \"variant\", \"qty\", \"unitPrice\" }],\n  \"decoreSpec\": { \"panelDetail\", \"insideEdge\", \"outsideFaceEdge\", \"outsideBackEdge\", \"borePattern\", \"borePosition\", \"dfGrain\", \"shipping\", \"shipDate\", \"notes\" },\n  \"appliancePackets\": [{ \"name\", \"url\", \"uploadedAt\" }],\n  \"budget\":     { \"target\", \"labor\", \"contingencyPct\", \"wigglePct\", \"projectTolerancePct\", \"showDrops\" }\n}\n```\n\n---\n\n## Roadmap\n\n| Version | Scope |\n|---|---|\n| **v1** (current) | Self-contained form, Supabase save, appliance PDF upload |\n| **v2** | POST to Monday.com — auto-creates Lead → Project record |\n| **v3** | Conversational mode — type \"12 Shaker maple, 18×30, Smoky Blue satin\" → form fills itself |\n| **v4** | Auto-submit to Decore — generate pre-filled order form PDF, Matt approves in one click |\n", "07-proposal-site": "# Proposal Site — `index.html`\n\n_Last updated: 2026-04-17_\n\nThe client-facing pitch site Matt receives. Single HTML file with inline CSS + JS, augmented by two shared scripts. Dark editorial design with animated hero, scrolling sections, and an interactive invoice \"desk\" scene.\n\n---\n\n## Shared scripts (loaded by both HTML files)\n\n| File | Role |\n|---|---|\n| `shared-header.js` | Renders the fixed site header (logo-icon crop, nav, theme toggle). Both `index.html` and `intake.html` use this. Any changes to the header happen here only. |\n| `utils/supabase/client.js` | Browser Supabase client (`window.SaundersDB`). Not needed by `index.html` today, but present for future use. |\n\n---\n\n## Sections (in order)\n\n| # | Section | Purpose |\n|---|---|---|\n| Hero | Saunders Wood Works — Monday Automation Strategy | Positioning + CTA + masonry of three hero photos |\n| 01 | The Problem | Six pain-point cards matching `00-project.md` operating pains |\n| 02 | The Solution | Architecture grid — 6 cards, Monday + n8n + AI layers |\n| 03 | Project Intelligence | Health-score explainer |\n| 04 | Monday Workspace | 4-board preview (Projects / Customers / Intake / Automations) |\n| 05 | Matt's Daily Loop | 15-min morning checklist + CEO Command Center mock |\n| 06 | AI Automations | Four n8n workflows with human-approval gates |\n| 07 | Build Timeline | 20-working-day Gantt + phase detail cards |\n| 08 | Investment | Three-phase pricing ($6K / $4.5K / TBD) |\n| 09 | Monthly Run Costs | Vendor table — Monday, Otter, n8n, Supabase, Claude (~$535/mo) |\n| 10 | What You Get | Outcome cards (RPH, 15m, 0, 30s, 100%, ∞) |\n| CTA | Ready? | Link to `intake.html` |\n| Invoice | Phase-1 invoice \"on a desk\" | Interactive front/back paper sheets, switchable wood texture, print→PDF |\n\n---\n\n## Visual system\n\n- **Palette**: sage `hsl(88, 12%, 24%)`, ivory `#F5F1E8`, gold `#C9A44C`\n- **Display font**: `minerva-modern` (Typekit — project `syk8hlp`)\n- **Body font**: `degular` (Typekit)\n- **Hero photos**: three `.webp` screenshots in repo root, displayed as a masonry with continuous micro-float animations (`float1/2/3` keyframes, `hm-1/2/3` classes)\n- **Scroll animations**: `.reveal`, `.reveal-left`, `.reveal-right`, `.reveal-scale` — all gated by a single `IntersectionObserver`\n- **Number counters**: `.hs-num` (hero stats) and `.out-num` (outcome cards) count up from 0 on entry\n- **`prefers-reduced-motion`** respected — disables all animations\n\n---\n\n## Header (shared)\n\nThe site header is rendered by `shared-header.js`, which:\n- Detects the current page (`index.html` vs `intake.html`) and renders the correct nav\n- Handles dark/light theme toggle — fires `saundersThemeChange` custom event\n- `index.html` listens for `saundersThemeChange` to recolour the revenue chart\n- Theme persisted to `localStorage` key `saundersTheme`\n\nDo **not** hardcode header HTML or CSS directly in either file — edit `shared-header.js` only.\n\n---\n\n## Footer\n\nAlways-dark bar matching the header. Logo uses the same cropped-icon treatment as the header (`.logo-icon` overflow trick, `scale(1.7)`).\n\n---\n\n## Invoice scene\n\n- Full-viewport top-down wood surface background with three switchable textures (ash / ebony / oak), persisted to `localStorage` under `saundersWood`. Default: ebony.\n- Two paper sheets at 8.5×11 ratio: **Phase 1 Invoice** (front) and **Monthly Subscriptions** (back).\n- Clicking the back sheet animates it to the front.\n- Both sheets are fully static (non-editable) — content pre-filled:\n  - **Bill to:** Matt Price, Saunders Wood Works LLC, 859 Coleman Blvd, Mount Pleasant SC 29464\n  - **Remit to:** Hans Turner, 1651 Eldora Ln. STE 310, Mount Pleasant SC 29464 (Check / Wire)\n  - **Invoice #:** SWW-OPS-P1 · **Date:** Apr 17, 2026 · **Terms:** Net-15 · 50/50 · **Amount:** $6,000\n- `window.print()` produces clean white paper — `@media print` hides all decoration.\n\n---\n\n## Asset inventory\n\n| File | Role |\n|---|---|\n| `logo.webp` | Icon + wordmark lockup; header and footer both crop to the icon only |\n| `Screenshot+2026-02-21+103001 (1).webp` | Hero mason `hm-1` — tall portrait |\n| `Screenshot+2026-02-21+102611 (1).webp` | Hero mason `hm-2` — wide landscape |\n| `Screenshot+2026-02-21+103229.webp` | Hero mason `hm-3` — landscape |\n\n---\n\n## Tech decisions\n\n- **No build step.** Single-file HTML + two lightweight shared scripts. Matt can host anywhere (Netlify, S3, a shared drive, email attachment).\n- **No framework.** Plain DOM + one `IntersectionObserver`. Keeps the file directly auditable.\n- **Print styles are first-class** — the invoice section must export to PDF without any decoration bleeding through.\n- **Copy tone**: confident, specific, quiet. No \"we\" language. Never \"seamless\" or \"empower\".\n", "08-agent-playbook": "# Agent Playbook — How to answer product questions\n\nThe ultimate UX vision: Matt types a question (\"what's the 520X?\", \"which shakers come in maple?\", \"how long for a painted Journey door?\") into a chat and gets a precise, Decore-accurate answer.\n\nThis playbook is the protocol every agent should follow to make that vision real.\n\n---\n\n## 1. Look up by model code first\n\nIf the user's message contains a token that looks like a Decore model code (three digits + optional letter suffix: `508`, `520X`, `841F`, `223G`), check `products.json` for an exact match under `doors[*].code` or `decoForm[*].code`.\n\n- Found → respond with name, joint type, species default, drawer-front style, any glass/French-lite flag, and thickness.\n- Not found → say so, do not guess. Suggest a search by name instead.\n\n## 2. Look up by name\n\nIf the user gives a door name (\"Shaker\", \"Journey\", \"Oakley\"), search `products.json` case-insensitively in `doors[*].name` and `decoForm[*].name`. Multiple matches possible — list them briefly and ask which one.\n\n## 3. Finish questions\n\n- \"What color is SW 7604?\" → `Smoky Blue`, in `finishes.paints` of `products.json`.\n- \"What sheens are available on stain?\" → `Matte 10`, `Satin 35` (stain/clear only; paint is `Matte 10` / `Satin 30`).\n- \"Can I get Tricorn Black on a Shaker (831)?\" → Yes if ordered in Hardwood Paint Grade or Maple Paint Grade. Remind them to order a ColorFirmation sample block before committing.\n\n## 4. Hardware questions\n\n- \"What hinge does Decore use?\" → Salice soft-close. Compact `7802` default; Traditional `7821` for inset.\n- \"What's in stock for undermount glides?\" → Salice Soft Close Undermount 21\" with Socket, sizes 12\"/15\"/18\"/23-5/8\".\n- \"What knobs are available?\" → Round Knob (`7275`), T-Bar Pull 96mm (`7185`), Mandara Pull 96mm (`1691`), all Satin Nickel.\n\n## 5. Lead time & warranty questions\n\n| User asks | Answer |\n|---|---|\n| How long for Deco-Form? | 6 working days · 5-year limited warranty |\n| How long for unfinished wood doors? | 6 working days · 1-year limited warranty |\n| How long for finished (painted/stained) wood doors? | **15 working days** — finishing adds ~9 days · 1-year limited warranty |\n\n## 6. Order-form questions\n\nFor any question involving \"how do I order X\" or \"what fields go on the order\", read `05-decore-order-form.md` and use it as the ground truth. The JSON shape for automation is documented at the bottom of that file.\n\n## 7. Pricing questions\n\nDecore **does not publish prices**. Do not invent numbers. Tell the user prices come from their Decore rep and that the intake form captures *quoted* prices against which market deltas are tracked.\n\n## 8. When to say \"I don't know\"\n\nSay it clearly, without hedging, when:\n\n- The user asks for a model code that isn't in `products.json`.\n- The user asks about the secondary supplier — it's not yet named (`brain/01-suppliers.md`). Ask Matt.\n- The user asks for a price.\n- The user asks about an *application detail* not documented in the brochures (e.g., how many hinges does a 36\"-tall door need — that's a Saunders install standard, not a Decore spec).\n\n## 9. Answer shape (template)\n\nKeep responses tight. Three lines max unless the user asks for depth.\n\n> **520X — Newbury (Glass)**. Miter-joint, 7/8\" thick, Maple Select default. 3/4\" face detail, 2\" frame, rubber glass stops, solid drawer front. 6-day lead time unfinished, 15-day finished.\n\nInclude the **model code in bold** so the user can scan. Cite the brain doc (`per 02-decore-doors.md`) when asked for depth.\n\n## 10. Keep the brain fresh\n\nIf you learn a new detail (a new door model, a new color, a new Salice SKU, a new supplier policy):\n\n1. Update the relevant `brain/` file.\n2. Update `products.json` if it's a structured fact.\n3. Append a dated entry to `CHANGELOG.md` with what changed and why.\n4. If the change affects the intake form, update the corresponding in-page catalog in `intake.html`.\n", "README": "# Saunders Wood Works — Agent Brain\n\n> **Single source of truth for any AI agent or human collaborator working on the Saunders Wood Works project.** Start here. Read the files you need. Keep this folder updated after every substantive decision.\n\n---\n\n## What is this folder?\n\n`brain/` is the project's context vault. It holds everything a fresh agent needs to:\n\n1. Understand the business and the client (Matt Price, Saunders Wood Works LLC, Mount Pleasant SC).\n2. Answer product questions by model number or name — Decore.com door styles, finishes, hardware — without guessing.\n3. Know what has been built, what is planned next, and why every decision was made.\n4. Stay aligned across sessions, models, and collaborators.\n\nIf anything drifts out of date, update the relevant file and add a line to `CHANGELOG.md`.\n\n---\n\n## File index\n\n| File | Category | Purpose | When to read |\n|---|---|---|---|\n| `README.md` | Meta | You are here. Index + agent protocol. | Always first. |\n| `00-project.md` | Business | Client, operating pains, solution, pricing, deliverables | Any project work. |\n| `01-suppliers.md` | Business | Decore.com contacts + secondary supplier (TBD) | Sourcing / intake Q. |\n| `02-decore-doors.md` | Products | Every door & drawer-front style with model codes | \"What is the 520X?\" |\n| `03-decore-finishes.md` | Products | SW paint codes, stains, primers, sheens | Finish selection. |\n| `04-decore-hardware.md` | Products | Salice glides/hinges/pulls + Decore drawer boxes | Hardware Q. |\n| `05-decore-order-form.md` | Process | Decore order-form field spec + JSON contract | Before submitting orders. |\n| `06-intake-form.md` | Process | `intake.html` architecture, sections, Supabase flow | Editing the intake tool. |\n| `07-proposal-site.md` | Process | `index.html` sections, shared scripts, assets | Editing the proposal site. |\n| `08-agent-playbook.md` | Process | How to answer product Q&A conversationally | Any chat-style Q. |\n| `09-database.md` | Infra | Supabase project, tables, storage, migration | Any DB/storage work. |\n| `products.json` | Products | Machine-readable catalog (all Decore doors, finishes, hardware) | LLM lookups / chatbot. |\n| `brain-index.json` | Meta | Structured manifest of all brain files with relationships | Programmatic traversal. |\n| `CHANGELOG.md` | Meta | Dated log of every material change | After any substantive edit. |\n\n---\n\n## Agent protocol\n\n### Step 1 — Orient\nAlways read `README.md` (this file), then `00-project.md`. For product questions, jump to `products.json` next.\n\n### Step 2 — Answer by type\n\n| Question type | Start here |\n|---|---|\n| \"What is door model 520X?\" | `products.json` → `doors[*].code` → enrich from `02-decore-doors.md` |\n| \"What colors does Decore offer?\" | `products.json` → `finishes` → `03-decore-finishes.md` |\n| \"How long does a painted door take?\" | `products.json` → `leadTimes.woodFinished` → `01-suppliers.md` |\n| \"What hardware does Decore have?\" | `products.json` → `hardware` → `04-decore-hardware.md` |\n| \"How do I submit a Decore order?\" | `05-decore-order-form.md` |\n| \"What does the intake form do?\" | `06-intake-form.md` |\n| \"How do uploads work?\" | `09-database.md` |\n| \"What's on the proposal site?\" | `07-proposal-site.md` |\n\n### Step 3 — Ground rules\n\n1. **Cite the file** when referencing brain content: *\"per `02-decore-doors.md`\"*.\n2. **Never invent** SKUs, lead times, prices, or model numbers. If it's not here, say so.\n3. **After any material change**, update the relevant doc and append a line to `CHANGELOG.md`.\n4. **Dual-update rule**: if a product fact changes, update **both** `products.json` (machine truth) and the prose doc.\n5. **Tone**: factual, concise, skimmable. This is a reference — not marketing.\n\n---\n\n## Source documents (Decore PDFs)\n\nThe Decore catalog was extracted from five official PDFs provided by the client (April 2026):\n\n| PDF | Extracted to |\n|---|---|\n| `standard-order-form.pdf` | `05-decore-order-form.md` |\n| `finishing-brochure-3.pdf` | `03-decore-finishes.md` |\n| `new-wood-styles-brochure.pdf` | `02-decore-doors.md` (wood section) |\n| `new-deco-form-styles-brochure.pdf` | `02-decore-doors.md` (Deco-Form section) |\n| `multi-family-housing-brochure.pdf` | `02-decore-doors.md` (cross-ref) + `04-decore-hardware.md` |\n\nWhen Decore publishes updated brochures: re-extract, update the matching docs, bump `products.json` version, log in `CHANGELOG.md`.\n", "CHANGELOG": "# Brain Changelog\n\nEvery material change to the `brain/` folder gets a line here. Date in ISO, author initial or agent name, and a one-line summary.\n\n## 2026-04-17 · brain audit + cleanup\n\n- **README** rewritten — cleaner index table, expanded agent protocol with question-type routing, PDF source table.\n- **`06-intake-form.md`** fully updated — accurate 9-section architecture tree, Supabase integration table, full state-object shape, roadmap v1→v4.\n- **`07-proposal-site.md`** updated — notes `shared-header.js`, correct section count, footer logo treatment, theme event wiring.\n- **`09-database.md`** new — Supabase project details, table schema, storage bucket, upload flow, future schema plan.\n- **`00-project.md`** updated — deliverables table now includes `shared-header.js`, `utils/supabase/client.js`, migration file.\n- **`products.json`** — removed fake `$schema` URL, added `_note` with dual-update reminder.\n- **`brain-index.json`** — updated descriptions for `06-intake-form` and `07-proposal-site`; added `09-database` entry.\n\n## 2026-04-17 · shared header, Supabase, intake.html\n\n- **Renamed** `intake.html` (was `onboarding.html`). All internal links updated.\n- **Shared header** (`shared-header.js`) created — both `index.html` and `intake.html` now render the same fixed header (logo-icon crop, nav, theme toggle). Footer logo in `index.html` updated to match.\n- **Supabase connection** wired (`utils/supabase/client.js`, `.env.local`). Browser client exposes `window.SaundersDB`. Project URL: `https://usdenbguhahvzmufwvgo.supabase.co`.\n- **Appliance Packets upload** section added to `intake.html`. Drag-and-drop PDF upload → Supabase Storage bucket `appliance-packets`. Each file stored under `{client-name}/{timestamp}-{filename}`. Public URL saved in `state.appliancePackets`.\n- **Save to Database** button added to `intake.html`. Saves full form state to `intake_submissions` table (schema in `utils/supabase/client.js`). Returns record ID on success.\n- **Component seed** expanded from 1 (Island) to 3 (Island, Lower Cabinets, Upper Cabinets) with explanatory hint text.\n- Brain docs updated: `onboarding.html` → `intake.html` across all files.\n\n## 2026-04-17 · brain seeded\n\n- Created `brain/` folder and README agent-onboarding protocol.\n- Wrote `00-project.md` with Saunders business profile, pain points, and phased deliverables.\n- Wrote `01-suppliers.md` — Decore contacts and ordering info. Secondary supplier marked TBD.\n- Extracted and catalogued Decore product lines from five official brochures (`standard-order-form.pdf`, `finishing-brochure-3.pdf`, `new-wood-styles-brochure.pdf`, `new-deco-form-styles-brochure.pdf`, `multi-family-housing-brochure.pdf`).\n- Documented every door & drawer-front style in `02-decore-doors.md` with model codes, defaults, glass/French-lite variants, and edge-detail spec fields.\n- Documented finishes (stains, primers, full Sherwin-Williams paint palette with codes) in `03-decore-finishes.md`.\n- Documented hardware (Salice glides/hinges/pulls) and drawer boxes (659/649/613) in `04-decore-hardware.md`.\n- Documented the full Decore standard order-form field spec with a JSON contract in `05-decore-order-form.md`.\n- Wrote `06-intake-form.md` and `07-proposal-site.md` architectural notes.\n- Wrote `08-agent-playbook.md` with answer protocols for product Q&A.\n- Published structured catalog `products.json` (version `2026.04.17`).\n- Refactored `intake.html` intake form to align with Decore model-code catalog, added Doors & Drawer Fronts section, restocked materials/hardware/drawer-box catalogs with Decore SKUs.\n", "products": "{\n  \"_note\": \"Authoritative machine-readable catalog. Update this file AND the matching consts in intake.html whenever products change. See brain/CHANGELOG.md.\",\n  \"version\": \"2026.04.17\",\n  \"supplier\": {\n    \"primary\": {\n      \"name\": \"Decore-ative Specialties\",\n      \"domain\": \"decore.com\",\n      \"phone\": \"800.729.7277\",\n      \"fax\": \"800.338.0852\",\n      \"email\": \"customerservice@decore.com\",\n      \"manufacturing\": [\"California\", \"Monroe, NC\"],\n      \"madeIn\": \"USA\",\n      \"creditCardSurcharge\": 0.025,\n      \"shippingOptions\": [\"Our Truck\", \"Small Parcel\", \"Freight\", \"Will Call\"]\n    },\n    \"secondary\": {\n      \"name\": \"TBD\",\n      \"notes\": \"Matt mentioned a second supplier; confirm name and contacts, then update brain/01-suppliers.md.\"\n    }\n  },\n  \"leadTimes\": {\n    \"decoForm\": { \"days\": 6, \"warrantyYears\": 5 },\n    \"woodUnfinished\": { \"days\": 6, \"warrantyYears\": 1 },\n    \"woodFinished\": { \"days\": 15, \"warrantyYears\": 1 }\n  },\n  \"doors\": [\n    { \"code\": \"513\",  \"name\": \"Georgia\",   \"thickness\": \"3/4\\\"\", \"joint\": \"butt\",   \"species\": \"White Oak Select\",   \"df\": \"5-Piece\" },\n    { \"code\": \"913\",  \"name\": \"Isabella\",  \"thickness\": \"3/4\\\"\", \"joint\": \"butt\",   \"species\": \"White Oak Select\",   \"df\": \"5-Piece\" },\n    { \"code\": \"913G\", \"name\": \"Isabella Glass\", \"thickness\": \"3/4\\\"\", \"joint\": \"butt\", \"species\": \"White Oak Select\", \"df\": \"Solid\", \"glass\": true },\n    { \"code\": \"510\",  \"name\": \"Owen\",      \"thickness\": \"3/4\\\"\", \"joint\": \"butt\",   \"species\": \"Maple Select\",        \"df\": \"5-Piece\", \"panel\": \"3/8\\\" Solid P1\" },\n    { \"code\": \"910\",  \"name\": \"Alpine\",    \"thickness\": \"3/4\\\"\", \"joint\": \"butt\",   \"species\": \"Maple Select\",        \"df\": \"5-Piece\" },\n    { \"code\": \"910G\", \"name\": \"Alpine Glass\", \"thickness\": \"3/4\\\"\", \"joint\": \"butt\", \"species\": \"Maple Select\",      \"df\": \"Solid\", \"glass\": true },\n    { \"code\": \"508\",  \"name\": \"Oakley\",    \"thickness\": \"3/4\\\"\", \"joint\": \"butt\",   \"species\": \"Walnut Select\",       \"df\": \"5-Piece\", \"panel\": \"1/2\\\" Solid P1\" },\n    { \"code\": \"508G\", \"name\": \"Oakley Glass\", \"thickness\": \"3/4\\\"\", \"joint\": \"butt\", \"species\": \"Walnut Select\",     \"df\": \"Solid\", \"glass\": true },\n    { \"code\": \"908\",  \"name\": \"Nolan\",     \"thickness\": \"3/4\\\"\", \"joint\": \"butt\",   \"species\": \"Walnut Select\",       \"df\": \"5-Piece\" },\n    { \"code\": \"515\",  \"name\": \"Zion\",      \"thickness\": \"3/4\\\"\", \"joint\": \"butt\",   \"species\": \"Alder Select\",        \"df\": \"5-Piece\" },\n    { \"code\": \"915\",  \"name\": \"Graham\",    \"thickness\": \"3/4\\\"\", \"joint\": \"butt\",   \"species\": \"Alder Select\",        \"df\": \"5-Piece\" },\n    { \"code\": \"915G\", \"name\": \"Graham Glass\", \"thickness\": \"3/4\\\"\", \"joint\": \"butt\", \"species\": \"Alder Select\",      \"df\": \"Solid\", \"glass\": true },\n    { \"code\": \"841\",  \"name\": \"Mitchell\",  \"thickness\": \"3/4\\\"\", \"joint\": \"butt\",   \"species\": \"Maple Select\",        \"df\": \"5-Piece\" },\n    { \"code\": \"841F\", \"name\": \"Mitchell French Lite\", \"thickness\": \"3/4\\\"\", \"joint\": \"butt\", \"species\": \"Maple Select\", \"df\": \"Solid\", \"frenchLite\": true },\n    { \"code\": \"831\",  \"name\": \"Shaker\",    \"thickness\": \"3/4\\\"\", \"joint\": \"butt\",   \"species\": \"Maple Select\",        \"df\": \"5-Piece\" },\n    { \"code\": \"514\",  \"name\": \"Glacier\",   \"thickness\": \"3/4\\\"\", \"joint\": \"butt\",   \"species\": \"Alder Select\",        \"df\": \"5-Piece\" },\n    { \"code\": \"914\",  \"name\": \"Josephine\", \"thickness\": \"3/4\\\"\", \"joint\": \"butt\",   \"species\": \"Alder Select\",        \"df\": \"5-Piece\" },\n    { \"code\": \"914G\", \"name\": \"Josephine Glass\", \"thickness\": \"3/4\\\"\", \"joint\": \"butt\", \"species\": \"Alder Select\",   \"df\": \"Solid\", \"glass\": true },\n    { \"code\": \"511\",  \"name\": \"Indiana\",   \"thickness\": \"3/4\\\"\", \"joint\": \"butt\",   \"species\": \"Maple Select\",        \"df\": \"5-Piece\", \"panel\": \"3/8\\\" Solid P1\" },\n    { \"code\": \"911\",  \"name\": \"Jasper\",    \"thickness\": \"3/4\\\"\", \"joint\": \"butt\",   \"species\": \"Maple Select\",        \"df\": \"5-Piece\" },\n    { \"code\": \"911G\", \"name\": \"Jasper Glass\", \"thickness\": \"3/4\\\"\", \"joint\": \"butt\", \"species\": \"Maple Select\",       \"df\": \"Solid\", \"glass\": true },\n\n    { \"code\": \"720\",  \"name\": \"Journey\",   \"thickness\": \"7/8\\\"\", \"joint\": \"miter\",  \"species\": \"Rift White Oak\",      \"df\": \"5-Piece\", \"faceDetail\": \"3/4\\\"\", \"frameWidth\": \"2\\\"\",    \"panel\": \"Recessed\" },\n    { \"code\": \"520\",  \"name\": \"Newbury\",   \"thickness\": \"7/8\\\"\", \"joint\": \"miter\",  \"species\": \"Maple Select\",        \"df\": \"5-Piece\", \"faceDetail\": \"3/4\\\"\", \"frameWidth\": \"2\\\"\",    \"panel\": \"1/2\\\" Solid\" },\n    { \"code\": \"520X\", \"name\": \"Newbury Glass\", \"thickness\": \"7/8\\\"\", \"joint\": \"miter\", \"species\": \"Maple Select\",    \"df\": \"Solid\", \"glass\": true, \"faceDetail\": \"3/4\\\"\", \"frameWidth\": \"2\\\"\" },\n    { \"code\": \"721\",  \"name\": \"Kennedy\",   \"thickness\": \"7/8\\\"\", \"joint\": \"miter\",  \"species\": \"Walnut Select\",       \"df\": \"5-Piece\", \"faceDetail\": \"1\\\"\",   \"frameWidth\": \"2-1/4\\\"\", \"panel\": \"Recessed\" },\n    { \"code\": \"521\",  \"name\": \"Dylan\",     \"thickness\": \"7/8\\\"\", \"joint\": \"miter\",  \"species\": \"White Oak Select\",    \"df\": \"5-Piece\", \"faceDetail\": \"1\\\"\",   \"frameWidth\": \"2-1/4\\\"\", \"panel\": \"1/2\\\" Solid\" },\n    { \"code\": \"521X\", \"name\": \"Dylan Glass\", \"thickness\": \"7/8\\\"\", \"joint\": \"miter\", \"species\": \"White Oak Select\",  \"df\": \"Solid\", \"glass\": true, \"faceDetail\": \"1\\\"\", \"frameWidth\": \"2-1/4\\\"\" },\n\n    { \"code\": \"79\",   \"name\": \"Vienna\",    \"thickness\": \"3/4\\\"\", \"joint\": \"veneer\", \"species\": \"Alder Select\",        \"df\": \"Solid w/ Molding\", \"edge\": \"3/8\\\" Bead Face Solid Molding\" },\n    { \"code\": \"84\",   \"name\": \"Quincy\",    \"thickness\": \"3/4\\\"\", \"joint\": \"veneer\", \"species\": \"Maple Select\",        \"df\": \"Solid w/ Molding\", \"edge\": \"3/4\\\" Face Solid Molding\" },\n    { \"code\": \"93\",   \"name\": \"Aries\",    \"thickness\": \"3/4\\\"\", \"joint\": \"veneer\",  \"species\": \"Rift White Oak Veneer\", \"df\": \"Veneer\" }\n  ],\n  \"decoForm\": [\n    { \"code\": \"218\",  \"name\": \"DSS218\", \"thickness\": \"3/4\\\"\", \"construction\": \"Shallow Depth Shaker, Routed DF\",            \"colors\": [\"949T White\", \"Mojave\"] },\n    { \"code\": \"218G\", \"name\": \"DSS218 Glass\", \"thickness\": \"3/4\\\"\", \"construction\": \"Shallow Depth Shaker, Solid DF\",       \"colors\": [\"949T White\"], \"glass\": true },\n    { \"code\": \"223\",  \"name\": \"DT223\",  \"thickness\": \"3/4\\\"\", \"construction\": \"Shallow Depth Bevel, Routed DF\",             \"colors\": [\"Mysterious Supermatte\", \"Fashion Grey\"] },\n    { \"code\": \"223G\", \"name\": \"DT223 Glass\", \"thickness\": \"3/4\\\"\", \"construction\": \"Shallow Depth Bevel, Solid DF\",         \"colors\": [\"Fashion Grey\"], \"glass\": true },\n    { \"code\": \"917\",  \"name\": \"DN917\",  \"thickness\": \"3/4\\\"\", \"construction\": \"7/8\\\" Face, Shallow Depth Skinny Shaker, Routed DF\", \"colors\": [\"Feather White Suedette\", \"Beach Glass Supermatte\", \"Satin Black\"] },\n    { \"code\": \"917G\", \"name\": \"DN917 Glass\", \"thickness\": \"3/4\\\"\", \"construction\": \"7/8\\\" Face Skinny Shaker, 2-1/4\\\" Frame, Solid DF\", \"colors\": [\"Feather White Suedette\"], \"glass\": true },\n    { \"code\": \"766\",  \"name\": \"AR766\",  \"thickness\": \"3/4\\\"\", \"construction\": \"Routed DF\", \"colors\": [\"Light Italian Walnut\"] },\n    { \"code\": \"756\",  \"name\": \"AR756\",  \"thickness\": \"3/4\\\"\", \"construction\": \"Routed DF\", \"colors\": [\"Fashion Grey\"] },\n    { \"code\": \"816\",  \"name\": \"DBQ\",    \"thickness\": \"3/4\\\"\", \"construction\": \"Solid DF\",  \"colors\": [\"Mojave\"] }\n  ],\n  \"decoFormColors\": [\n    \"949T White\", \"Feather White Suedette\", \"Fashion Grey\", \"Cool Grey\",\n    \"Mysterious Supermatte\", \"Alabaster\", \"Mojave\", \"Light Italian Walnut Taction\",\n    \"Natural Maple Taction\", \"Chocolate Pear\", \"Oak Walnut\",\n    \"Beach Glass Supermatte\", \"Satin Black\"\n  ],\n  \"materials\": [\n    { \"key\": \"maple-select\",        \"name\": \"Maple Select\" },\n    { \"key\": \"maple-paint\",          \"name\": \"Maple Paint Grade\" },\n    { \"key\": \"white-oak-select\",     \"name\": \"White Oak Select\" },\n    { \"key\": \"rift-white-oak\",       \"name\": \"Rift White Oak\" },\n    { \"key\": \"walnut-select\",        \"name\": \"Walnut Select\" },\n    { \"key\": \"alder-select\",         \"name\": \"Alder Select\" },\n    { \"key\": \"cherry-select\",        \"name\": \"Cherry Select\" },\n    { \"key\": \"red-oak-select\",       \"name\": \"Red Oak Select\" },\n    { \"key\": \"hardwood-paint\",       \"name\": \"Hardwood Paint Grade (MDF Panel / Hardwood Frame)\" },\n    { \"key\": \"aspen\",                \"name\": \"Aspen\" },\n    { \"key\": \"rift-white-oak-veneer\",\"name\": \"Rift White Oak Veneer\" }\n  ],\n  \"finishes\": {\n    \"sheens\": {\n      \"clearStain\": [\"Matte 10\", \"Satin 35\"],\n      \"paint\":      [\"Matte 10\", \"Satin 30\"],\n      \"sbf\":        [\"Satin Sheen SBF\", \"Matte 10 Sheen SBF\"]\n    },\n    \"clear\": [\n      { \"name\": \"Clear\", \"base\": \"Maple Finish Grade\" }\n    ],\n    \"stains\": [\n      \"Amber\", \"Coal\", \"Copper\", \"Limestone\", \"Onyx\",\n      \"Pumice\", \"Ruby\", \"Smokey Quartz\", \"Tigers Eye\", \"Topaz\"\n    ],\n    \"primers\": [\"White\", \"Gray\", \"Black\"],\n    \"paints\": [\n      { \"name\": \"White Extra\",      \"code\": \"Sher-Wood H66WH73-20\" },\n      { \"name\": \"Pure White\",        \"code\": \"SW 7005\" },\n      { \"name\": \"Alabaster\",         \"code\": \"SW 7008\" },\n      { \"name\": \"Creamy\",            \"code\": \"SW 7012\" },\n      { \"name\": \"Antique White\",     \"code\": \"SW 6119\" },\n      { \"name\": \"Accessible Beige\",  \"code\": \"SW 7036\" },\n      { \"name\": \"Repose Gray\",       \"code\": \"SW 7015\" },\n      { \"name\": \"Silver Strand\",     \"code\": \"SW 7057\" },\n      { \"name\": \"Mindful Gray\",      \"code\": \"SW 7016\" },\n      { \"name\": \"Eventide\",          \"code\": \"SW 9643\" },\n      { \"name\": \"Dorian Gray\",       \"code\": \"SW 7017\" },\n      { \"name\": \"Poolhouse\",         \"code\": \"SW 7603\" },\n      { \"name\": \"Software\",          \"code\": \"SW 7074\" },\n      { \"name\": \"Retreat\",           \"code\": \"SW 6207\" },\n      { \"name\": \"Anonymous\",         \"code\": \"SW 7046\" },\n      { \"name\": \"Smoky Blue\",        \"code\": \"SW 7604\" },\n      { \"name\": \"Pewter Green\",      \"code\": \"SW 6208\" },\n      { \"name\": \"Cyberspace\",        \"code\": \"SW 7076\" },\n      { \"name\": \"Gale Force\",        \"code\": \"SW 7605\" },\n      { \"name\": \"Naval\",             \"code\": \"SW 6244\" },\n      { \"name\": \"Tricorn Black\",     \"code\": \"SW 6258\" }\n    ]\n  },\n  \"drawerBoxes\": [\n    { \"code\": \"659\", \"name\": \"Dovetail Plywood\", \"sides\": \"1/2\\\"\", \"bottom\": \"1/4\\\"\", \"material\": \"Prefinished 9-Ply Birch\" },\n    { \"code\": \"649\", \"name\": \"Doweled Plywood\",  \"sides\": \"1/2\\\"\", \"bottom\": \"1/4\\\"\", \"material\": \"Prefinished 9-Ply Birch\" },\n    { \"code\": \"613\", \"name\": \"Dovetail Solid\",   \"sides\": \"5/8\\\"\", \"bottom\": \"1/4\\\"\", \"material\": \"Preferred Maple\" }\n  ],\n  \"hardware\": {\n    \"glides\": {\n      \"undermount\": { \"model\": \"Salice Soft Close Undermount 21\\\" w/ Socket\", \"sizes\": [\"12\\\"\", \"15\\\"\", \"18\\\"\", \"23-5/8\\\"\"] },\n      \"sidemount\":  { \"model\": \"Salice Side Mount 20\\\"\", \"sizes\": [\"12\\\"\", \"14\\\"\", \"16\\\"\", \"18\\\"\", \"22\\\"\", \"24\\\"\"] }\n    },\n    \"hinges\": [\n      { \"code\": \"7802\", \"name\": \"Salice Soft Close Compact Hinge\" },\n      { \"code\": \"7821\", \"name\": \"Salice Soft Close Traditional Hinge\" },\n      { \"code\": \"7111\", \"name\": \"Salice Hinge Plate\" }\n    ],\n    \"pulls\": [\n      { \"code\": \"7275\", \"name\": \"Round Knob\",   \"size\": null,   \"finish\": \"Satin Nickel\" },\n      { \"code\": \"7185\", \"name\": \"T-Bar Pull\",   \"size\": \"96mm\", \"finish\": \"Satin Nickel\" },\n      { \"code\": \"1691\", \"name\": \"Mandara Pull\", \"size\": \"96mm\", \"finish\": \"Satin Nickel\" }\n    ]\n  },\n  \"orderFormEnums\": {\n    \"sDf\":                [\"S\", \"DF\", \"Special\", \"Bore\"],\n    \"drawerFrontStyle\":   [\"Solid\", \"Routed\", \"5-Piece\", \"Vertical Grain\"],\n    \"panelDetail\":        [\"Standard\", \"Other\"],\n    \"insideEdgeDetail\":   [\"Standard\", \"Other\"],\n    \"outsideFaceEdge\":    [\"Standard\", \"Square Face Edge\", \"Other\"],\n    \"outsideBackEdge\":    [\"Square Back Edge\", \"Other\"],\n    \"borePattern\":        [\"None\", \"Bore A (5mm tab)\", \"Bore B (3mm tab)\", \"Other\"],\n    \"borePosition\":       [\"None\", \"Left\", \"Center\", \"Right\"],\n    \"dfGrainDirection\":   [\"Standard\", \"Vertical (Clear & Stain only)\"],\n    \"shipping\":           [\"Our Truck\", \"Small Parcel\", \"Freight\", \"Will Call\"]\n  }\n}\n", "09-database": "# Database & Infrastructure — Supabase\n\n_Last updated: 2026-04-17_\n\n---\n\n## Project\n\n| Field | Value |\n|---|---|\n| Name | Saunders |\n| URL | `https://usdenbguhahvzmufwvgo.supabase.co` |\n| Publishable key | `sb_publishable_f8ZfnDA_obVBoqasd7G5Nw_iYkiQ7bJ` |\n| Region | (Supabase default / us-east-1) |\n| Client file | `utils/supabase/client.js` — exposes `window.SaundersDB` |\n| Env file | `.env.local` — for future Next.js or server-side use |\n| Migration | `supabase/migrations/001_saunders_initial.sql` |\n\n---\n\n## Tables\n\n### `intake_submissions`\n\nStores each client intake form submission from `intake.html`.\n\n| Column | Type | Notes |\n|---|---|---|\n| `id` | `uuid` | PK, `gen_random_uuid()` |\n| `created_at` | `timestamptz` | Auto-set to `now()` |\n| `client_name` | `text` | From `state.basics.name` |\n| `client_email` | `text` | From `state.basics.email` |\n| `project_type` | `text` | From `state.basics.projectType` |\n| `target_date` | `text` | From `state.basics.targetDate` |\n| `state_json` | `jsonb` | Full form state — see `06-intake-form.md` for shape |\n| `appliance_packet_urls` | `jsonb` | Array of public Storage URLs |\n\nRLS:\n- **Insert**: open to publishable-key sessions (no login required for intake submit)\n- **Select**: authenticated users only (Matt views submissions)\n\n---\n\n## Storage buckets\n\n### `appliance-packets`\n\nStores manufacturer PDF spec sheets uploaded from the Appliance Packets section.\n\n| Field | Value |\n|---|---|\n| Bucket ID | `appliance-packets` |\n| Public | Yes |\n| Path convention | `{client-name}/{timestamp}-{original-filename}.pdf` |\n| Upload policy | Public insert (any bearer with publishable key) |\n| Read policy | Public (anyone with the URL can download) |\n\n---\n\n## How uploads work (`intake.html`)\n\n1. User drops or selects PDFs in the upload zone.\n2. `uploadPacketFiles()` fires for each file.\n3. Each file is `PUT` to `SaundersDB.storage.from('appliance-packets').upload(path, file)`.\n4. On success, `getPublicUrl(path)` returns the CDN URL.\n5. URL is pushed into `state.appliancePackets[]` and rendered in the packet list.\n6. When the user clicks **Save to Saunders DB**, `state.appliancePackets` URLs are included in the `appliance_packet_urls` column of `intake_submissions`.\n\n---\n\n## Setup instructions (run once)\n\n1. Open [Saunders SQL Editor](https://supabase.com/dashboard/project/usdenbguhahvzmufwvgo/sql/new).\n2. Paste and run `supabase/migrations/001_saunders_initial.sql`.\n3. Confirm `appliance-packets` bucket exists under **Storage**.\n\n---\n\n## Future schema additions\n\nWhen new features are built, add a new migration file (`002_...sql`) and document the new tables or columns here.\n\n| Planned | Trigger |\n|---|---|\n| `appliance_extractions` | Phase 2 — AI-extracted model numbers + cut-outs from PDF packets |\n| `monday_sync_log` | Phase 2 — log of records pushed to Monday.com |\n| `projects` | Phase 3 — normalised project records linking intake → Monday → QuickBooks |\n"};
+
+    /* ── State ────────────────────────────────────────────────────────── */
+    const EDITOR_PW   = 'SaundersAI';
+    let isEditor      = false;
+    let currentFileId = null;
+    let filteredFiles = [];
+
+    const CAT_CLS = {
+      business:  'cat-business',
+      products:  'cat-products',
+      processes: 'cat-processes',
+      reference: 'cat-reference',
+    };
+    const CAT_ICO = {
+      business:  '&#128200;',
+      products:  '&#128218;',
+      processes: '&#9881;&#65039;',
+      reference: '&#128196;',
+    };
+
+    /* ── Init ─────────────────────────────────────────────────────────── */
+    function initialize() {
+      let totalWords = 0;
+      BRAIN_INDEX.files.forEach(function(f) { totalWords += f.wordCount || 0; });
+      document.getElementById('statFiles').textContent   = BRAIN_INDEX.files.length;
+      document.getElementById('statPdfs').textContent    = BRAIN_INDEX.pdfs.length;
+      document.getElementById('statWords').textContent   = (totalWords / 1000).toFixed(1) + 'k';
+      var d = new Date(BRAIN_INDEX.lastUpdated);
+      document.getElementById('statUpdated').textContent =
+        d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+
+      filteredFiles = BRAIN_INDEX.files.slice();
+      renderFiles();
+      renderPdfs();
+
+      if (localStorage.getItem('brainEditorAuth') === EDITOR_PW) {
+        isEditor = true;
+        updateAuthBtn();
+      }
+    }
+
+    /* ── Search ───────────────────────────────────────────────────────── */
+    function handleSearch() {
+      var q   = document.getElementById('searchInput').value.toLowerCase().trim();
+      var cat = document.getElementById('catFilter').value;
+      filteredFiles = BRAIN_INDEX.files.filter(function(f) {
+        var matchCat = !cat || f.category === cat;
+        var matchQ   = !q ||
+          f.name.toLowerCase().includes(q) ||
+          f.description.toLowerCase().includes(q) ||
+          (f.path || '').toLowerCase().includes(q);
+        return matchCat && matchQ;
+      });
+      renderFiles();
+    }
+
+    /* ── View toggle ──────────────────────────────────────────────────── */
+    function setView(v) {
+      document.getElementById('viewTable').style.display = v === 'table' ? 'block' : 'none';
+      document.getElementById('viewGrid').style.display  = v === 'grid'  ? 'block' : 'none';
+      document.getElementById('viewBtnTable').classList.toggle('active', v === 'table');
+      document.getElementById('viewBtnGrid').classList.toggle('active', v === 'grid');
+    }
+
+    /* ── Render files ─────────────────────────────────────────────────── */
+    function catName(f) {
+      var obj = BRAIN_INDEX.categories.find(function(c) { return c.id === f.category; });
+      return obj ? obj.name : f.category;
+    }
+
+    function renderFiles() {
+      var n = filteredFiles.length;
+      document.getElementById('fileCount').textContent     = n;
+      document.getElementById('fileCountGrid').textContent = n;
+
+      /* Table */
+      var tbody = document.getElementById('fileTableBody');
+      tbody.innerHTML = '';
+      filteredFiles.forEach(function(f) {
+        var tr = document.createElement('tr');
+        tr.tabIndex = 0;
+        tr.setAttribute('role', 'button');
+        tr.setAttribute('aria-label', 'Preview ' + f.name);
+        tr.addEventListener('click', function() { openFile(f.id); });
+        tr.addEventListener('keydown', function(e) {
+          if (e.key === 'Enter' || e.key === ' ') openFile(f.id);
+        });
+        var dateStr = new Date(f.lastUpdated).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+        var words   = (f.wordCount || 0).toLocaleString();
+        tr.innerHTML =
+          '<td><span class="cat-badge ' + (CAT_CLS[f.category] || '') + '">' + catName(f) + '</span></td>' +
+          '<td class="col-name">' + f.name + '<small>' + (f.path || '') + '</small></td>' +
+          '<td class="col-desc">' + f.description + '</td>' +
+          '<td class="col-meta">' + words + '</td>' +
+          '<td class="col-meta">' + dateStr + '</td>' +
+          '<td class="col-action"><button class="row-btn" data-id="' + f.id + '">Preview</button></td>';
+        tr.querySelector('.row-btn').addEventListener('click', function(e) {
+          e.stopPropagation();
+          openFile(f.id);
+        });
+        tbody.appendChild(tr);
+      });
+
+      /* Grid */
+      var grid = document.getElementById('fileGridBody');
+      grid.innerHTML = '';
+      filteredFiles.forEach(function(f) {
+        var div = document.createElement('div');
+        div.className = 'file-card';
+        div.tabIndex  = 0;
+        div.setAttribute('role', 'button');
+        div.setAttribute('aria-label', 'Preview ' + f.name);
+        div.addEventListener('click', function() { openFile(f.id); });
+        div.addEventListener('keydown', function(e) {
+          if (e.key === 'Enter' || e.key === ' ') openFile(f.id);
+        });
+        var words = (f.wordCount || 0).toLocaleString();
+        div.innerHTML =
+          '<div class="file-card-top">' +
+            '<div class="file-icon">' + (CAT_ICO[f.category] || '&#128196;') + '</div>' +
+            '<span class="cat-badge ' + (CAT_CLS[f.category] || '') + '" style="margin-top:3px">' + catName(f) + '</span>' +
+          '</div>' +
+          '<h3>' + f.name + '</h3>' +
+          '<div class="file-path">' + (f.path || '') + '</div>' +
+          '<p class="file-desc">' + f.description + '</p>' +
+          '<div class="file-card-footer">' +
+            '<span class="file-card-meta">' + words + ' words</span>' +
+            '<button class="open-btn" data-id="' + f.id + '">Open &#8594;</button>' +
+          '</div>';
+        div.querySelector('.open-btn').addEventListener('click', function(e) {
+          e.stopPropagation();
+          openFile(f.id);
+        });
+        grid.appendChild(div);
+      });
+    }
+
+    /* ── Render PDFs ──────────────────────────────────────────────────── */
+    var PDF_CAT_ORDER = ['brochures', 'order-forms', 'reference', 'internal', 'supplier-docs'];
+    var PDF_CAT_LABEL = {
+      'brochures':    'Product Brochures',
+      'order-forms':  'Order Forms',
+      'reference':    'Reference & Guides',
+      'internal':     'Internal Docs',
+      'supplier-docs':'Supplier Docs'
+    };
+
+    function renderPdfs() {
+      var pdfs = BRAIN_INDEX.pdfs;
+      document.getElementById('pdfCount').textContent = pdfs.length;
+
+      var container = document.getElementById('pdfSection');
+      container.innerHTML = '';
+
+      /* Group by category */
+      var groups = {};
+      pdfs.forEach(function(pdf) {
+        var cat = pdf.category || 'other';
+        if (!groups[cat]) groups[cat] = [];
+        groups[cat].push(pdf);
+      });
+
+      /* Render in order */
+      var catKeys = PDF_CAT_ORDER.filter(function(k) { return groups[k]; });
+      /* Append any unlisted categories at the end */
+      Object.keys(groups).forEach(function(k) {
+        if (catKeys.indexOf(k) === -1) catKeys.push(k);
+      });
+
+      catKeys.forEach(function(cat) {
+        var catPdfs = groups[cat];
+
+        var section = document.createElement('div');
+        section.style.marginBottom = '48px';
+
+        var heading = document.createElement('h3');
+        heading.className = 'pdf-cat-heading';
+        heading.textContent = PDF_CAT_LABEL[cat] || cat;
+        section.appendChild(heading);
+
+        var grid = document.createElement('div');
+        grid.className = 'pdf-grid';
+        section.appendChild(grid);
+
+        catPdfs.forEach(function(pdf) {
+          var pills = (pdf.relatedTo || []).map(function(id) {
+            var f = BRAIN_INDEX.files.find(function(x) { return x.id === id; });
+            return f ? '<span class="related-pill">' + f.name + '</span>' : '';
+          }).join('');
+
+          var pdfHref = pdf.localPath || null;
+
+          var div = document.createElement('div');
+          div.className = 'pdf-card' + (pdfHref ? ' pdf-card-clickable' : '');
+          if (pdfHref) {
+            div.setAttribute('role', 'button');
+            div.setAttribute('tabindex', '0');
+            div.setAttribute('aria-label', 'Open ' + pdf.name);
+            div.addEventListener('click', function() { window.open(pdfHref, '_blank'); });
+            div.addEventListener('keydown', function(e) {
+              if (e.key === 'Enter' || e.key === ' ') window.open(pdfHref, '_blank');
+            });
+          }
+
+          div.innerHTML =
+            '<div class="pdf-header">' +
+              '<div class="pdf-icon-wrap">&#128196;</div>' +
+              '<div class="pdf-title">' + pdf.name + '</div>' +
+            '</div>' +
+            '<p class="pdf-desc">' + pdf.description + '</p>' +
+            (pills ? '<div class="pdf-pills">' + pills + '</div>' : '') +
+            '<div class="pdf-footer">' +
+              '<span>' + (pdf.size || '') + '</span>' +
+              (pdfHref
+                ? '<a class="pdf-link" href="' + pdfHref + '" target="_blank" rel="noopener" onclick="event.stopPropagation()">&#8599;&nbsp;Open PDF</a>'
+                : '<a class="pdf-link" href="https://decore.com" target="_blank" rel="noopener">&#128279;&nbsp;Decore.com</a>') +
+            '</div>';
+
+          grid.appendChild(div);
+        });
+
+        container.appendChild(section);
+      });
+    }
+
+    /* ── Open file preview ────────────────────────────────────────────── */
+    function openFile(fileId) {
+      currentFileId = fileId;
+      var file    = BRAIN_INDEX.files.find(function(f) { return f.id === fileId; });
+      var catObj  = BRAIN_INDEX.categories.find(function(c) { return c.id === file.category; }) || {};
+      var content = BRAIN_CONTENT[fileId] || '*(No content available)*';
+
+      document.getElementById('modalTitle').textContent = file.name;
+      document.getElementById('modalPath').textContent  = 'brain/' + file.path;
+      document.getElementById('modalMeta').textContent  =
+        (file.wordCount || 0).toLocaleString() + ' words \u00b7 ' +
+        new Date(file.lastUpdated).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+      document.getElementById('modalDesc').textContent  = file.description;
+      document.getElementById('modalCat').innerHTML =
+        '<span class="cat-badge ' + (CAT_CLS[file.category] || '') + '">' + (catObj.name || file.category) + '</span>';
+      document.getElementById('modalContent').innerHTML = renderMarkdown(content);
+
+      document.getElementById('fileModal').classList.add('open');
+      document.body.style.overflow = 'hidden';
+      document.querySelector('#fileModal .modal-body').scrollTop = 0;
+    }
+
+    function closeModal() {
+      document.getElementById('fileModal').classList.remove('open');
+      document.body.style.overflow = '';
+      currentFileId = null;
+    }
+
+    function handleModalBg(e) {
+      if (e.target.id === 'fileModal') closeModal();
+    }
+
+    function downloadCurrentFile() {
+      if (!currentFileId) return;
+      var file    = BRAIN_INDEX.files.find(function(f) { return f.id === currentFileId; });
+      var content = BRAIN_CONTENT[currentFileId] || '';
+      var a = document.createElement('a');
+      a.href     = 'data:text/plain;charset=utf-8,' + encodeURIComponent(content);
+      a.download = file.path;
+      a.click();
+    }
+
+    /* ── Markdown renderer ────────────────────────────────────────────── */
+    function renderMarkdown(raw) {
+      /* --- 1. stash fenced code blocks -------------------------------- */
+      var codeStash   = [];
+      var inlineStash = [];
+      var BT3 = String.fromCharCode(96, 96, 96); // ```
+      var BT1 = String.fromCharCode(96);          // `
+
+      /* fenced blocks: ```lang\n...\n``` */
+      var fenceRe = new RegExp(BT3 + '([\\w]*)\\n?([\\s\\S]*?)' + BT3, 'g');
+      var h = raw.replace(fenceRe, function(_, lang, code) {
+        var esc = code
+          .replace(/&/g, '&amp;')
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;');
+        codeStash.push('<pre><code>' + esc + '</code></pre>');
+        return '\x01CB' + (codeStash.length - 1) + '\x01';
+      });
+
+      /* inline code: `...` */
+      var inlineRe = new RegExp(BT1 + '([^' + BT1 + '\\n]+)' + BT1, 'g');
+      h = h.replace(inlineRe, function(_, c) {
+        var esc = c
+          .replace(/&/g, '&amp;')
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;');
+        inlineStash.push('<code>' + esc + '</code>');
+        return '\x01IC' + (inlineStash.length - 1) + '\x01';
+      });
+
+      /* --- 2. GFM tables --------------------------------------------- */
+      h = h.replace(/((?:\|[^\n]*\|\n)+)/g, function(block) {
+        var lines = block.trim().split('\n');
+        if (lines.length < 2) return block;
+        function cols(row) {
+          return row.split('|').slice(1, -1).map(function(c) { return c.trim(); });
+        }
+        var head = cols(lines[0]).map(function(c) { return '<th>' + c + '</th>'; }).join('');
+        var body = lines.slice(2).filter(Boolean).map(function(row) {
+          return '<tr>' + cols(row).map(function(c) { return '<td>' + c + '</td>'; }).join('') + '</tr>';
+        }).join('');
+        return '<table><thead><tr>' + head + '</tr></thead><tbody>' + body + '</tbody></table>';
+      });
+
+      /* --- 3. Block elements ------------------------------------------ */
+      h = h.replace(/^#### (.+)$/gm,  '<h4>$1</h4>');
+      h = h.replace(/^### (.+)$/gm,   '<h3>$1</h3>');
+      h = h.replace(/^## (.+)$/gm,    '<h2>$1</h2>');
+      h = h.replace(/^# (.+)$/gm,     '<h1>$1</h1>');
+      h = h.replace(/^-{3,}$/gm,      '<hr>');
+
+      /* --- 4. Inline formatting --------------------------------------- */
+      h = h.replace(/\*\*\*(.+?)\*\*\*/g, '<strong><em>$1</em></strong>');
+      h = h.replace(/\*\*(.+?)\*\*/g,     '<strong>$1</strong>');
+      h = h.replace(/\*([^*\n]+?)\*/g,    '<em>$1</em>');
+      h = h.replace(/__(.+?)__/g,         '<strong>$1</strong>');
+      h = h.replace(/_([^_\n]+?)_/g,      '<em>$1</em>');
+      h = h.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank" rel="noopener">$1</a>');
+
+      /* --- 5. Blockquotes -------------------------------------------- */
+      h = h.replace(/((?:^> .+\n?)+)/gm, function(block) {
+        return '<blockquote>' + block.replace(/^> /gm, '').trim() + '</blockquote>';
+      });
+
+      /* --- 6. Lists -------------------------------------------------- */
+      h = h.replace(/((?:^[ \t]*[-*] .+\n?)+)/gm, function(b) {
+        var items = b.trim().split('\n').map(function(l) {
+          return '<li>' + l.replace(/^[ \t]*[-*] /, '') + '</li>';
+        }).join('');
+        return '<ul>' + items + '</ul>';
+      });
+      h = h.replace(/((?:^[ \t]*\d+\. .+\n?)+)/gm, function(b) {
+        var items = b.trim().split('\n').map(function(l) {
+          return '<li>' + l.replace(/^[ \t]*\d+\. /, '') + '</li>';
+        }).join('');
+        return '<ol>' + items + '</ol>';
+      });
+
+      /* --- 7. Paragraphs --------------------------------------------- */
+      h = h.split(/\n\n+/).map(function(block) {
+        block = block.trim();
+        if (!block) return '';
+        if (/^<(h[1-6]|ul|ol|table|pre|blockquote|hr)/.test(block)) return block;
+        if (/\x01(CB|IC)/.test(block)) return '<p>' + block + '</p>';
+        block = block.replace(/\n/g, ' ');
+        return '<p>' + block + '</p>';
+      }).join('\n');
+
+      /* --- 8. Restore stashed blocks ---------------------------------- */
+      codeStash.forEach(function(b, i) {
+        h = h.split('\x01CB' + i + '\x01').join(b);
+      });
+      inlineStash.forEach(function(b, i) {
+        h = h.split('\x01IC' + i + '\x01').join(b);
+      });
+
+      return h;
+    }
+
+    /* ── Editor auth ──────────────────────────────────────────────────── */
+    function handleAuthToggle() {
+      if (isEditor) {
+        isEditor = false;
+        localStorage.removeItem('brainEditorAuth');
+        updateAuthBtn();
+        return;
+      }
+      document.getElementById('authPwInput').value = '';
+      document.getElementById('authError').style.display = 'none';
+      document.getElementById('authModal').classList.add('open');
+      document.body.style.overflow = 'hidden';
+      setTimeout(function() { document.getElementById('authPwInput').focus(); }, 80);
+    }
+
+    function submitAuth() {
+      if (document.getElementById('authPwInput').value === EDITOR_PW) {
+        isEditor = true;
+        localStorage.setItem('brainEditorAuth', EDITOR_PW);
+        updateAuthBtn();
+        closeAuthModal();
+      } else {
+        document.getElementById('authError').style.display = 'block';
+        document.getElementById('authPwInput').select();
+      }
+    }
+
+    function closeAuthModal() {
+      document.getElementById('authModal').classList.remove('open');
+      document.body.style.overflow = '';
+    }
+
+    function handleAuthBg(e) {
+      if (e.target.id === 'authModal') closeAuthModal();
+    }
+
+    function updateAuthBtn() {
+      var btn = document.getElementById('authBtn');
+      if (isEditor) {
+        btn.textContent       = '\uD83D\uDD13 Editor On';
+        btn.style.background  = 'var(--gold)';
+        btn.style.borderColor = 'var(--gold)';
+        btn.style.color       = '#1a1c18';
+      } else {
+        btn.textContent       = '\uD83D\uDD12 Unlock Editor';
+        btn.style.background  = '';
+        btn.style.borderColor = '';
+        btn.style.color       = '';
+      }
+    }
+
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') { closeModal(); closeAuthModal(); }
+    });
+
+    /* DOMContentLoaded may already have fired for bottom-of-body scripts */
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initialize);
+    } else {
+      initialize();
+    }
+
+  </script>
+
+
+
+</body>
+</html>

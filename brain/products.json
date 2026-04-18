@@ -1,0 +1,161 @@
+{
+  "_note": "Authoritative machine-readable catalog. Update this file AND the matching consts in intake.html whenever products change. See brain/CHANGELOG.md.",
+  "version": "2026.04.17",
+  "supplier": {
+    "primary": {
+      "name": "Decore-ative Specialties",
+      "domain": "decore.com",
+      "phone": "800.729.7277",
+      "fax": "800.338.0852",
+      "email": "customerservice@decore.com",
+      "manufacturing": ["California", "Monroe, NC"],
+      "madeIn": "USA",
+      "creditCardSurcharge": 0.025,
+      "shippingOptions": ["Our Truck", "Small Parcel", "Freight", "Will Call"]
+    },
+    "secondary": {
+      "name": "TBD",
+      "notes": "Matt mentioned a second supplier; confirm name and contacts, then update brain/01-suppliers.md."
+    }
+  },
+  "leadTimes": {
+    "decoForm": { "days": 6, "warrantyYears": 5 },
+    "woodUnfinished": { "days": 6, "warrantyYears": 1 },
+    "woodFinished": { "days": 15, "warrantyYears": 1 }
+  },
+  "doors": [
+    { "code": "513",  "name": "Georgia",   "thickness": "3/4\"", "joint": "butt",   "species": "White Oak Select",   "df": "5-Piece" },
+    { "code": "913",  "name": "Isabella",  "thickness": "3/4\"", "joint": "butt",   "species": "White Oak Select",   "df": "5-Piece" },
+    { "code": "913G", "name": "Isabella Glass", "thickness": "3/4\"", "joint": "butt", "species": "White Oak Select", "df": "Solid", "glass": true },
+    { "code": "510",  "name": "Owen",      "thickness": "3/4\"", "joint": "butt",   "species": "Maple Select",        "df": "5-Piece", "panel": "3/8\" Solid P1" },
+    { "code": "910",  "name": "Alpine",    "thickness": "3/4\"", "joint": "butt",   "species": "Maple Select",        "df": "5-Piece" },
+    { "code": "910G", "name": "Alpine Glass", "thickness": "3/4\"", "joint": "butt", "species": "Maple Select",      "df": "Solid", "glass": true },
+    { "code": "508",  "name": "Oakley",    "thickness": "3/4\"", "joint": "butt",   "species": "Walnut Select",       "df": "5-Piece", "panel": "1/2\" Solid P1" },
+    { "code": "508G", "name": "Oakley Glass", "thickness": "3/4\"", "joint": "butt", "species": "Walnut Select",     "df": "Solid", "glass": true },
+    { "code": "908",  "name": "Nolan",     "thickness": "3/4\"", "joint": "butt",   "species": "Walnut Select",       "df": "5-Piece" },
+    { "code": "515",  "name": "Zion",      "thickness": "3/4\"", "joint": "butt",   "species": "Alder Select",        "df": "5-Piece" },
+    { "code": "915",  "name": "Graham",    "thickness": "3/4\"", "joint": "butt",   "species": "Alder Select",        "df": "5-Piece" },
+    { "code": "915G", "name": "Graham Glass", "thickness": "3/4\"", "joint": "butt", "species": "Alder Select",      "df": "Solid", "glass": true },
+    { "code": "841",  "name": "Mitchell",  "thickness": "3/4\"", "joint": "butt",   "species": "Maple Select",        "df": "5-Piece" },
+    { "code": "841F", "name": "Mitchell French Lite", "thickness": "3/4\"", "joint": "butt", "species": "Maple Select", "df": "Solid", "frenchLite": true },
+    { "code": "831",  "name": "Shaker",    "thickness": "3/4\"", "joint": "butt",   "species": "Maple Select",        "df": "5-Piece" },
+    { "code": "514",  "name": "Glacier",   "thickness": "3/4\"", "joint": "butt",   "species": "Alder Select",        "df": "5-Piece" },
+    { "code": "914",  "name": "Josephine", "thickness": "3/4\"", "joint": "butt",   "species": "Alder Select",        "df": "5-Piece" },
+    { "code": "914G", "name": "Josephine Glass", "thickness": "3/4\"", "joint": "butt", "species": "Alder Select",   "df": "Solid", "glass": true },
+    { "code": "511",  "name": "Indiana",   "thickness": "3/4\"", "joint": "butt",   "species": "Maple Select",        "df": "5-Piece", "panel": "3/8\" Solid P1" },
+    { "code": "911",  "name": "Jasper",    "thickness": "3/4\"", "joint": "butt",   "species": "Maple Select",        "df": "5-Piece" },
+    { "code": "911G", "name": "Jasper Glass", "thickness": "3/4\"", "joint": "butt", "species": "Maple Select",       "df": "Solid", "glass": true },
+
+    { "code": "720",  "name": "Journey",   "thickness": "7/8\"", "joint": "miter",  "species": "Rift White Oak",      "df": "5-Piece", "faceDetail": "3/4\"", "frameWidth": "2\"",    "panel": "Recessed" },
+    { "code": "520",  "name": "Newbury",   "thickness": "7/8\"", "joint": "miter",  "species": "Maple Select",        "df": "5-Piece", "faceDetail": "3/4\"", "frameWidth": "2\"",    "panel": "1/2\" Solid" },
+    { "code": "520X", "name": "Newbury Glass", "thickness": "7/8\"", "joint": "miter", "species": "Maple Select",    "df": "Solid", "glass": true, "faceDetail": "3/4\"", "frameWidth": "2\"" },
+    { "code": "721",  "name": "Kennedy",   "thickness": "7/8\"", "joint": "miter",  "species": "Walnut Select",       "df": "5-Piece", "faceDetail": "1\"",   "frameWidth": "2-1/4\"", "panel": "Recessed" },
+    { "code": "521",  "name": "Dylan",     "thickness": "7/8\"", "joint": "miter",  "species": "White Oak Select",    "df": "5-Piece", "faceDetail": "1\"",   "frameWidth": "2-1/4\"", "panel": "1/2\" Solid" },
+    { "code": "521X", "name": "Dylan Glass", "thickness": "7/8\"", "joint": "miter", "species": "White Oak Select",  "df": "Solid", "glass": true, "faceDetail": "1\"", "frameWidth": "2-1/4\"" },
+
+    { "code": "79",   "name": "Vienna",    "thickness": "3/4\"", "joint": "veneer", "species": "Alder Select",        "df": "Solid w/ Molding", "edge": "3/8\" Bead Face Solid Molding" },
+    { "code": "84",   "name": "Quincy",    "thickness": "3/4\"", "joint": "veneer", "species": "Maple Select",        "df": "Solid w/ Molding", "edge": "3/4\" Face Solid Molding" },
+    { "code": "93",   "name": "Aries",    "thickness": "3/4\"", "joint": "veneer",  "species": "Rift White Oak Veneer", "df": "Veneer" }
+  ],
+  "decoForm": [
+    { "code": "218",  "name": "DSS218", "thickness": "3/4\"", "construction": "Shallow Depth Shaker, Routed DF",            "colors": ["949T White", "Mojave"] },
+    { "code": "218G", "name": "DSS218 Glass", "thickness": "3/4\"", "construction": "Shallow Depth Shaker, Solid DF",       "colors": ["949T White"], "glass": true },
+    { "code": "223",  "name": "DT223",  "thickness": "3/4\"", "construction": "Shallow Depth Bevel, Routed DF",             "colors": ["Mysterious Supermatte", "Fashion Grey"] },
+    { "code": "223G", "name": "DT223 Glass", "thickness": "3/4\"", "construction": "Shallow Depth Bevel, Solid DF",         "colors": ["Fashion Grey"], "glass": true },
+    { "code": "917",  "name": "DN917",  "thickness": "3/4\"", "construction": "7/8\" Face, Shallow Depth Skinny Shaker, Routed DF", "colors": ["Feather White Suedette", "Beach Glass Supermatte", "Satin Black"] },
+    { "code": "917G", "name": "DN917 Glass", "thickness": "3/4\"", "construction": "7/8\" Face Skinny Shaker, 2-1/4\" Frame, Solid DF", "colors": ["Feather White Suedette"], "glass": true },
+    { "code": "766",  "name": "AR766",  "thickness": "3/4\"", "construction": "Routed DF", "colors": ["Light Italian Walnut"] },
+    { "code": "756",  "name": "AR756",  "thickness": "3/4\"", "construction": "Routed DF", "colors": ["Fashion Grey"] },
+    { "code": "816",  "name": "DBQ",    "thickness": "3/4\"", "construction": "Solid DF",  "colors": ["Mojave"] }
+  ],
+  "decoFormColors": [
+    "949T White", "Feather White Suedette", "Fashion Grey", "Cool Grey",
+    "Mysterious Supermatte", "Alabaster", "Mojave", "Light Italian Walnut Taction",
+    "Natural Maple Taction", "Chocolate Pear", "Oak Walnut",
+    "Beach Glass Supermatte", "Satin Black"
+  ],
+  "materials": [
+    { "key": "maple-select",        "name": "Maple Select" },
+    { "key": "maple-paint",          "name": "Maple Paint Grade" },
+    { "key": "white-oak-select",     "name": "White Oak Select" },
+    { "key": "rift-white-oak",       "name": "Rift White Oak" },
+    { "key": "walnut-select",        "name": "Walnut Select" },
+    { "key": "alder-select",         "name": "Alder Select" },
+    { "key": "cherry-select",        "name": "Cherry Select" },
+    { "key": "red-oak-select",       "name": "Red Oak Select" },
+    { "key": "hardwood-paint",       "name": "Hardwood Paint Grade (MDF Panel / Hardwood Frame)" },
+    { "key": "aspen",                "name": "Aspen" },
+    { "key": "rift-white-oak-veneer","name": "Rift White Oak Veneer" }
+  ],
+  "finishes": {
+    "sheens": {
+      "clearStain": ["Matte 10", "Satin 35"],
+      "paint":      ["Matte 10", "Satin 30"],
+      "sbf":        ["Satin Sheen SBF", "Matte 10 Sheen SBF"]
+    },
+    "clear": [
+      { "name": "Clear", "base": "Maple Finish Grade" }
+    ],
+    "stains": [
+      "Amber", "Coal", "Copper", "Limestone", "Onyx",
+      "Pumice", "Ruby", "Smokey Quartz", "Tigers Eye", "Topaz"
+    ],
+    "primers": ["White", "Gray", "Black"],
+    "paints": [
+      { "name": "White Extra",      "code": "Sher-Wood H66WH73-20" },
+      { "name": "Pure White",        "code": "SW 7005" },
+      { "name": "Alabaster",         "code": "SW 7008" },
+      { "name": "Creamy",            "code": "SW 7012" },
+      { "name": "Antique White",     "code": "SW 6119" },
+      { "name": "Accessible Beige",  "code": "SW 7036" },
+      { "name": "Repose Gray",       "code": "SW 7015" },
+      { "name": "Silver Strand",     "code": "SW 7057" },
+      { "name": "Mindful Gray",      "code": "SW 7016" },
+      { "name": "Eventide",          "code": "SW 9643" },
+      { "name": "Dorian Gray",       "code": "SW 7017" },
+      { "name": "Poolhouse",         "code": "SW 7603" },
+      { "name": "Software",          "code": "SW 7074" },
+      { "name": "Retreat",           "code": "SW 6207" },
+      { "name": "Anonymous",         "code": "SW 7046" },
+      { "name": "Smoky Blue",        "code": "SW 7604" },
+      { "name": "Pewter Green",      "code": "SW 6208" },
+      { "name": "Cyberspace",        "code": "SW 7076" },
+      { "name": "Gale Force",        "code": "SW 7605" },
+      { "name": "Naval",             "code": "SW 6244" },
+      { "name": "Tricorn Black",     "code": "SW 6258" }
+    ]
+  },
+  "drawerBoxes": [
+    { "code": "659", "name": "Dovetail Plywood", "sides": "1/2\"", "bottom": "1/4\"", "material": "Prefinished 9-Ply Birch" },
+    { "code": "649", "name": "Doweled Plywood",  "sides": "1/2\"", "bottom": "1/4\"", "material": "Prefinished 9-Ply Birch" },
+    { "code": "613", "name": "Dovetail Solid",   "sides": "5/8\"", "bottom": "1/4\"", "material": "Preferred Maple" }
+  ],
+  "hardware": {
+    "glides": {
+      "undermount": { "model": "Salice Soft Close Undermount 21\" w/ Socket", "sizes": ["12\"", "15\"", "18\"", "23-5/8\""] },
+      "sidemount":  { "model": "Salice Side Mount 20\"", "sizes": ["12\"", "14\"", "16\"", "18\"", "22\"", "24\""] }
+    },
+    "hinges": [
+      { "code": "7802", "name": "Salice Soft Close Compact Hinge" },
+      { "code": "7821", "name": "Salice Soft Close Traditional Hinge" },
+      { "code": "7111", "name": "Salice Hinge Plate" }
+    ],
+    "pulls": [
+      { "code": "7275", "name": "Round Knob",   "size": null,   "finish": "Satin Nickel" },
+      { "code": "7185", "name": "T-Bar Pull",   "size": "96mm", "finish": "Satin Nickel" },
+      { "code": "1691", "name": "Mandara Pull", "size": "96mm", "finish": "Satin Nickel" }
+    ]
+  },
+  "orderFormEnums": {
+    "sDf":                ["S", "DF", "Special", "Bore"],
+    "drawerFrontStyle":   ["Solid", "Routed", "5-Piece", "Vertical Grain"],
+    "panelDetail":        ["Standard", "Other"],
+    "insideEdgeDetail":   ["Standard", "Other"],
+    "outsideFaceEdge":    ["Standard", "Square Face Edge", "Other"],
+    "outsideBackEdge":    ["Square Back Edge", "Other"],
+    "borePattern":        ["None", "Bore A (5mm tab)", "Bore B (3mm tab)", "Other"],
+    "borePosition":       ["None", "Left", "Center", "Right"],
+    "dfGrainDirection":   ["Standard", "Vertical (Clear & Stain only)"],
+    "shipping":           ["Our Truck", "Small Parcel", "Freight", "Will Call"]
+  }
+}

@@ -1,0 +1,773 @@
+{
+  "version": "1.0",
+  "lastUpdated": "2026-04-17",
+  "files": [
+    {
+      "id": "00-project",
+      "name": "Project Overview",
+      "path": "00-project.md",
+      "category": "business",
+      "description": "Business context for Saunders Wood Works, operating pains, solution design, and 4-layer automation strategy",
+      "relatedFiles": [
+        "01-suppliers",
+        "08-agent-playbook",
+        "06-intake-form"
+      ],
+      "importance": 5,
+      "lastUpdated": "2026-04-17",
+      "wordCount": 507
+    },
+    {
+      "id": "01-suppliers",
+      "name": "Suppliers & Vendors",
+      "path": "01-suppliers.md",
+      "category": "business",
+      "description": "Primary and secondary material suppliers. Decore.com is the main source for doors, hardware, finishes; secondary supplier TBD",
+      "relatedFiles": [
+        "02-decore-doors",
+        "03-decore-finishes",
+        "04-decore-hardware"
+      ],
+      "importance": 4,
+      "lastUpdated": "2026-04-17",
+      "wordCount": 476
+    },
+    {
+      "id": "02-decore-doors",
+      "name": "Decore Door Styles",
+      "path": "02-decore-doors.md",
+      "category": "products",
+      "description": "40+ door and drawer-front styles from Decore, organized by construction method (butt, miter, veneer, deco-form) with exact model codes",
+      "relatedFiles": [
+        "03-decore-finishes",
+        "04-decore-hardware",
+        "05-decore-order-form"
+      ],
+      "sources": [
+        "doors-brochure.pdf",
+        "deco-form-styles-brochure.pdf"
+      ],
+      "importance": 5,
+      "lastUpdated": "2026-04-17",
+      "wordCount": 1190
+    },
+    {
+      "id": "03-decore-finishes",
+      "name": "Decore Finishes & Paint",
+      "path": "03-decore-finishes.md",
+      "category": "products",
+      "description": "Complete finishing palette including paint colors (Sherwin-Williams codes), stains, sheens, primers, and lead times for finished vs. unfinished",
+      "relatedFiles": [
+        "02-decore-doors",
+        "04-decore-hardware"
+      ],
+      "sources": [
+        "finishing-brochure.pdf"
+      ],
+      "importance": 5,
+      "lastUpdated": "2026-04-17",
+      "wordCount": 526
+    },
+    {
+      "id": "04-decore-hardware",
+      "name": "Decore Hardware & Drawer Boxes",
+      "path": "04-decore-hardware.md",
+      "category": "products",
+      "description": "Salice hinges, glides, and specialty hardware; Decore-made drawer box models (659, 649, 613) with specs",
+      "relatedFiles": [
+        "02-decore-doors",
+        "03-decore-finishes",
+        "05-decore-order-form"
+      ],
+      "importance": 4,
+      "lastUpdated": "2026-04-17",
+      "wordCount": 341
+    },
+    {
+      "id": "05-decore-order-form",
+      "name": "Decore Order Form Spec",
+      "path": "05-decore-order-form.md",
+      "category": "processes",
+      "description": "Field mapping of Decore's standard order form (LDN1-1003d-20) for understanding what data is needed to submit orders",
+      "relatedFiles": [
+        "02-decore-doors",
+        "03-decore-finishes",
+        "04-decore-hardware",
+        "06-intake-form"
+      ],
+      "sources": [
+        "standard-order-form.pdf"
+      ],
+      "importance": 4,
+      "lastUpdated": "2026-04-17",
+      "wordCount": 797
+    },
+    {
+      "id": "06-intake-form",
+      "name": "Intake Form Architecture",
+      "path": "06-intake-form.md",
+      "category": "processes",
+      "description": "Documentation of intake.html — 9 sections, Supabase save, appliance PDF upload, Decore catalog mapping, state shape, and v2/v3/v4 roadmap",
+      "relatedFiles": [
+        "00-project",
+        "05-decore-order-form",
+        "07-proposal-site",
+        "09-database"
+      ],
+      "importance": 5,
+      "lastUpdated": "2026-04-17",
+      "wordCount": 620
+    },
+    {
+      "id": "07-proposal-site",
+      "name": "Proposal Site (index.html)",
+      "path": "07-proposal-site.md",
+      "category": "processes",
+      "description": "index.html — 10 proposal sections + invoice desk, shared-header.js, visual system, asset inventory, and tech decisions",
+      "relatedFiles": [
+        "00-project",
+        "06-intake-form"
+      ],
+      "importance": 3,
+      "lastUpdated": "2026-04-17",
+      "wordCount": 590
+    },
+    {
+      "id": "08-agent-playbook",
+      "name": "Agent Playbook",
+      "path": "08-agent-playbook.md",
+      "category": "processes",
+      "description": "Protocol for AI agent to answer product questions about Decore doors, finishes, hardware, lead times, and specifications accurately",
+      "relatedFiles": [
+        "02-decore-doors",
+        "03-decore-finishes",
+        "04-decore-hardware"
+      ],
+      "importance": 5,
+      "lastUpdated": "2026-04-17",
+      "wordCount": 650
+    },
+    {
+      "id": "README",
+      "name": "Brain Index & Protocol",
+      "path": "README.md",
+      "category": "reference",
+      "description": "Introductory guide to the Agent Brain folder, file index, and how to keep it updated",
+      "relatedFiles": [
+        "00-project",
+        "CHANGELOG"
+      ],
+      "importance": 4,
+      "lastUpdated": "2026-04-17",
+      "wordCount": 495
+    },
+    {
+      "id": "CHANGELOG",
+      "name": "Brain Changelog",
+      "path": "CHANGELOG.md",
+      "category": "reference",
+      "description": "Record of all material changes to the brain folder with dates and summaries",
+      "relatedFiles": [
+        "README"
+      ],
+      "importance": 2,
+      "lastUpdated": "2026-04-17",
+      "wordCount": 318
+    },
+    {
+      "id": "products",
+      "name": "Products Catalog (JSON)",
+      "path": "products.json",
+      "category": "products",
+      "description": "Machine-readable catalog of all Decore products: doors, finishes, hardware, with SKUs and specifications. Authoritative source — update intake.html consts when this changes.",
+      "relatedFiles": [
+        "02-decore-doors",
+        "03-decore-finishes",
+        "04-decore-hardware"
+      ],
+      "importance": 5,
+      "lastUpdated": "2026-04-17",
+      "wordCount": 1500
+    },
+    {
+      "id": "09-database",
+      "name": "Database & Infrastructure",
+      "path": "09-database.md",
+      "category": "processes",
+      "description": "Supabase project details (usdenbguhahvzmufwvgo), intake_submissions table schema, appliance-packets storage bucket, upload flow, and planned future schema",
+      "relatedFiles": [
+        "06-intake-form",
+        "00-project"
+      ],
+      "importance": 4,
+      "lastUpdated": "2026-04-17",
+      "wordCount": 380
+    }
+  ],
+  "pdfs": [
+    {
+      "id": "saunders-wood-works-llc---monday-automation-strategy",
+      "name": "Saunders Automation Strategy",
+      "filename": "Saunders Wood Works LLC — Monday Automation Strategy.pdf",
+      "localPath": "docs/Saunders Wood Works LLC — Monday Automation Strategy.pdf",
+      "category": "internal",
+      "relatedTo": [],
+      "description": "Full automation strategy proposal for Saunders Wood Works — Monday.com integration, intake form, and Claude AI.",
+      "uploadedAt": "2026-04-17",
+      "size": "215 KB",
+      "sourceUrl": "https://decore.com"
+    },
+    {
+      "id": "applied-molding-order-form",
+      "name": "Applied Molding Order Form",
+      "filename": "applied-molding-order-form.pdf",
+      "localPath": "docs/applied-molding-order-form.pdf",
+      "category": "order-forms",
+      "relatedTo": [
+        "05-decore-order-form"
+      ],
+      "description": "Decore order form for applied molding products.",
+      "uploadedAt": "2026-04-17",
+      "size": "45 KB",
+      "sourceUrl": "https://decore.com"
+    },
+    {
+      "id": "corner-drawer-box-order-form",
+      "name": "Corner Drawer Box Order Form",
+      "filename": "corner-drawer-box-order-form.pdf",
+      "localPath": "docs/corner-drawer-box-order-form.pdf",
+      "category": "order-forms",
+      "relatedTo": [
+        "04-decore-hardware",
+        "05-decore-order-form"
+      ],
+      "description": "Decore order form for corner drawer box configurations.",
+      "uploadedAt": "2026-04-17",
+      "size": "478 KB",
+      "sourceUrl": "https://decore.com"
+    },
+    {
+      "id": "deco-form-accessory-order-form",
+      "name": "Deco-Form Accessory Order Form",
+      "filename": "deco-form-accessory-order-form.pdf",
+      "localPath": "docs/deco-form-accessory-order-form.pdf",
+      "category": "order-forms",
+      "relatedTo": [
+        "02-decore-doors",
+        "05-decore-order-form"
+      ],
+      "description": "Decore order form for Deco-Form accessories.",
+      "uploadedAt": "2026-04-17",
+      "size": "47 KB",
+      "sourceUrl": "https://decore.com"
+    },
+    {
+      "id": "deco-form-doors-drawer-fronts",
+      "name": "Deco-Form Doors & Drawer Fronts Catalog",
+      "filename": "deco-form-doors-drawer-fronts.pdf",
+      "localPath": "docs/deco-form-doors-drawer-fronts.pdf",
+      "category": "brochures",
+      "relatedTo": [
+        "02-decore-doors"
+      ],
+      "description": "Full Deco-Form door and drawer front style catalog with model specs.",
+      "uploadedAt": "2026-04-17",
+      "size": "177 KB",
+      "sourceUrl": "https://decore.com"
+    },
+    {
+      "id": "deco-form-order-form",
+      "name": "Deco-Form Order Form",
+      "filename": "deco-form-order-form.pdf",
+      "localPath": "docs/deco-form-order-form.pdf",
+      "category": "order-forms",
+      "relatedTo": [
+        "02-decore-doors",
+        "05-decore-order-form"
+      ],
+      "description": "Standard Decore order form for Deco-Form door products.",
+      "uploadedAt": "2026-04-17",
+      "size": "109 KB",
+      "sourceUrl": "https://decore.com"
+    },
+    {
+      "id": "deco-form-refacing-order-form",
+      "name": "Deco-Form Refacing Order Form",
+      "filename": "deco-form-refacing-order-form.pdf",
+      "localPath": "docs/deco-form-refacing-order-form.pdf",
+      "category": "order-forms",
+      "relatedTo": [
+        "05-decore-order-form"
+      ],
+      "description": "Decore order form for cabinet refacing with Deco-Form materials.",
+      "uploadedAt": "2026-04-17",
+      "size": "74 KB",
+      "sourceUrl": "https://decore.com"
+    },
+    {
+      "id": "deco-form-shelf-order-form",
+      "name": "Deco-Form Shelf Order Form",
+      "filename": "deco-form-shelf-order-form.pdf",
+      "localPath": "docs/deco-form-shelf-order-form.pdf",
+      "category": "order-forms",
+      "relatedTo": [
+        "05-decore-order-form"
+      ],
+      "description": "Decore order form for Deco-Form shelf products.",
+      "uploadedAt": "2026-04-17",
+      "size": "51 KB",
+      "sourceUrl": "https://decore.com"
+    },
+    {
+      "id": "digital-form-directions",
+      "name": "Digital Form Directions",
+      "filename": "digital-form-directions.pdf",
+      "localPath": "docs/digital-form-directions.pdf",
+      "category": "reference",
+      "relatedTo": [
+        "05-decore-order-form"
+      ],
+      "description": "Instructions for completing Decore digital order forms.",
+      "uploadedAt": "2026-04-17",
+      "size": "33 KB",
+      "sourceUrl": "https://decore.com"
+    },
+    {
+      "id": "drawer-box-order-form-2",
+      "name": "Drawer Box Order Form (Alt)",
+      "filename": "drawer-box-order-form-2.pdf",
+      "localPath": "docs/drawer-box-order-form-2.pdf",
+      "category": "order-forms",
+      "relatedTo": [
+        "04-decore-hardware",
+        "05-decore-order-form"
+      ],
+      "description": "Alternate Decore drawer box order form.",
+      "uploadedAt": "2026-04-17",
+      "size": "73 KB",
+      "sourceUrl": "https://decore.com"
+    },
+    {
+      "id": "drawer-box-order-form",
+      "name": "Drawer Box Order Form",
+      "filename": "drawer-box-order-form.pdf",
+      "localPath": "docs/drawer-box-order-form.pdf",
+      "category": "order-forms",
+      "relatedTo": [
+        "04-decore-hardware",
+        "05-decore-order-form"
+      ],
+      "description": "Standard Decore order form for dovetail and doweled drawer boxes.",
+      "uploadedAt": "2026-04-17",
+      "size": "44 KB",
+      "sourceUrl": "https://decore.com"
+    },
+    {
+      "id": "face-frame-order-form",
+      "name": "Face Frame Order Form",
+      "filename": "face-frame-order-form.pdf",
+      "localPath": "docs/face-frame-order-form.pdf",
+      "category": "order-forms",
+      "relatedTo": [
+        "05-decore-order-form"
+      ],
+      "description": "Decore order form for face frame components.",
+      "uploadedAt": "2026-04-17",
+      "size": "0.5 MB",
+      "sourceUrl": "https://decore.com"
+    },
+    {
+      "id": "finishing-brochure-3",
+      "name": "Decore Finishing Brochure",
+      "filename": "finishing-brochure-3.pdf",
+      "localPath": "docs/finishing-brochure-3.pdf",
+      "category": "brochures",
+      "relatedTo": [
+        "03-decore-finishes"
+      ],
+      "description": "Complete finishing palette — paint colors (SW codes), stains, sheens, primers, and lead times.",
+      "uploadedAt": "2026-04-17",
+      "size": "477 KB",
+      "sourceUrl": "https://decore.com"
+    },
+    {
+      "id": "hardware-blum-order-form",
+      "name": "Blum Hardware Order Form",
+      "filename": "hardware-blum-order-form.pdf",
+      "localPath": "docs/hardware-blum-order-form.pdf",
+      "category": "order-forms",
+      "relatedTo": [
+        "04-decore-hardware",
+        "05-decore-order-form"
+      ],
+      "description": "Decore order form for Blum brand hinges and hardware.",
+      "uploadedAt": "2026-04-17",
+      "size": "44 KB",
+      "sourceUrl": "https://decore.com"
+    },
+    {
+      "id": "hardware-salice-order-form",
+      "name": "Salice Hardware Order Form",
+      "filename": "hardware-salice-order-form.pdf",
+      "localPath": "docs/hardware-salice-order-form.pdf",
+      "category": "order-forms",
+      "relatedTo": [
+        "04-decore-hardware",
+        "05-decore-order-form"
+      ],
+      "description": "Decore order form for Salice hinges, glides, and specialty hardware.",
+      "uploadedAt": "2026-04-17",
+      "size": "45 KB",
+      "sourceUrl": "https://decore.com"
+    },
+    {
+      "id": "knobs-pulls-order-form",
+      "name": "Knobs & Pulls Order Form",
+      "filename": "knobs-pulls-order-form.pdf",
+      "localPath": "docs/knobs-pulls-order-form.pdf",
+      "category": "order-forms",
+      "relatedTo": [
+        "04-decore-hardware",
+        "05-decore-order-form"
+      ],
+      "description": "Decore order form for knobs, pulls, and decorative hardware.",
+      "uploadedAt": "2026-04-17",
+      "size": "43 KB",
+      "sourceUrl": "https://decore.com"
+    },
+    {
+      "id": "multi-family-housing-brochure",
+      "name": "Multi-Family Housing Guide",
+      "filename": "multi-family-housing-brochure.pdf",
+      "localPath": "docs/multi-family-housing-brochure.pdf",
+      "category": "brochures",
+      "relatedTo": [
+        "04-decore-hardware",
+        "02-decore-doors"
+      ],
+      "description": "Decore specs for multi-family housing — hardware standards and bulk ordering.",
+      "uploadedAt": "2026-04-17",
+      "size": "1.3 MB",
+      "sourceUrl": "https://decore.com"
+    },
+    {
+      "id": "new-deco-form-styles-brochure",
+      "name": "Deco-Form Styles Brochure",
+      "filename": "new-deco-form-styles-brochure.pdf",
+      "localPath": "docs/new-deco-form-styles-brochure.pdf",
+      "category": "brochures",
+      "relatedTo": [
+        "02-decore-doors"
+      ],
+      "description": "New Deco-Form door style catalog with full model and specification listings.",
+      "uploadedAt": "2026-04-17",
+      "size": "0.5 MB",
+      "sourceUrl": "https://decore.com"
+    },
+    {
+      "id": "new-wood-styles-brochure",
+      "name": "Wood Styles Brochure",
+      "filename": "new-wood-styles-brochure.pdf",
+      "localPath": "docs/new-wood-styles-brochure.pdf",
+      "category": "brochures",
+      "relatedTo": [
+        "02-decore-doors"
+      ],
+      "description": "Official Decore wood door style catalog — all species, joint types, and model codes.",
+      "uploadedAt": "2026-04-17",
+      "size": "3.3 MB",
+      "sourceUrl": "https://decore.com"
+    },
+    {
+      "id": "radius-concave-order-form",
+      "name": "Radius Concave Order Form",
+      "filename": "radius-concave-order-form.pdf",
+      "localPath": "docs/radius-concave-order-form.pdf",
+      "category": "order-forms",
+      "relatedTo": [
+        "02-decore-doors",
+        "05-decore-order-form"
+      ],
+      "description": "Decore order form for radius concave door profiles.",
+      "uploadedAt": "2026-04-17",
+      "size": "68 KB",
+      "sourceUrl": "https://decore.com"
+    },
+    {
+      "id": "radius-convex-order-form",
+      "name": "Radius Convex Order Form",
+      "filename": "radius-convex-order-form.pdf",
+      "localPath": "docs/radius-convex-order-form.pdf",
+      "category": "order-forms",
+      "relatedTo": [
+        "02-decore-doors",
+        "05-decore-order-form"
+      ],
+      "description": "Decore order form for radius convex door profiles.",
+      "uploadedAt": "2026-04-17",
+      "size": "68 KB",
+      "sourceUrl": "https://decore.com"
+    },
+    {
+      "id": "radius-ff-concave-order-form",
+      "name": "Radius FF Concave Order Form",
+      "filename": "radius-ff-concave-order-form.pdf",
+      "localPath": "docs/radius-ff-concave-order-form.pdf",
+      "category": "order-forms",
+      "relatedTo": [
+        "02-decore-doors",
+        "05-decore-order-form"
+      ],
+      "description": "Decore order form for face-frame radius concave products.",
+      "uploadedAt": "2026-04-17",
+      "size": "470 KB",
+      "sourceUrl": "https://decore.com"
+    },
+    {
+      "id": "radius-ff-convex-order-form",
+      "name": "Radius FF Convex Order Form",
+      "filename": "radius-ff-convex-order-form.pdf",
+      "localPath": "docs/radius-ff-convex-order-form.pdf",
+      "category": "order-forms",
+      "relatedTo": [
+        "02-decore-doors",
+        "05-decore-order-form"
+      ],
+      "description": "Decore order form for face-frame radius convex products.",
+      "uploadedAt": "2026-04-17",
+      "size": "91 KB",
+      "sourceUrl": "https://decore.com"
+    },
+    {
+      "id": "standard-order-form",
+      "name": "Standard Order Form",
+      "filename": "standard-order-form.pdf",
+      "localPath": "docs/standard-order-form.pdf",
+      "category": "order-forms",
+      "relatedTo": [
+        "05-decore-order-form",
+        "02-decore-doors",
+        "03-decore-finishes"
+      ],
+      "description": "Official Decore standard order form (LDN1-1003d-20) — primary form for all wood door orders.",
+      "uploadedAt": "2026-04-17",
+      "size": "421 KB",
+      "sourceUrl": "https://decore.com"
+    },
+    {
+      "id": "u-shape-drawer-box-order-form",
+      "name": "U-Shape Drawer Box Order Form",
+      "filename": "u-shape-drawer-box-order-form.pdf",
+      "localPath": "docs/u-shape-drawer-box-order-form.pdf",
+      "category": "order-forms",
+      "relatedTo": [
+        "04-decore-hardware",
+        "05-decore-order-form"
+      ],
+      "description": "Decore order form for U-shaped drawer box configurations.",
+      "uploadedAt": "2026-04-17",
+      "size": "47 KB",
+      "sourceUrl": "https://decore.com"
+    },
+    {
+      "id": "wood-accessory-order-form",
+      "name": "Wood Accessory Order Form",
+      "filename": "wood-accessory-order-form.pdf",
+      "localPath": "docs/wood-accessory-order-form.pdf",
+      "category": "order-forms",
+      "relatedTo": [
+        "05-decore-order-form"
+      ],
+      "description": "Decore order form for wood accessory components.",
+      "uploadedAt": "2026-04-17",
+      "size": "422 KB",
+      "sourceUrl": "https://decore.com"
+    },
+    {
+      "id": "wood-doors-drawer-fronts",
+      "name": "Wood Doors & Drawer Fronts Catalog",
+      "filename": "wood-doors-drawer-fronts.pdf",
+      "localPath": "docs/wood-doors-drawer-fronts.pdf",
+      "category": "brochures",
+      "relatedTo": [
+        "02-decore-doors"
+      ],
+      "description": "Wood door and drawer front product catalog with style and species options.",
+      "uploadedAt": "2026-04-17",
+      "size": "175 KB",
+      "sourceUrl": "https://decore.com"
+    },
+    {
+      "id": "wood-molding-order-form",
+      "name": "Wood Molding Order Form",
+      "filename": "wood-molding-order-form.pdf",
+      "localPath": "docs/wood-molding-order-form.pdf",
+      "category": "order-forms",
+      "relatedTo": [
+        "05-decore-order-form"
+      ],
+      "description": "Decore order form for wood molding products.",
+      "uploadedAt": "2026-04-17",
+      "size": "419 KB",
+      "sourceUrl": "https://decore.com"
+    },
+    {
+      "id": "wood-sheet-goods-order-form",
+      "name": "Wood Sheet Goods Order Form",
+      "filename": "wood-sheet-goods-order-form.pdf",
+      "localPath": "docs/wood-sheet-goods-order-form.pdf",
+      "category": "order-forms",
+      "relatedTo": [
+        "05-decore-order-form"
+      ],
+      "description": "Decore order form for sheet goods (plywood, panels, etc.).",
+      "uploadedAt": "2026-04-17",
+      "size": "425 KB",
+      "sourceUrl": "https://decore.com"
+    },
+    {
+      "id": "wood-specialty-valance-form",
+      "name": "Wood Specialty Valance Form",
+      "filename": "wood-specialty-valance-form.pdf",
+      "localPath": "docs/wood-specialty-valance-form.pdf",
+      "category": "order-forms",
+      "relatedTo": [
+        "05-decore-order-form"
+      ],
+      "description": "Decore order form for wood specialty valance components.",
+      "uploadedAt": "2026-04-17",
+      "size": "54 KB",
+      "sourceUrl": "https://decore.com"
+    },
+    {
+      "id": "wood-warranty-2",
+      "name": "Decore Wood Warranty",
+      "filename": "wood-warranty-2.pdf",
+      "localPath": "docs/wood-warranty-2.pdf",
+      "category": "reference",
+      "relatedTo": [],
+      "description": "Decore warranty documentation for wood products.",
+      "uploadedAt": "2026-04-17",
+      "size": "71 KB",
+      "sourceUrl": "https://decore.com"
+    }
+  ],
+  "relationships": [
+    {
+      "from": "02-decore-doors",
+      "to": "03-decore-finishes",
+      "label": "doors are finished with",
+      "type": "contains"
+    },
+    {
+      "from": "03-decore-finishes",
+      "to": "04-decore-hardware",
+      "label": "coordinated with",
+      "type": "related"
+    },
+    {
+      "from": "02-decore-doors",
+      "to": "04-decore-hardware",
+      "label": "installed with",
+      "type": "contains"
+    },
+    {
+      "from": "02-decore-doors",
+      "to": "05-decore-order-form",
+      "label": "ordered via",
+      "type": "references"
+    },
+    {
+      "from": "03-decore-finishes",
+      "to": "05-decore-order-form",
+      "label": "specified in",
+      "type": "references"
+    },
+    {
+      "from": "04-decore-hardware",
+      "to": "05-decore-order-form",
+      "label": "specified in",
+      "type": "references"
+    },
+    {
+      "from": "06-intake-form",
+      "to": "02-decore-doors",
+      "label": "collects data for",
+      "type": "uses"
+    },
+    {
+      "from": "06-intake-form",
+      "to": "03-decore-finishes",
+      "label": "collects data for",
+      "type": "uses"
+    },
+    {
+      "from": "06-intake-form",
+      "to": "04-decore-hardware",
+      "label": "collects data for",
+      "type": "uses"
+    },
+    {
+      "from": "08-agent-playbook",
+      "to": "02-decore-doors",
+      "label": "references",
+      "type": "uses"
+    },
+    {
+      "from": "08-agent-playbook",
+      "to": "03-decore-finishes",
+      "label": "references",
+      "type": "uses"
+    },
+    {
+      "from": "08-agent-playbook",
+      "to": "04-decore-hardware",
+      "label": "references",
+      "type": "uses"
+    },
+    {
+      "from": "00-project",
+      "to": "01-suppliers",
+      "label": "identifies",
+      "type": "references"
+    },
+    {
+      "from": "00-project",
+      "to": "06-intake-form",
+      "label": "includes",
+      "type": "contains"
+    },
+    {
+      "from": "00-project",
+      "to": "08-agent-playbook",
+      "label": "enables",
+      "type": "references"
+    }
+  ],
+  "categories": [
+    {
+      "id": "business",
+      "name": "Business & Strategy",
+      "color": "#6b8e23",
+      "description": "Project context, suppliers, and strategic decisions"
+    },
+    {
+      "id": "products",
+      "name": "Products & Catalog",
+      "color": "#daa520",
+      "description": "Decore product lines, specifications, and pricing"
+    },
+    {
+      "id": "processes",
+      "name": "Processes & Systems",
+      "color": "#f5f5dc",
+      "description": "Forms, workflows, and operational procedures"
+    },
+    {
+      "id": "reference",
+      "name": "Reference & Meta",
+      "color": "#fffaf0",
+      "description": "Documentation indices and change logs"
+    }
+  ]
+}

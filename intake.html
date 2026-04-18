@@ -1,0 +1,1948 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Saunders Wood Works — Client Intake Form</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://use.typekit.net" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400;1,600&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="https://use.typekit.net/syk8hlp.css"/>
+<style>
+  :root {
+    --font-body: degular, "degular-text", system-ui, sans-serif;
+    --font-display: "minerva-modern", "Minerva", Georgia, serif;
+    /* Saunders palette — warm sage, cream, gold */
+    --sage:        hsla(88, 12.4%, 23.73%, 1);   /* dark muted olive — replaces black */
+    --sage-hi:     hsla(88, 12%, 30%, 1);
+    --sage-lo:     hsla(88, 14%, 18%, 1);
+    --sage-soft:   hsla(88, 14%, 95%, 1);        /* very light sage wash */
+    --black:       hsla(88, 12.4%, 23.73%, 1);   /* alias — JS inline styles still work */
+    --ink:         hsla(88, 10%, 14%, 1);
+    --ink-soft:    hsla(88, 8%, 34%, 1);
+    --ivory:       #F5F1E8;
+    --paper:       #FDFBF5;
+    --paper-2:     #FBF7ED;
+    --gold:        #C9A44C;
+    --gold-dk:     #9E7E30;
+    --gold-soft:   rgba(201, 164, 76, 0.14);
+    --red:         #B8352C;
+    --red-soft:    rgba(184, 53, 44, 0.12);
+    --green:       #4A7A4F;
+    --green-soft:  rgba(74, 122, 79, 0.14);
+    --blue:        #3A6A94;
+    --blue-soft:   rgba(58, 106, 148, 0.14);
+    --line:        hsla(88, 10%, 23%, 0.10);
+    --line-strong: hsla(88, 10%, 23%, 0.18);
+    --line-gold:   rgba(201, 164, 76, 0.42);
+
+    /* Radii — softened */
+    --r-xs: 6px;
+    --r-sm: 10px;
+    --r-md: 14px;
+    --r-lg: 20px;
+    --r-xl: 28px;
+    --r-pill: 999px;
+
+    /* Shadows — warm, subtle */
+    --shadow-sm: 0 1px 2px hsla(88,20%,10%,0.05);
+    --shadow-md: 0 1px 2px hsla(88,20%,10%,0.04), 0 8px 24px hsla(88,20%,10%,0.06);
+    --shadow-lg: 0 2px 4px hsla(88,20%,10%,0.05), 0 18px 44px hsla(88,20%,10%,0.10);
+    --shadow-footer: 0 -2px 4px hsla(88,20%,10%,0.05), 0 -12px 40px hsla(88,20%,10%,0.12);
+
+    --serif: var(--font-display);
+    --sans:  var(--font-body);
+
+    --lh-tight: 1.1;
+    --lh-body:  1.55;
+
+    --ease: cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    background:
+      radial-gradient(1200px 600px at 85% -10%, rgba(201,164,76,0.07), transparent 60%),
+      radial-gradient(900px 500px at -10% 20%, rgba(54,61,51,0.04), transparent 60%),
+      var(--ivory);
+    background-attachment: fixed;
+    color: var(--ink);
+    font-family: var(--sans);
+    font-weight: 400;
+    font-style: normal;
+    font-size: 15px;
+    line-height: var(--lh-body);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    padding-bottom: 220px; /* room for sticky footer */
+  }
+
+  /* Header CSS is provided by shared-header.js */
+
+  /* ---------- layout ---------- */
+  main {
+    max-width: 1240px;
+    margin: 0 auto;
+    padding: 80px 40px 36px; /* 80px top clears the fixed 60px header */
+  }
+  section.card {
+    background: var(--paper);
+    border: 1px solid var(--line);
+    box-shadow: var(--shadow-md);
+    padding: 32px 36px;
+    margin-bottom: 24px;
+    border-radius: var(--r-lg);
+    transition: box-shadow 0.2s var(--ease);
+  }
+  section.card:hover { box-shadow: var(--shadow-lg); }
+  section.card h2 {
+    font-family: var(--serif);
+    font-weight: 600;
+    font-size: 32px;
+    line-height: var(--lh-tight);
+    letter-spacing: -0.005em;
+    margin: 0 0 6px 0;
+    color: var(--sage);
+  }
+  section.card .kicker {
+    font-size: 10.5px;
+    font-weight: 600;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--gold-dk);
+    margin-bottom: 22px;
+    padding-bottom: 14px;
+    border-bottom: 1px solid var(--line-gold);
+    line-height: 1.4;
+  }
+
+  /* ---------- form controls ---------- */
+  label.field {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    line-height: 1.3;
+  }
+  input[type=text], input[type=email], input[type=tel], input[type=number],
+  input[type=date], select, textarea {
+    font-family: var(--sans);
+    font-size: 14.5px;
+    padding: 11px 14px;
+    border: 1px solid var(--line-strong);
+    background: #fff;
+    border-radius: var(--r-sm);
+    color: var(--ink);
+    text-transform: none;
+    letter-spacing: normal;
+    font-weight: 400;
+    transition: border-color 0.15s var(--ease), box-shadow 0.15s var(--ease), background 0.15s var(--ease);
+    line-height: 1.3;
+  }
+  select {
+    appearance: none;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'><path d='M1 1l5 5 5-5' stroke='%239E7E30' stroke-width='1.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/></svg>");
+    background-repeat: no-repeat;
+    background-position: right 14px center;
+    padding-right: 36px;
+  }
+  input:hover, select:hover, textarea:hover { border-color: var(--gold-dk); }
+  input:focus, select:focus, textarea:focus {
+    outline: none;
+    border-color: var(--gold);
+    box-shadow: 0 0 0 4px rgba(201,164,76,0.16);
+    background: #fff;
+  }
+  textarea { min-height: 92px; resize: vertical; line-height: 1.5; }
+
+  .grid { display: grid; gap: 18px; }
+  .grid.cols-2 { grid-template-columns: 1fr 1fr; }
+  .grid.cols-3 { grid-template-columns: 1fr 1fr 1fr; }
+  .grid.cols-4 { grid-template-columns: 1fr 1fr 1fr 1fr; }
+
+  /* ---------- buttons ---------- */
+  button, .btn {
+    font-family: var(--sans);
+    font-size: 11.5px;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    padding: 12px 22px;
+    border: 1px solid var(--sage);
+    background: var(--sage);
+    color: var(--ivory);
+    cursor: pointer;
+    border-radius: var(--r-pill);
+    transition: all 0.2s var(--ease);
+    line-height: 1.2;
+    white-space: nowrap;
+  }
+  button:hover {
+    background: var(--sage-hi);
+    border-color: var(--sage-hi);
+    color: var(--gold);
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-md);
+  }
+  button:active { transform: translateY(0); }
+  button.ghost {
+    background: transparent;
+    color: var(--sage);
+    border-color: var(--line-strong);
+  }
+  button.ghost:hover {
+    background: var(--sage);
+    color: var(--gold);
+    border-color: var(--sage);
+  }
+  button.gold {
+    background: var(--gold);
+    border-color: var(--gold);
+    color: var(--sage);
+  }
+  button.gold:hover {
+    background: var(--gold-dk);
+    border-color: var(--gold-dk);
+    color: var(--ivory);
+  }
+  button.small { padding: 8px 14px; font-size: 10.5px; letter-spacing: 0.12em; }
+  button.danger {
+    background: transparent;
+    color: var(--red);
+    border-color: transparent;
+    padding: 6px 10px;
+    border-radius: var(--r-pill);
+  }
+  button.danger:hover {
+    background: var(--red-soft);
+    color: var(--red);
+    border-color: transparent;
+    transform: none;
+    box-shadow: none;
+  }
+
+  /* ---------- tables ---------- */
+  .table-wrap {
+    overflow-x: auto;
+    margin: 0 -8px;
+    padding: 0 8px;
+    /* nicer scrollbar for mobile */
+    -webkit-overflow-scrolling: touch;
+  }
+  .table-wrap::-webkit-scrollbar { height: 8px; }
+  .table-wrap::-webkit-scrollbar-thumb { background: var(--line-gold); border-radius: var(--r-pill); }
+  .table-wrap::-webkit-scrollbar-track { background: transparent; }
+
+  table.estimator {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    font-size: 13.5px;
+    min-width: 640px;
+  }
+  table.estimator th {
+    text-align: left;
+    font-family: var(--sans);
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--gold-dk);
+    padding: 12px 10px;
+    border-bottom: 1px solid var(--line-gold);
+    white-space: nowrap;
+    line-height: 1.2;
+    background: var(--paper-2);
+  }
+  table.estimator th:first-child { border-top-left-radius: var(--r-sm); border-bottom-left-radius: 0; }
+  table.estimator th:last-child  { border-top-right-radius: var(--r-sm); }
+  table.estimator td {
+    padding: 10px 8px;
+    border-bottom: 1px solid var(--line);
+    vertical-align: middle;
+  }
+  table.estimator tr:last-child td { border-bottom: none; }
+  table.estimator tr:hover td { background: rgba(201,164,76,0.04); }
+  table.estimator input, table.estimator select {
+    width: 100%;
+    padding: 8px 10px;
+    font-size: 13.5px;
+    border-radius: var(--r-xs);
+  }
+  table.estimator select {
+    background-position: right 10px center;
+    padding-right: 30px;
+  }
+  table.estimator .num { text-align: right; font-variant-numeric: tabular-nums; font-weight: 500; }
+
+  .flag {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: var(--r-pill);
+    font-size: 10.5px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    white-space: nowrap;
+    line-height: 1.3;
+  }
+  .flag.green { background: var(--green-soft); color: var(--green); }
+  .flag.red   { background: var(--red-soft);   color: var(--red); }
+  .flag.blue  { background: var(--blue-soft);  color: var(--blue); }
+
+  /* ---------- budget controls ---------- */
+  .ctl-block {
+    background: var(--sage-soft);
+    border: 1px solid var(--line);
+    border-radius: var(--r-md);
+    padding: 20px 22px;
+  }
+  .ctl-lbl {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    margin-bottom: 12px;
+    line-height: 1.3;
+  }
+  .slider-row { display: flex; align-items: center; gap: 14px; }
+  .slider-row input[type=range] {
+    flex: 1;
+    accent-color: var(--gold);
+    height: 4px;
+  }
+  .slider-row .val {
+    font-family: var(--serif);
+    font-size: 26px;
+    font-weight: 600;
+    line-height: var(--lh-tight);
+    color: var(--sage);
+    min-width: 64px;
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+  }
+  .slider-hint {
+    font-size: 12.5px;
+    color: var(--ink-soft);
+    margin-top: 10px;
+    line-height: 1.45;
+  }
+  .toggle {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 13.5px;
+    text-transform: none;
+    letter-spacing: normal;
+    color: var(--ink);
+    font-weight: 500;
+    cursor: pointer;
+    user-select: none;
+  }
+  .toggle input[type=checkbox] { accent-color: var(--gold); width: 16px; height: 16px; cursor: pointer; }
+
+  /* radio chips (unit toggle) */
+  .chip-group { display: inline-flex; background: var(--paper-2); border: 1px solid var(--line); border-radius: var(--r-pill); padding: 3px; gap: 2px; }
+  .chip-group label {
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 7px 16px;
+    border-radius: var(--r-pill);
+    cursor: pointer;
+    color: var(--ink-soft);
+    transition: all 0.15s var(--ease);
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .chip-group input[type=radio] { display: none; }
+  .chip-group label:has(input:checked) {
+    background: var(--sage);
+    color: var(--gold);
+  }
+
+  /* ---------- sticky summary ---------- */
+  footer.summary {
+    position: fixed;
+    left: 0; right: 0; bottom: 0;
+    background: linear-gradient(180deg, var(--sage) 0%, var(--sage-lo) 100%);
+    color: var(--ivory);
+    padding: 16px 40px;
+    display: grid;
+    grid-template-columns: 1.6fr 1fr 1fr 1fr 1.4fr;
+    gap: 24px;
+    align-items: center;
+    z-index: 25;
+    border-top: 1px solid rgba(201,164,76,0.28);
+    box-shadow: var(--shadow-footer);
+    border-top-left-radius: var(--r-lg);
+    border-top-right-radius: var(--r-lg);
+  }
+  footer.summary::before {
+    content: "";
+    position: absolute;
+    top: 0; left: 5%; right: 5%;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--gold) 30%, var(--gold) 70%, transparent);
+    opacity: 0.8;
+  }
+  footer.summary .cell { min-width: 0; }
+  footer.summary .cell .lbl {
+    font-size: 9.5px;
+    font-weight: 600;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: rgba(245,241,232,0.58);
+    margin-bottom: 4px;
+    line-height: 1.3;
+  }
+  footer.summary .cell .val {
+    font-family: var(--serif);
+    font-size: 26px;
+    font-weight: 600;
+    line-height: var(--lh-tight);
+    color: var(--ivory);
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -0.005em;
+  }
+  .status-pill {
+    display: inline-block;
+    padding: 12px 18px;
+    border-radius: var(--r-pill);
+    font-size: 11.5px;
+    font-weight: 700;
+    letter-spacing: 0.2em;
+    line-height: 1.2;
+    text-transform: uppercase;
+    text-align: center;
+    width: 100%;
+    box-shadow: inset 0 0 0 1px rgba(255,255,255,0.12);
+  }
+  .status-pill.green { background: var(--green); color: #fff; }
+  .status-pill.red   { background: var(--red);   color: #fff; }
+  .status-pill.blue  { background: var(--blue);  color: #fff; }
+
+  .movers {
+    font-size: 12.5px;
+    line-height: 1.5;
+  }
+  .movers .m-row {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 2px 0;
+  }
+  .movers .m-row .delta { font-variant-numeric: tabular-nums; font-weight: 600; }
+  .movers .m-row .delta.up   { color: #ffa89f; }
+  .movers .m-row .delta.down { color: #9ec9f0; }
+
+  .actions-bar {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    margin-top: 14px;
+  }
+
+  /* ---------- optgroup styling ---------- */
+  select optgroup { font-style: italic; color: var(--gold-dk); font-weight: 600; }
+  select option   { font-style: normal; color: var(--ink); font-weight: 400; padding: 4px; }
+
+  /* ---------- appliance upload widget ---------- */
+  .upload-zone {
+    border: 2px dashed var(--line-gold);
+    border-radius: var(--r-md);
+    padding: 36px 28px;
+    text-align: center;
+    cursor: pointer;
+    background: var(--gold-soft);
+    transition: background .2s, border-color .2s;
+    position: relative;
+  }
+  .upload-zone:hover,
+  .upload-zone.drag-over { background: rgba(201,164,76,0.10); border-color: var(--gold); }
+  .upload-zone input[type="file"] {
+    position: absolute; inset: 0; width: 100%; height: 100%;
+    opacity: 0; cursor: pointer;
+  }
+  .upload-zone__icon { font-size: 28px; margin-bottom: 10px; }
+  .upload-zone__label { font-family: var(--serif); font-size: 16px; font-weight: 600; color: var(--ink); }
+  .upload-zone__hint  { font-size: 12px; color: var(--ink-soft); margin-top: 5px; letter-spacing: 0.04em; }
+  .upload-progress {
+    display: none;
+    margin-top: 12px;
+    height: 4px;
+    border-radius: 4px;
+    background: var(--line);
+    overflow: hidden;
+  }
+  .upload-progress.active { display: block; }
+  .upload-progress__bar {
+    height: 100%;
+    background: var(--gold);
+    border-radius: 4px;
+    transition: width .2s;
+    width: 0%;
+  }
+  .packet-list { margin-top: 18px; display: flex; flex-direction: column; gap: 8px; }
+  .packet-item {
+    display: flex; align-items: center; gap: 10px;
+    background: var(--paper-2); border: 1px solid var(--line);
+    border-radius: var(--r-sm); padding: 10px 14px;
+    font-size: 13px;
+  }
+  .packet-item a { color: var(--gold-dk); text-decoration: none; font-weight: 500; flex: 1; }
+  .packet-item a:hover { text-decoration: underline; }
+  .packet-item .pk-date { font-size: 11px; color: var(--ink-soft); white-space: nowrap; }
+  .packet-item .pk-del  { background: none; border: none; color: var(--red); cursor: pointer; font-size: 14px; padding: 2px 6px; border-radius: 4px; }
+  .packet-item .pk-del:hover { background: var(--red-soft); }
+  .db-save-row { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+  .db-save-row .db-status { font-size: 12px; color: var(--ink-soft); letter-spacing: 0.04em; }
+
+  /* ---------- utility / decorative ---------- */
+  .section-ornament {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: var(--gold);
+    font-size: 12px;
+    opacity: 0.9;
+  }
+  .section-ornament::before,
+  .section-ornament::after {
+    content: "";
+    flex: 1;
+    height: 1px;
+    background: var(--line-gold);
+  }
+
+  /* =========================================================================
+     MOBILE (up to 820px)  — dramatically rework layout for small screens
+     ========================================================================= */
+  @media (max-width: 820px) {
+    body { font-size: 14.5px; padding-bottom: 260px; }
+    header.brand {
+      padding: 14px 18px;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+    header.brand .hdr-nav { width: 100%; margin-left: 0; justify-content: flex-end; padding-top: 4px; }
+    header.brand .logo-wrap { width: 54px; height: 54px; }
+    header.brand img { height: 42px; }
+    header.brand .wordmark { font-size: 22px; }
+    header.brand .sub { font-size: 9.5px; letter-spacing: 0.2em; }
+
+    main { padding: 18px 14px; }
+    section.card {
+      padding: 22px 20px;
+      border-radius: var(--r-md);
+      margin-bottom: 16px;
+    }
+    section.card h2 { font-size: 25px; }
+    section.card .kicker { font-size: 10px; margin-bottom: 16px; padding-bottom: 10px; }
+
+    .grid { gap: 14px; }
+    .grid.cols-2, .grid.cols-3, .grid.cols-4 { grid-template-columns: 1fr; }
+
+    .ctl-block { padding: 16px; }
+
+    .actions-bar { justify-content: stretch; }
+    .actions-bar button { flex: 1 1 auto; min-width: 140px; }
+
+    /* Footer collapses to a clean stack */
+    footer.summary {
+      position: fixed;
+      padding: 14px 18px 16px;
+      gap: 10px 14px;
+      grid-template-columns: 1fr 1fr;
+      grid-template-areas:
+        "status  status"
+        "mat     hw"
+        "grand   grand"
+        "movers  movers";
+      border-top-left-radius: var(--r-md);
+      border-top-right-radius: var(--r-md);
+    }
+    footer.summary .cell:nth-child(1) { grid-area: status; }
+    footer.summary .cell:nth-child(2) { grid-area: mat; }
+    footer.summary .cell:nth-child(3) { grid-area: hw; }
+    footer.summary .cell:nth-child(4) { grid-area: grand; display: flex; justify-content: space-between; align-items: baseline; border-top: 1px solid rgba(201,164,76,0.2); padding-top: 8px; }
+    footer.summary .cell:nth-child(4) .lbl { margin: 0; }
+    footer.summary .cell:nth-child(4) .val { font-size: 30px; }
+    footer.summary .cell:nth-child(5) { grid-area: movers; }
+    footer.summary .cell .val { font-size: 18px; }
+    .status-pill { padding: 10px 14px; font-size: 11px; letter-spacing: 0.18em; }
+    .movers { font-size: 12px; }
+  }
+
+  @media (max-width: 480px) {
+    header.brand .sub { display: none; }
+    header.brand .wordmark { font-size: 20px; }
+    section.card h2 { font-size: 22px; }
+    button { padding: 11px 16px; }
+  }
+
+  /* ---------- focus-visible for keyboard users ---------- */
+  button:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(201,164,76,0.35);
+  }
+
+  /* ---------- print ---------- */
+  @media print {
+    body { background: #fff; padding-bottom: 0; }
+    header.brand {
+      position: static;
+      background: #fff;
+      color: var(--sage);
+      border-bottom: 2px solid var(--gold);
+      box-shadow: none;
+    }
+    header.brand::after { display: none; }
+    #site-header .shdr-name { color: var(--sage); }
+    #site-header .shdr-name span { color: var(--gold-dk); }
+    #site-header nav a { color: var(--sage); }
+    #site-header { position: relative; }
+    section.card {
+      box-shadow: none;
+      page-break-inside: avoid;
+      border-radius: var(--r-sm);
+    }
+    footer.summary {
+      position: static;
+      background: #fff;
+      color: var(--sage);
+      border-top: 2px solid var(--gold);
+      box-shadow: none;
+      border-radius: 0;
+      page-break-inside: avoid;
+    }
+    footer.summary::before { display: none; }
+    footer.summary .cell .lbl { color: #666; }
+    footer.summary .cell .val { color: var(--sage); }
+    button, .actions-bar, .no-print { display: none !important; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Supabase CDN -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="./utils/supabase/client.js"></script>
+
+<div id="site-header-root"></div>
+<script src="./shared-header.js"></script>
+
+<main>
+
+  <!-- ============ 0. DELIVERABLE CONTEXT BANNER ============ -->
+  <div style="background:linear-gradient(135deg,rgba(46,58,47,0.06) 0%,rgba(201,164,76,0.08) 100%);border:1px solid rgba(201,164,76,0.32);border-left:3px solid var(--gold);border-radius:var(--r-md);padding:22px 28px;margin-bottom:28px;display:flex;gap:20px;align-items:flex-start;">
+    <div style="flex-shrink:0;width:36px;height:36px;background:var(--gold);border-radius:50%;display:flex;align-items:center;justify-content:center;margin-top:2px;">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M8 1.5a6.5 6.5 0 1 0 0 13 6.5 6.5 0 0 0 0-13zM7 7h2v5H7V7zm0-3h2v2H7V4z" fill="#0a0a08"/></svg>
+    </div>
+    <div style="min-width:0;">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px;flex-wrap:wrap;">
+        <span style="font-family:var(--serif);font-size:17px;font-weight:600;color:var(--sage);line-height:1.2;">Client Intake Form</span>
+        <span style="display:inline-flex;align-items:center;gap:5px;background:var(--gold);color:#0a0a08;font-size:9.5px;font-weight:700;letter-spacing:0.16em;text-transform:uppercase;padding:3px 10px;border-radius:var(--r-pill);">Deliverable · V1</span>
+      </div>
+      <p style="margin:0;font-size:13.5px;color:var(--ink-soft);line-height:1.55;">This is <strong style="color:var(--ink);">Version 1</strong> of a client onboarding tool built as part of the <a href="index.html" style="color:var(--gold-dk);text-decoration:underline;text-underline-offset:2px;">Monday Automation Strategy</a>. Door styles, finishes, and hardware mirror Saunders' primary supplier, <strong style="color:var(--ink);">Decore-ative Specialties (decore.com)</strong> — including model codes, Sherwin-Williams paint palette, and Salice hardware. Future versions will submit into Monday.com and auto-generate Decore orders.</p>
+    </div>
+  </div>
+
+  <!-- ============ 1. PROJECT BASICS ============ -->
+  <section class="card">
+    <h2>Tell us about your project</h2>
+    <div class="kicker">Project Basics</div>
+    <div class="grid cols-2">
+      <label class="field">Customer name
+        <input type="text" data-state="basics.name" placeholder="Full name" />
+      </label>
+      <label class="field">Email
+        <input type="email" data-state="basics.email" placeholder="name@example.com" />
+      </label>
+      <label class="field">Phone
+        <input type="tel" data-state="basics.phone" placeholder="(843) 555-0100" />
+      </label>
+      <label class="field">Project address
+        <input type="text" data-state="basics.address" placeholder="Street, City, State" />
+      </label>
+      <label class="field">What are you building?
+        <select data-state="basics.projectType">
+          <optgroup label="Cabinetry &amp; Built-ins">
+            <option>Kitchen cabinetry</option>
+            <option>Bathroom vanity</option>
+            <option>Wine room</option>
+            <option>Entertainment built-in</option>
+            <option>Bookcase / library built-in</option>
+            <option>Closet system</option>
+            <option>Bar / serving area</option>
+            <option>Outdoor kitchen / cabinetry</option>
+          </optgroup>
+          <optgroup label="Broader Woodworking">
+            <option>Deck</option>
+            <option>Dock</option>
+            <option>Dining table</option>
+            <option>Chair</option>
+            <option>Bed frame</option>
+            <option>Pergola</option>
+            <option>Shed</option>
+            <option>Fence</option>
+            <option>Other (describe below)</option>
+          </optgroup>
+        </select>
+      </label>
+      <label class="field">Target completion
+        <input type="date" data-state="basics.targetDate" />
+      </label>
+    </div>
+    <div style="margin-top:16px;">
+      <label class="field">Tell us about your vision
+        <textarea data-state="basics.narrative" placeholder="Style, finishes you love, pieces you've seen, how you'll use the space…"></textarea>
+      </label>
+    </div>
+    <div style="margin-top:16px;">
+      <label class="field">Site readiness / access notes
+        <textarea data-state="basics.siteNotes" placeholder="Existing conditions, demo required, delivery access, stairs, HOA, etc."></textarea>
+      </label>
+    </div>
+  </section>
+
+  <!-- ============ 2. DIMENSIONS / COMPONENTS ============ -->
+  <section class="card">
+    <h2>Dimensions</h2>
+    <p style="font-size:13px;color:var(--ink-soft);margin-bottom:12px;line-height:1.5;">Each row is a discrete piece or cabinet run — e.g. <em>Island</em>, <em>Upper Cabinets (East Wall)</em>, <em>Vanity</em>, etc. Add as many as the job has. Dimensions feed into the materials estimator below.</p>
+    <div class="kicker">Break the project into components — island, perimeter run, pantry, deck section, etc.</div>
+
+    <div style="margin-bottom: 16px; display:flex; align-items:center; gap:14px; flex-wrap:wrap;" class="no-print">
+      <span style="font-size:11px; font-weight:600; letter-spacing:0.12em; text-transform:uppercase; color:var(--ink-soft);">Units</span>
+      <div class="chip-group">
+        <label><input type="radio" name="unit" value="in" checked data-state="dims.unit" /> Inches</label>
+        <label><input type="radio" name="unit" value="ft" data-state="dims.unit" /> Feet</label>
+      </div>
+    </div>
+
+    <div class="table-wrap">
+    <table class="estimator" id="componentsTable">
+      <thead>
+        <tr>
+          <th style="width:22%">Component label</th>
+          <th>Length</th>
+          <th>Width</th>
+          <th>Height</th>
+          <th>Depth</th>
+          <th>Notes</th>
+          <th class="no-print"></th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+    </div>
+    <div class="actions-bar no-print">
+      <button class="ghost small" onclick="addComponent()">+ Add component</button>
+    </div>
+  </section>
+
+  <!-- ============ 3. DOORS & DRAWER FRONTS (DECORE) ============ -->
+  <section class="card">
+    <h2>Doors &amp; Drawer Fronts</h2>
+    <div class="kicker">Decore-ative Specialties · Wood · Miter · Veneer · Deco-Form®</div>
+
+    <div class="table-wrap">
+    <table class="estimator" id="doorsTable">
+      <thead>
+        <tr>
+          <th style="width:16%">Component</th>
+          <th style="width:24%">Style (model)</th>
+          <th>Type</th>
+          <th>Qty</th>
+          <th>Width</th>
+          <th>Height</th>
+          <th style="width:18%">Finish</th>
+          <th>Sheen</th>
+          <th class="num">Quoted $</th>
+          <th class="num">Line Total</th>
+          <th class="no-print"></th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+    </div>
+    <div class="actions-bar no-print">
+      <button class="ghost small" onclick="addDoor()">+ Add door / drawer front</button>
+    </div>
+
+    <div style="margin-top:22px;" class="grid cols-3">
+      <label class="field">Panel detail
+        <select data-state="decoreSpec.panelDetail">
+          <option>Standard</option>
+          <option>Other (specify in notes)</option>
+        </select>
+      </label>
+      <label class="field">Inside edge detail
+        <select data-state="decoreSpec.insideEdge">
+          <option>Standard</option>
+          <option>Other (specify in notes)</option>
+        </select>
+      </label>
+      <label class="field">Outside face edge
+        <select data-state="decoreSpec.outsideFaceEdge">
+          <option>Standard</option>
+          <option>Square Face Edge</option>
+          <option>Other (specify in notes)</option>
+        </select>
+      </label>
+      <label class="field">Outside back edge
+        <select data-state="decoreSpec.outsideBackEdge">
+          <option>Square Back Edge</option>
+          <option>Other (specify in notes)</option>
+        </select>
+      </label>
+      <label class="field">Bore pattern
+        <select data-state="decoreSpec.borePattern">
+          <option>None</option>
+          <option>Bore A (5mm tab)</option>
+          <option>Bore B (3mm tab)</option>
+          <option>Other (specify in notes)</option>
+        </select>
+      </label>
+      <label class="field">Bore position
+        <select data-state="decoreSpec.borePosition">
+          <option>None</option>
+          <option>Left</option>
+          <option>Center</option>
+          <option>Right</option>
+        </select>
+      </label>
+      <label class="field">Drawer front grain
+        <select data-state="decoreSpec.dfGrain">
+          <option>Standard</option>
+          <option>Vertical (Clear / Stain only)</option>
+        </select>
+      </label>
+      <label class="field">Ship method
+        <select data-state="decoreSpec.shipping">
+          <option>Our Truck</option>
+          <option>Small Parcel</option>
+          <option>Freight</option>
+          <option>Will Call</option>
+        </select>
+      </label>
+      <label class="field">Requested ship date
+        <input type="date" data-state="decoreSpec.shipDate" />
+      </label>
+    </div>
+    <div style="margin-top:14px;">
+      <label class="field">Special instructions (glass type, French-lite count, custom SW color, etc.)
+        <textarea data-state="decoreSpec.notes" placeholder="e.g. 8-lite mullion pattern on 520X; custom color Sherwin-Williams Iron Ore SW 7069 to match trim."></textarea>
+      </label>
+    </div>
+    <div class="slider-hint" style="margin-top:10px;">Lead time: 6 working days unfinished · 15 working days finished. 5-year warranty on Deco-Form, 1-year on wood.</div>
+  </section>
+
+  <!-- ============ 4. MATERIALS ============ -->
+  <section class="card">
+    <h2>Materials</h2>
+    <div class="kicker">Hardwood lumber · Sheet goods · Deck &amp; outdoor · Shop finishes — Saunders-sourced, pricing tracked against market</div>
+    <div class="table-wrap">
+    <table class="estimator" id="materialsTable">
+      <thead>
+        <tr>
+          <th style="width:16%">Component</th>
+          <th style="width:22%">Material</th>
+          <th>Qty</th>
+          <th>L</th>
+          <th>W</th>
+          <th>H / Thk</th>
+          <th>Unit</th>
+          <th class="num">Quoted $</th>
+          <th class="num">Market $</th>
+          <th class="num">Δ %</th>
+          <th class="num">Line Total</th>
+          <th>Status</th>
+          <th class="no-print"></th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+    </div>
+    <div class="actions-bar no-print">
+      <button class="ghost small" onclick="addMaterial()">+ Add material</button>
+      <button class="small" onclick="refreshPrices()">Refresh market prices</button>
+    </div>
+  </section>
+
+  <!-- ============ 4. HARDWARE ============ -->
+  <section class="card">
+    <h2>Hardware</h2>
+    <div class="kicker">Salice glides &amp; hinges · Decore knobs &amp; pulls · Fasteners · Specialty</div>
+    <div class="table-wrap">
+    <table class="estimator" id="hardwareTable">
+      <thead>
+        <tr>
+          <th style="width:18%">Category</th>
+          <th style="width:30%">Item</th>
+          <th>Size / Finish</th>
+          <th>Qty</th>
+          <th class="num">Unit $</th>
+          <th class="num">Line Total</th>
+          <th class="no-print"></th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+    </div>
+    <div class="actions-bar no-print">
+      <button class="ghost small" onclick="addHardware()">+ Add hardware</button>
+    </div>
+  </section>
+
+  <!-- ============ 6. DRAWER BOXES (DECORE) ============ -->
+  <section class="card">
+    <h2>Drawer Boxes</h2>
+    <div class="kicker">Decore-ative Specialties · Dovetail Plywood (659) · Doweled Plywood (649) · Dovetail Solid (613)</div>
+    <div class="table-wrap">
+    <table class="estimator" id="boxesTable">
+      <thead>
+        <tr>
+          <th style="width:20%">Component</th>
+          <th style="width:30%">Box model</th>
+          <th>Width</th>
+          <th>Depth</th>
+          <th>Height</th>
+          <th>Qty</th>
+          <th class="num">Unit $</th>
+          <th class="num">Line Total</th>
+          <th class="no-print"></th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+    </div>
+    <div class="actions-bar no-print">
+      <button class="ghost small" onclick="addBox()">+ Add drawer box</button>
+    </div>
+  </section>
+
+  <!-- ============ 7. BUDGET CONTROLS ============ -->
+  <section class="card">
+    <h2>Budget Controls</h2>
+    <div class="kicker">Set your target and how much price movement you'll tolerate before we flag it</div>
+    <div class="grid cols-3">
+      <label class="field">Target budget ($)
+        <input type="number" min="0" step="100" data-state="budget.target" value="50000" />
+      </label>
+      <label class="field">Labor ($)
+        <input type="number" min="0" step="100" data-state="budget.labor" value="0" />
+      </label>
+      <label class="field">Contingency (%)
+        <input type="number" min="0" max="50" step="0.5" data-state="budget.contingencyPct" value="5" />
+      </label>
+    </div>
+    <div style="margin-top:22px;" class="grid cols-2">
+      <div class="ctl-block">
+        <div class="ctl-lbl">Wiggle room — per-material flag threshold</div>
+        <div class="slider-row">
+          <input type="range" min="0" max="25" step="0.5" value="5" data-state="budget.wigglePct" id="wiggleSlider" />
+          <span class="val" id="wiggleLabel">5%</span>
+        </div>
+        <div class="slider-hint">A material's market price must move by more than this to flag red or blue.</div>
+      </div>
+      <div class="ctl-block">
+        <div class="ctl-lbl">Overall project tolerance</div>
+        <div class="slider-row">
+          <input type="range" min="0" max="25" step="0.5" value="8" data-state="budget.projectTolerancePct" id="tolSlider" />
+          <span class="val" id="tolLabel">8%</span>
+        </div>
+        <label class="toggle" style="margin-top:14px;">
+          <input type="checkbox" checked data-state="budget.showDrops" />
+          Surface price drops (flag savings, not just overages)
+        </label>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 8. APPLIANCE PACKETS ============ -->
+  <section class="card no-print">
+    <h2>Appliance Packets</h2>
+    <div class="kicker">Upload manufacturer PDF spec sheets — model numbers and cut-out dimensions saved to the project record</div>
+    <p style="font-size:13px;color:var(--ink-soft);margin-bottom:18px;line-height:1.5;">Drop the PDF that ships with each appliance. Future automation will extract model numbers, cut-out W&nbsp;×&nbsp;H&nbsp;×&nbsp;D, and push specs into Monday.com before design starts.</p>
+
+    <div class="upload-zone" id="uploadZone"
+         aria-label="Upload appliance PDF"
+         ondragover="handlePacketDragOver(event)"
+         ondragleave="handlePacketDragLeave(event)"
+         ondrop="handlePacketDrop(event)">
+      <input type="file" accept="application/pdf"
+             multiple
+             aria-label="Choose appliance PDF files"
+             onchange="handlePacketFileChange(event)" />
+      <div class="upload-zone__icon" aria-hidden="true">
+        <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#C9A44C" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+      </div>
+      <div class="upload-zone__label">Drop appliance PDFs here or click to browse</div>
+      <div class="upload-zone__hint">PDF only · Multiple files accepted · Uploaded to Saunders project record</div>
+    </div>
+
+    <div class="upload-progress" id="uploadProgress">
+      <div class="upload-progress__bar" id="uploadProgressBar"></div>
+    </div>
+
+    <div class="packet-list" id="packetList"></div>
+  </section>
+
+  <!-- ============ 9. ACTIONS ============ -->
+  <section class="card no-print">
+    <h2>Save &amp; Share</h2>
+    <div class="kicker">Save this intake to the Saunders database, export a copy, or print to PDF</div>
+    <div class="actions-bar" style="justify-content:flex-start;flex-wrap:wrap;gap:10px;margin-bottom:16px;">
+      <button class="gold" onclick="saveToDatabase()">Save to Saunders DB</button>
+      <button class="ghost" onclick="window.print()">Print / Save as PDF</button>
+      <button class="ghost" onclick="exportJSON()">Export JSON</button>
+      <button class="ghost" onclick="document.getElementById('importFile').click()">Import JSON</button>
+      <input type="file" id="importFile" accept="application/json" style="display:none" onchange="importJSON(event)" />
+      <button class="ghost" onclick="resetAll()">Reset</button>
+    </div>
+    <div class="db-save-row">
+      <span class="db-status" id="dbStatus"></span>
+    </div>
+  </section>
+
+</main>
+
+<footer class="summary">
+  <div class="cell">
+    <div class="lbl">Status</div>
+    <div id="statusPill" class="status-pill green">WITHIN BUDGET</div>
+  </div>
+  <div class="cell">
+    <div class="lbl">Doors + Boxes (Decore)</div>
+    <div class="val" id="decoreTotal">$0</div>
+  </div>
+  <div class="cell">
+    <div class="lbl">Materials</div>
+    <div class="val" id="matTotal">$0</div>
+  </div>
+  <div class="cell">
+    <div class="lbl">Hardware</div>
+    <div class="val" id="hwTotal">$0</div>
+  </div>
+  <div class="cell">
+    <div class="lbl">Grand Total</div>
+    <div class="val" id="grandTotal">$0</div>
+  </div>
+  <div class="cell">
+    <div class="lbl">Biggest Movers</div>
+    <div class="movers" id="movers"><div class="m-row"><span style="opacity:0.6;">— none yet —</span></div></div>
+  </div>
+</footer>
+
+<script>
+/* =========================================================================
+   PRICE CATALOG — Saunders-sourced lumber, sheet goods, shop finishes.
+   Does NOT include Decore-shipped doors / drawer fronts / hardware / boxes;
+   those live in DECORE_CATALOG below.  Prices are placeholder "market"
+   reference values — quoted prices lock on first entry.
+   Manually maintained today. `fetchLivePrices()` below is the stub hook
+   for a future supplier integration.
+   ========================================================================= */
+const PRICE_CATALOG = {
+  "Hardwood lumber": {
+    "Maple Select, S4S":                 { unit: "bd-ft", price:  9.75, updated: "2026-04-17" },
+    "White Oak Select, S4S":             { unit: "bd-ft", price: 12.50, updated: "2026-04-17" },
+    "Rift White Oak, S4S":               { unit: "bd-ft", price: 16.80, updated: "2026-04-17" },
+    "Walnut Select, S4S":                { unit: "bd-ft", price: 18.00, updated: "2026-04-17" },
+    "Cherry Select, S4S":                { unit: "bd-ft", price: 11.20, updated: "2026-04-17" },
+    "Alder Select, S4S":                 { unit: "bd-ft", price:  7.80, updated: "2026-04-17" },
+    "Red Oak Select, S4S":               { unit: "bd-ft", price:  7.20, updated: "2026-04-17" },
+    "Hardwood paint grade (Poplar)":     { unit: "bd-ft", price:  4.80, updated: "2026-04-17" },
+    "Aspen, S4S":                        { unit: "bd-ft", price:  5.60, updated: "2026-04-17" }
+  },
+  "Sheet goods": {
+    "White Oak veneer ply, 3/4\"":       { unit: "sheet", price: 165, updated: "2026-04-17" },
+    "Rift White Oak veneer ply, 3/4\"":  { unit: "sheet", price: 210, updated: "2026-04-17" },
+    "Walnut veneer ply, 3/4\"":          { unit: "sheet", price: 210, updated: "2026-04-17" },
+    "Maple veneer ply, 3/4\"":           { unit: "sheet", price: 125, updated: "2026-04-17" },
+    "Baltic birch ply, 3/4\"":           { unit: "sheet", price:  95, updated: "2026-04-17" },
+    "Baltic birch ply, 1/2\"":           { unit: "sheet", price:  72, updated: "2026-04-17" },
+    "MDF, 3/4\"":                         { unit: "sheet", price:  48, updated: "2026-04-17" },
+    "Melamine white, 3/4\"":              { unit: "sheet", price:  62, updated: "2026-04-17" }
+  },
+  "Deck & outdoor": {
+    "PT southern pine 2x6":              { unit: "ln-ft", price: 2.15, updated: "2026-04-17" },
+    "Ipe decking, 1x6":                  { unit: "ln-ft", price: 7.50, updated: "2026-04-17" },
+    "Cedar decking, 5/4x6":              { unit: "ln-ft", price: 3.40, updated: "2026-04-17" },
+    "PT 6x6 post (dock)":                { unit: "ln-ft", price: 6.20, updated: "2026-04-17" }
+  },
+  "Shop finishes": {
+    "Conversion varnish (gal)":          { unit: "gal", price:  88, updated: "2026-04-17" },
+    "Pre-cat lacquer (gal)":             { unit: "gal", price:  74, updated: "2026-04-17" },
+    "Rubio Monocoat (L)":                { unit: "L",   price: 110, updated: "2026-04-17" },
+    "Penofin marine oil (gal)":          { unit: "gal", price:  95, updated: "2026-04-17" }
+  }
+};
+
+/* =========================================================================
+   DECORE CATALOG — Doors, drawer fronts, finishes, drawer boxes.
+   Mirrors brain/products.json (authoritative copy).  Update both together.
+   Prices are Saunders-entered at time of quote (Decore doesn't publish).
+   ========================================================================= */
+const DECORE_DOORS = {
+  "Wood — Butt Joint (3/4\")": [
+    ["513",  "Georgia",   "White Oak Select"],
+    ["913",  "Isabella",  "White Oak Select"],
+    ["913G", "Isabella Glass", "White Oak Select"],
+    ["510",  "Owen",      "Maple Select"],
+    ["910",  "Alpine",    "Maple Select"],
+    ["910G", "Alpine Glass", "Maple Select"],
+    ["508",  "Oakley",    "Walnut Select"],
+    ["508G", "Oakley Glass", "Walnut Select"],
+    ["908",  "Nolan",     "Walnut Select"],
+    ["515",  "Zion",      "Alder Select"],
+    ["915",  "Graham",    "Alder Select"],
+    ["915G", "Graham Glass", "Alder Select"],
+    ["841",  "Mitchell",  "Maple Select"],
+    ["841F", "Mitchell French Lite", "Maple Select"],
+    ["831",  "Shaker",    "Maple Select"],
+    ["514",  "Glacier",   "Alder Select"],
+    ["914",  "Josephine", "Alder Select"],
+    ["914G", "Josephine Glass", "Alder Select"],
+    ["511",  "Indiana",   "Maple Select"],
+    ["911",  "Jasper",    "Maple Select"],
+    ["911G", "Jasper Glass", "Maple Select"]
+  ],
+  "Wood — Miter Joint (7/8\")": [
+    ["720",  "Journey",   "Rift White Oak"],
+    ["520",  "Newbury",   "Maple Select"],
+    ["520X", "Newbury Glass", "Maple Select"],
+    ["721",  "Kennedy",   "Walnut Select"],
+    ["521",  "Dylan",     "White Oak Select"],
+    ["521X", "Dylan Glass", "White Oak Select"]
+  ],
+  "Wood — Veneer (3/4\")": [
+    ["79",   "Vienna",    "Alder Select"],
+    ["84",   "Quincy",    "Maple Select"],
+    ["93",   "Aries",     "Rift White Oak Veneer"]
+  ],
+  "Deco-Form® (thermofoil)": [
+    ["218",  "DSS218 Shallow Depth Shaker", "Deco-Form"],
+    ["218G", "DSS218 Glass",                "Deco-Form"],
+    ["223",  "DT223 Shallow Depth Bevel",   "Deco-Form"],
+    ["223G", "DT223 Glass",                 "Deco-Form"],
+    ["917",  "DN917 Skinny Shaker",         "Deco-Form"],
+    ["917G", "DN917 Glass",                 "Deco-Form"],
+    ["766",  "AR766",                        "Deco-Form"],
+    ["756",  "AR756",                        "Deco-Form"],
+    ["816",  "DBQ",                          "Deco-Form"]
+  ]
+};
+
+const DECORE_FINISHES = {
+  "Clear / Natural": [
+    "Clear — Maple Finish Grade"
+  ],
+  "Stain (Maple Finish Grade)": [
+    "Amber", "Coal", "Copper", "Limestone", "Onyx",
+    "Pumice", "Ruby", "Smokey Quartz", "Tigers Eye", "Topaz"
+  ],
+  "Paint — Sherwin-Williams": [
+    "White Extra (Sher-Wood H66WH73-20)",
+    "Pure White (SW 7005)",
+    "Alabaster (SW 7008)",
+    "Creamy (SW 7012)",
+    "Antique White (SW 6119)",
+    "Accessible Beige (SW 7036)",
+    "Repose Gray (SW 7015)",
+    "Silver Strand (SW 7057)",
+    "Mindful Gray (SW 7016)",
+    "Eventide (SW 9643)",
+    "Dorian Gray (SW 7017)",
+    "Poolhouse (SW 7603)",
+    "Software (SW 7074)",
+    "Retreat (SW 6207)",
+    "Anonymous (SW 7046)",
+    "Smoky Blue (SW 7604)",
+    "Pewter Green (SW 6208)",
+    "Cyberspace (SW 7076)",
+    "Gale Force (SW 7605)",
+    "Naval (SW 6244)",
+    "Tricorn Black (SW 6258)",
+    "Custom SW color — specify in notes"
+  ],
+  "Deco-Form® integrated color": [
+    "949T White", "Feather White Suedette", "Fashion Grey", "Cool Grey",
+    "Mysterious Supermatte", "Alabaster", "Mojave", "Light Italian Walnut Taction",
+    "Natural Maple Taction", "Chocolate Pear", "Oak Walnut",
+    "Beach Glass Supermatte", "Satin Black"
+  ],
+  "Unfinished": [
+    "Ship unfinished"
+  ]
+};
+
+const DRAWER_BOX_CATALOG = {
+  "659 — Dovetail Plywood (1/2\" sides, 9-Ply Birch)":  { code: "659", price: 42.00 },
+  "649 — Doweled Plywood (1/2\" sides, 9-Ply Birch)":    { code: "649", price: 36.00 },
+  "613 — Dovetail Solid Maple (5/8\" sides)":            { code: "613", price: 68.00 }
+};
+
+const HARDWARE_CATALOG = {
+  "Drawer glides (Salice)": {
+    "Soft Close Undermount 12\"":             { unit: "pr", price: 28.00, code: "Salice U-12" },
+    "Soft Close Undermount 15\"":             { unit: "pr", price: 30.00, code: "Salice U-15" },
+    "Soft Close Undermount 18\"":             { unit: "pr", price: 34.00, code: "Salice U-18" },
+    "Soft Close Undermount 21\" (w/ socket)": { unit: "pr", price: 38.00, code: "Salice U-21" },
+    "Soft Close Undermount 23-5/8\"":         { unit: "pr", price: 42.00, code: "Salice U-24" },
+    "Side Mount 20\" — 12\"":                 { unit: "pr", price: 16.00, code: "Salice S-12" },
+    "Side Mount 20\" — 14\"":                 { unit: "pr", price: 17.00, code: "Salice S-14" },
+    "Side Mount 20\" — 16\"":                 { unit: "pr", price: 18.00, code: "Salice S-16" },
+    "Side Mount 20\" — 18\"":                 { unit: "pr", price: 19.00, code: "Salice S-18" },
+    "Side Mount 20\" — 22\"":                 { unit: "pr", price: 21.00, code: "Salice S-22" },
+    "Side Mount 20\" — 24\"":                 { unit: "pr", price: 23.00, code: "Salice S-24" }
+  },
+  "Hinges (Salice)": {
+    "Soft Close Compact Hinge (7802)":    { unit: "ea", price: 4.50, code: "7802" },
+    "Soft Close Traditional Hinge (7821)": { unit: "ea", price: 5.20, code: "7821" },
+    "Hinge Plate (7111)":                  { unit: "ea", price: 1.80, code: "7111" }
+  },
+  "Knobs & pulls (Decore)": {
+    "Round Knob — Satin Nickel (7275)":           { unit: "ea", price: 6.50,  code: "7275" },
+    "T-Bar Pull 96mm — Satin Nickel (7185)":      { unit: "ea", price: 9.00,  code: "7185" },
+    "Mandara Pull 96mm — Satin Nickel (1691)":    { unit: "ea", price: 10.00, code: "1691" },
+    "Custom pull (specify in notes)":              { unit: "ea", price: 0 }
+  },
+  "Fasteners (shop stock)": {
+    "Wood screws #8 x 1-1/4\"":    { unit: "ea", price: 0.08 },
+    "Wood screws #8 x 2-1/2\"":    { unit: "ea", price: 0.12 },
+    "Finish nails 16ga":            { unit: "ea", price: 0.04 },
+    "Brad nails 18ga":              { unit: "ea", price: 0.02 },
+    "Pocket screws (Kreg)":         { unit: "ea", price: 0.10 },
+    "Dowels 3/8\" fluted":          { unit: "ea", price: 0.15 },
+    "Biscuits #20":                 { unit: "ea", price: 0.08 },
+    "Confirmat screws":             { unit: "ea", price: 0.22 },
+    "Deck screws, stainless #10 x 3\"": { unit: "ea", price: 0.35 }
+  },
+  "Specialty": {
+    "Lazy-susan bearing":           { unit: "ea",  price: 24.00 },
+    "Pull-out waste bin kit":       { unit: "ea",  price: 120.00 },
+    "Tip-out tray":                 { unit: "ea",  price: 28.00 },
+    "LED strip + driver (10ft)":    { unit: "kit", price: 85.00 },
+    "Glass-door clip":              { unit: "ea",  price: 3.20 },
+    "Shelf pin, 5mm":               { unit: "ea",  price: 0.10 },
+    "Corbel, carved":               { unit: "ea",  price: 42.00 },
+    "Marine cleat (dock)":          { unit: "ea",  price: 32.00 }
+  }
+};
+
+/* ------------------------------------------------------------------ */
+/*  Future live-pricing hook.  Today returns the local catalog as-is. */
+/*  Replace the body with a fetch() when wiring to a real feed.       */
+/* ------------------------------------------------------------------ */
+async function fetchLivePrices() {
+  // TODO: wire to live market feed, e.g.:
+  //   const r = await fetch('https://api.example.com/lumber');
+  //   const data = await r.json();
+  //   merge `data` into PRICE_CATALOG and bump `.updated`
+  return PRICE_CATALOG;
+}
+
+/* =========================================================================
+   STATE
+   ========================================================================= */
+const state = {
+  basics: { name:"", email:"", phone:"", address:"", projectType:"Kitchen cabinetry",
+            targetDate:"", narrative:"", siteNotes:"" },
+  dims:   { unit: "in" },
+  components: [],
+  doors:       [],
+  drawerBoxes: [],
+  materials:   [],
+  hardware:    [],
+  decoreSpec: {
+    panelDetail: "Standard",
+    insideEdge:  "Standard",
+    outsideFaceEdge: "Standard",
+    outsideBackEdge: "Square Back Edge",
+    borePattern: "None",
+    borePosition:"None",
+    dfGrain:     "Standard",
+    shipping:    "Our Truck",
+    shipDate:    "",
+    notes:       ""
+  },
+  appliancePackets: [], // [{ name, url, uploadedAt }]
+  budget: { target: 50000, labor: 0, contingencyPct: 5,
+            wigglePct: 5, projectTolerancePct: 8, showDrops: true }
+};
+
+/* ---------- flat material list for dropdowns ---------- */
+function allMaterials() {
+  const out = [];
+  for (const group of Object.keys(PRICE_CATALOG)) {
+    for (const name of Object.keys(PRICE_CATALOG[group])) {
+      out.push({ group, name, ...PRICE_CATALOG[group][name] });
+    }
+  }
+  return out;
+}
+
+/* =========================================================================
+   RENDERERS
+   ========================================================================= */
+function uid() { return Math.random().toString(36).slice(2, 10); }
+
+function addComponent(data = {}) {
+  state.components.push({
+    id: uid(),
+    label: data.label || "",
+    L: data.L ?? "", W: data.W ?? "", H: data.H ?? "", D: data.D ?? "",
+    notes: data.notes || ""
+  });
+  renderComponents();
+}
+function renderComponents() {
+  const tbody = document.querySelector("#componentsTable tbody");
+  tbody.innerHTML = "";
+  const unit = state.dims.unit;
+  state.components.forEach((c, idx) => {
+    const tr = document.createElement("tr");
+    tr.innerHTML = `
+      <td><input type="text" placeholder="e.g. Island" value="${escape(c.label)}" oninput="state.components[${idx}].label=this.value"></td>
+      <td><input type="number" min="0" step="0.125" value="${c.L}" oninput="state.components[${idx}].L=numOrBlank(this.value); refreshMaterialComponents();" placeholder="${unit}"></td>
+      <td><input type="number" min="0" step="0.125" value="${c.W}" oninput="state.components[${idx}].W=numOrBlank(this.value); refreshMaterialComponents();" placeholder="${unit}"></td>
+      <td><input type="number" min="0" step="0.125" value="${c.H}" oninput="state.components[${idx}].H=numOrBlank(this.value); refreshMaterialComponents();" placeholder="${unit}"></td>
+      <td><input type="number" min="0" step="0.125" value="${c.D}" oninput="state.components[${idx}].D=numOrBlank(this.value); refreshMaterialComponents();" placeholder="${unit}"></td>
+      <td><input type="text" value="${escape(c.notes)}" oninput="state.components[${idx}].notes=this.value" placeholder="Optional"></td>
+      <td class="no-print"><button class="danger small" onclick="removeComponent('${c.id}')">✕</button></td>
+    `;
+    tbody.appendChild(tr);
+  });
+  refreshMaterialComponents();
+}
+function removeComponent(id) {
+  state.components = state.components.filter(c => c.id !== id);
+  renderComponents();
+}
+
+/* ---------- materials ---------- */
+function addMaterial(data = {}) {
+  state.materials.push({
+    id: uid(),
+    componentId: data.componentId || "",
+    materialKey:  data.materialKey || "",       // "lumber::White oak, S4S, FAS"
+    qty: data.qty ?? 1,
+    L: data.L ?? "", W: data.W ?? "", H: data.H ?? "",
+    quotedPrice: data.quotedPrice ?? null       // null => lock to current market on first set
+  });
+  renderMaterials();
+}
+function removeMaterial(id) {
+  state.materials = state.materials.filter(m => m.id !== id);
+  renderMaterials();
+}
+function renderMaterials() {
+  const tbody = document.querySelector("#materialsTable tbody");
+  tbody.innerHTML = "";
+  const mats = allMaterials();
+  state.materials.forEach((m, idx) => {
+    const mat = resolveMaterial(m.materialKey);
+    const market = mat ? mat.price : 0;
+    if (m.quotedPrice == null && mat) m.quotedPrice = market; // first-set lock
+    const quoted = m.quotedPrice ?? 0;
+    const delta = quoted > 0 ? ((market - quoted) / quoted) * 100 : 0;
+    const lineTotal = market * (Number(m.qty) || 0);
+    const flag = classifyFlag(delta);
+
+    const compOpts = ['<option value="">—</option>']
+      .concat(state.components.map(c => `<option value="${c.id}" ${c.id===m.componentId?"selected":""}>${escape(c.label || "(unlabeled)")}</option>`))
+      .join("");
+
+    let matOpts = '<option value="">— choose —</option>';
+    const grouped = {};
+    mats.forEach(x => { (grouped[x.group] ||= []).push(x); });
+    for (const g of Object.keys(grouped)) {
+      matOpts += `<optgroup label="${g}">`;
+      for (const x of grouped[g]) {
+        const key = `${x.group}::${x.name}`;
+        matOpts += `<option value="${key}" ${key===m.materialKey?"selected":""}>${x.name} (${x.unit})</option>`;
+      }
+      matOpts += "</optgroup>";
+    }
+
+    const tr = document.createElement("tr");
+    tr.innerHTML = `
+      <td><select onchange="state.materials[${idx}].componentId=this.value; render();">${compOpts}</select></td>
+      <td><select onchange="pickMaterial(${idx}, this.value)">${matOpts}</select></td>
+      <td><input type="number" min="0" step="0.25" value="${m.qty}" oninput="state.materials[${idx}].qty=numOrZero(this.value); render();"></td>
+      <td><input type="number" min="0" step="0.125" value="${m.L}" oninput="state.materials[${idx}].L=numOrBlank(this.value);"></td>
+      <td><input type="number" min="0" step="0.125" value="${m.W}" oninput="state.materials[${idx}].W=numOrBlank(this.value);"></td>
+      <td><input type="number" min="0" step="0.125" value="${m.H}" oninput="state.materials[${idx}].H=numOrBlank(this.value);"></td>
+      <td style="font-size:11px; color:#666;">${mat ? mat.unit : "—"}</td>
+      <td class="num"><input type="number" min="0" step="0.01" value="${quoted.toFixed(2)}" oninput="state.materials[${idx}].quotedPrice=numOrZero(this.value); render();" style="text-align:right;"></td>
+      <td class="num">${money(market)}</td>
+      <td class="num" style="color:${flag==='red'?'var(--red)':flag==='blue'?'var(--blue)':'#444'}">${quoted>0 ? (delta>=0?"+":"") + delta.toFixed(1) + "%" : "—"}</td>
+      <td class="num">${money(lineTotal)}</td>
+      <td><span class="flag ${flag}">${flag==='red'?'▲ OVER': flag==='blue'?'▼ UNDER':'✓ OK'}</span></td>
+      <td class="no-print"><button class="danger small" onclick="removeMaterial('${m.id}')">✕</button></td>
+    `;
+    tbody.appendChild(tr);
+  });
+}
+function pickMaterial(idx, key) {
+  state.materials[idx].materialKey = key;
+  // reset quoted price to current market when material changes
+  const mat = resolveMaterial(key);
+  state.materials[idx].quotedPrice = mat ? mat.price : 0;
+  render();
+}
+function resolveMaterial(key) {
+  if (!key) return null;
+  const [group, name] = key.split("::");
+  return PRICE_CATALOG[group]?.[name] || null;
+}
+function refreshMaterialComponents() {
+  // Re-render rows so component dropdowns pick up renamed components.
+  renderDoors();
+  renderBoxes();
+  renderMaterials();
+  updateSummary();
+}
+
+/* ---------- hardware ---------- */
+function addHardware(data = {}) {
+  state.hardware.push({
+    id: uid(),
+    category: data.category || "Fasteners",
+    itemKey:  data.itemKey  || "",
+    variant:  data.variant  || "",
+    qty: data.qty ?? 1,
+    unitPrice: data.unitPrice ?? null
+  });
+  renderHardware();
+}
+function removeHardware(id) {
+  state.hardware = state.hardware.filter(h => h.id !== id);
+  renderHardware();
+}
+function renderHardware() {
+  const tbody = document.querySelector("#hardwareTable tbody");
+  tbody.innerHTML = "";
+  state.hardware.forEach((h, idx) => {
+    const cats = Object.keys(HARDWARE_CATALOG);
+    const catOpts = cats.map(c => `<option ${c===h.category?"selected":""}>${c}</option>`).join("");
+    const items = HARDWARE_CATALOG[h.category] || {};
+    const itemOpts = ['<option value="">— choose —</option>']
+      .concat(Object.keys(items).map(k => `<option value="${k}" ${k===h.itemKey?"selected":""}>${k}</option>`))
+      .join("");
+    const base = items[h.itemKey];
+    if (h.unitPrice == null && base) h.unitPrice = base.price;
+    const unit = base ? base.unit : "";
+    const lineTotal = (Number(h.qty)||0) * (Number(h.unitPrice)||0);
+
+    const tr = document.createElement("tr");
+    tr.innerHTML = `
+      <td><select onchange="pickHardwareCategory(${idx}, this.value)">${catOpts}</select></td>
+      <td><select onchange="pickHardwareItem(${idx}, this.value)">${itemOpts}</select></td>
+      <td><input type="text" value="${escape(h.variant)}" placeholder="e.g. brushed brass / 3\\" / #10" oninput="state.hardware[${idx}].variant=this.value"></td>
+      <td><input type="number" min="0" step="1" value="${h.qty}" oninput="state.hardware[${idx}].qty=numOrZero(this.value); render();"></td>
+      <td class="num"><input type="number" min="0" step="0.01" value="${(h.unitPrice||0).toFixed(2)}" oninput="state.hardware[${idx}].unitPrice=numOrZero(this.value); render();" style="text-align:right;"> <span style="font-size:10px;color:#888;">/${unit||"ea"}</span></td>
+      <td class="num">${money(lineTotal)}</td>
+      <td class="no-print"><button class="danger small" onclick="removeHardware('${h.id}')">✕</button></td>
+    `;
+    tbody.appendChild(tr);
+  });
+}
+function pickHardwareCategory(idx, cat) {
+  state.hardware[idx].category = cat;
+  state.hardware[idx].itemKey = "";
+  state.hardware[idx].unitPrice = null;
+  renderHardware();
+  updateSummary();
+}
+function pickHardwareItem(idx, key) {
+  state.hardware[idx].itemKey = key;
+  const base = HARDWARE_CATALOG[state.hardware[idx].category]?.[key];
+  state.hardware[idx].unitPrice = base ? base.price : 0;
+  renderHardware();
+  updateSummary();
+}
+
+/* ---------- doors & drawer fronts (Decore) ---------- */
+function addDoor(data = {}) {
+  state.doors.push({
+    id: uid(),
+    componentId: data.componentId || "",
+    styleKey:   data.styleKey   || "",  // "Wood — Butt Joint (3/4\")::520X"
+    type:       data.type       || "S", // S | DF | Special | Bore
+    qty:        data.qty ?? 1,
+    width:      data.width ?? "",
+    height:     data.height ?? "",
+    finish:     data.finish ?? "",
+    sheen:      data.sheen ?? "Satin 35",
+    unitPrice:  data.unitPrice ?? 0
+  });
+  renderDoors();
+}
+function removeDoor(id) {
+  state.doors = state.doors.filter(d => d.id !== id);
+  renderDoors();
+}
+function renderDoors() {
+  const tbody = document.querySelector("#doorsTable tbody");
+  if (!tbody) return;
+  tbody.innerHTML = "";
+  const compOptsBase = ['<option value="">—</option>']
+    .concat(state.components.map(c => `<option value="${c.id}">${escape(c.label || "(unlabeled)")}</option>`));
+
+  let styleOpts = '<option value="">— choose style —</option>';
+  for (const group of Object.keys(DECORE_DOORS)) {
+    styleOpts += `<optgroup label="${group}">`;
+    for (const [code, name, species] of DECORE_DOORS[group]) {
+      const key = `${group}::${code}`;
+      styleOpts += `<option value="${key}" data-species="${escape(species)}">${code} — ${name} · ${species}</option>`;
+    }
+    styleOpts += "</optgroup>";
+  }
+
+  let finishOpts = '<option value="">— choose finish —</option>';
+  for (const group of Object.keys(DECORE_FINISHES)) {
+    finishOpts += `<optgroup label="${group}">`;
+    for (const f of DECORE_FINISHES[group]) {
+      finishOpts += `<option>${f}</option>`;
+    }
+    finishOpts += "</optgroup>";
+  }
+
+  const typeOpts = ["S","DF","Special","Bore"].map(t => `<option>${t}</option>`).join("");
+  const sheenOpts = ["Matte 10","Satin 30","Satin 35","Sheen SBF","Matte 10 Sheen SBF"]
+    .map(s => `<option>${s}</option>`).join("");
+
+  state.doors.forEach((d, idx) => {
+    const compOpts = compOptsBase.map(o => {
+      // mark the selected option
+      return o.replace(`value="${d.componentId}"`, `value="${d.componentId}" selected`);
+    }).join("");
+    const lineTotal = (Number(d.qty)||0) * (Number(d.unitPrice)||0);
+    const tr = document.createElement("tr");
+    tr.innerHTML = `
+      <td><select onchange="state.doors[${idx}].componentId=this.value; render();">${compOpts}</select></td>
+      <td><select onchange="pickDoorStyle(${idx}, this.value)">${styleOpts.replace(`value="${d.styleKey}"`, `value="${d.styleKey}" selected`)}</select></td>
+      <td><select onchange="state.doors[${idx}].type=this.value">${typeOpts.replace(`>${d.type}<`, ` selected>${d.type}<`)}</select></td>
+      <td><input type="number" min="0" step="1" value="${d.qty}" oninput="state.doors[${idx}].qty=numOrZero(this.value); render();"></td>
+      <td><input type="number" min="0" step="0.0625" value="${d.width}" oninput="state.doors[${idx}].width=numOrBlank(this.value);" placeholder="in"></td>
+      <td><input type="number" min="0" step="0.0625" value="${d.height}" oninput="state.doors[${idx}].height=numOrBlank(this.value);" placeholder="in"></td>
+      <td><select onchange="state.doors[${idx}].finish=this.value; render();">${finishOpts.replace(`>${d.finish}<`, ` selected>${d.finish}<`)}</select></td>
+      <td><select onchange="state.doors[${idx}].sheen=this.value">${sheenOpts.replace(`>${d.sheen}<`, ` selected>${d.sheen}<`)}</select></td>
+      <td class="num"><input type="number" min="0" step="0.01" value="${(d.unitPrice||0).toFixed(2)}" oninput="state.doors[${idx}].unitPrice=numOrZero(this.value); render();" style="text-align:right;"></td>
+      <td class="num">${money(lineTotal)}</td>
+      <td class="no-print"><button class="danger small" onclick="removeDoor('${d.id}')">✕</button></td>
+    `;
+    tbody.appendChild(tr);
+  });
+}
+function pickDoorStyle(idx, key) {
+  state.doors[idx].styleKey = key;
+  render();
+}
+
+/* ---------- drawer boxes (Decore) ---------- */
+function addBox(data = {}) {
+  state.drawerBoxes.push({
+    id: uid(),
+    componentId: data.componentId || "",
+    modelKey:   data.modelKey   || "",
+    width:      data.width ?? "",
+    depth:      data.depth ?? "",
+    height:     data.height ?? "",
+    qty:        data.qty ?? 1,
+    unitPrice:  data.unitPrice ?? null
+  });
+  renderBoxes();
+}
+function removeBox(id) {
+  state.drawerBoxes = state.drawerBoxes.filter(b => b.id !== id);
+  renderBoxes();
+}
+function renderBoxes() {
+  const tbody = document.querySelector("#boxesTable tbody");
+  if (!tbody) return;
+  tbody.innerHTML = "";
+  const compOptsBase = ['<option value="">—</option>']
+    .concat(state.components.map(c => `<option value="${c.id}">${escape(c.label || "(unlabeled)")}</option>`));
+  const modelOpts = ['<option value="">— choose box —</option>']
+    .concat(Object.keys(DRAWER_BOX_CATALOG).map(k => `<option value="${k}">${k}</option>`))
+    .join("");
+
+  state.drawerBoxes.forEach((b, idx) => {
+    const base = DRAWER_BOX_CATALOG[b.modelKey];
+    if (b.unitPrice == null && base) b.unitPrice = base.price;
+    const compOpts = compOptsBase.map(o => o.replace(`value="${b.componentId}"`, `value="${b.componentId}" selected`)).join("");
+    const modelHtml = modelOpts.replace(`value="${b.modelKey}"`, `value="${b.modelKey}" selected`);
+    const lineTotal = (Number(b.qty)||0) * (Number(b.unitPrice)||0);
+    const tr = document.createElement("tr");
+    tr.innerHTML = `
+      <td><select onchange="state.drawerBoxes[${idx}].componentId=this.value; render();">${compOpts}</select></td>
+      <td><select onchange="pickBoxModel(${idx}, this.value)">${modelHtml}</select></td>
+      <td><input type="number" min="0" step="0.0625" value="${b.width}"  oninput="state.drawerBoxes[${idx}].width=numOrBlank(this.value);" placeholder="in"></td>
+      <td><input type="number" min="0" step="0.0625" value="${b.depth}"  oninput="state.drawerBoxes[${idx}].depth=numOrBlank(this.value);" placeholder="in"></td>
+      <td><input type="number" min="0" step="0.0625" value="${b.height}" oninput="state.drawerBoxes[${idx}].height=numOrBlank(this.value);" placeholder="in"></td>
+      <td><input type="number" min="0" step="1" value="${b.qty}" oninput="state.drawerBoxes[${idx}].qty=numOrZero(this.value); render();"></td>
+      <td class="num"><input type="number" min="0" step="0.01" value="${(b.unitPrice||0).toFixed(2)}" oninput="state.drawerBoxes[${idx}].unitPrice=numOrZero(this.value); render();" style="text-align:right;"></td>
+      <td class="num">${money(lineTotal)}</td>
+      <td class="no-print"><button class="danger small" onclick="removeBox('${b.id}')">✕</button></td>
+    `;
+    tbody.appendChild(tr);
+  });
+}
+function pickBoxModel(idx, key) {
+  state.drawerBoxes[idx].modelKey = key;
+  const base = DRAWER_BOX_CATALOG[key];
+  state.drawerBoxes[idx].unitPrice = base ? base.price : 0;
+  render();
+}
+
+/* =========================================================================
+   CALCULATIONS / FLAGS
+   ========================================================================= */
+function classifyFlag(deltaPct) {
+  const w = Number(state.budget.wigglePct) || 0;
+  if (deltaPct > w) return "red";
+  if (deltaPct < -w && state.budget.showDrops) return "blue";
+  if (deltaPct < -w) return "green"; // drops hidden — treat as OK
+  return "green";
+}
+
+function materialsSubtotal() {
+  return state.materials.reduce((s, m) => {
+    const mat = resolveMaterial(m.materialKey);
+    if (!mat) return s;
+    return s + mat.price * (Number(m.qty)||0);
+  }, 0);
+}
+function hardwareSubtotal() {
+  return state.hardware.reduce((s, h) => s + (Number(h.qty)||0) * (Number(h.unitPrice)||0), 0);
+}
+function doorsSubtotal() {
+  return state.doors.reduce((s, d) => s + (Number(d.qty)||0) * (Number(d.unitPrice)||0), 0);
+}
+function boxesSubtotal() {
+  return state.drawerBoxes.reduce((s, b) => s + (Number(b.qty)||0) * (Number(b.unitPrice)||0), 0);
+}
+
+function updateSummary() {
+  const mat    = materialsSubtotal();
+  const hw     = hardwareSubtotal();
+  const doors  = doorsSubtotal();
+  const boxes  = boxesSubtotal();
+  const decore = doors + boxes;
+  const labor  = Number(state.budget.labor) || 0;
+  const cont   = (mat + hw + decore + labor) * ((Number(state.budget.contingencyPct)||0) / 100);
+  const grand  = mat + hw + decore + labor + cont;
+  const target = Number(state.budget.target) || 0;
+  const tol = (Number(state.budget.projectTolerancePct)||0) / 100;
+
+  document.getElementById("matTotal").textContent = money(mat);
+  document.getElementById("hwTotal").textContent  = money(hw);
+  const decoreEl = document.getElementById("decoreTotal");
+  if (decoreEl) decoreEl.textContent = money(decore);
+  document.getElementById("grandTotal").textContent = money(grand);
+
+  const pill = document.getElementById("statusPill");
+  let status, cls;
+  if (target <= 0) { status = "SET A TARGET"; cls = "blue"; }
+  else if (grand > target * (1 + tol)) { status = "OVER BUDGET"; cls = "red"; }
+  else if (grand < target * (1 - tol)) { status = "UNDER BUDGET"; cls = "blue"; }
+  else { status = "WITHIN BUDGET"; cls = "green"; }
+  pill.className = "status-pill " + cls;
+  pill.textContent = status + (target > 0 ? ` · ${money(grand - target, true)} vs target` : "");
+
+  // biggest movers
+  const movers = state.materials
+    .map(m => {
+      const mat = resolveMaterial(m.materialKey);
+      if (!mat || !m.quotedPrice) return null;
+      const d = ((mat.price - m.quotedPrice) / m.quotedPrice) * 100;
+      return { name: m.materialKey.split("::")[1], delta: d, dollars: (mat.price - m.quotedPrice) * (Number(m.qty)||0) };
+    })
+    .filter(Boolean)
+    .sort((a,b) => Math.abs(b.delta) - Math.abs(a.delta))
+    .slice(0, 3);
+  const moversEl = document.getElementById("movers");
+  if (movers.length === 0) {
+    moversEl.innerHTML = `<div class="m-row"><span style="opacity:0.6;">— none yet —</span></div>`;
+  } else {
+    moversEl.innerHTML = movers.map(m => {
+      const cls = m.delta >= 0 ? "up" : "down";
+      const sign = m.delta >= 0 ? "+" : "";
+      return `<div class="m-row"><span>${truncate(m.name, 26)}</span><span class="delta ${cls}">${sign}${m.delta.toFixed(1)}% · ${money(m.dollars, true)}</span></div>`;
+    }).join("");
+  }
+}
+
+/* =========================================================================
+   TOP-LEVEL RENDER / BINDING
+   ========================================================================= */
+function render() {
+  renderDoors();
+  renderBoxes();
+  renderMaterials();
+  renderHardware();
+  renderPackets();
+  updateSummary();
+}
+
+/* Bind declarative data-state inputs to the state object. */
+function bindStateInputs() {
+  document.querySelectorAll("[data-state]").forEach(el => {
+    const path = el.dataset.state.split(".");
+    // initialize value from state
+    const cur = getPath(state, path);
+    if (el.type === "checkbox") el.checked = !!cur;
+    else if (el.type === "radio") el.checked = (el.value === cur);
+    else if (cur !== undefined && cur !== null) el.value = cur;
+
+    const handler = () => {
+      let v;
+      if (el.type === "checkbox") v = el.checked;
+      else if (el.type === "radio") { if (!el.checked) return; v = el.value; }
+      else if (el.type === "number" || el.type === "range") v = numOrZero(el.value);
+      else v = el.value;
+      setPath(state, path, v);
+      if (el.id === "wiggleSlider") document.getElementById("wiggleLabel").textContent = v + "%";
+      if (el.id === "tolSlider")    document.getElementById("tolLabel").textContent    = v + "%";
+      if (path[0] === "dims")       renderComponents();
+      render();
+    };
+    el.addEventListener("input", handler);
+    el.addEventListener("change", handler);
+  });
+}
+function getPath(o, p) { return p.reduce((a,k)=>a?.[k], o); }
+function setPath(o, p, v) {
+  for (let i=0; i<p.length-1; i++) { o = o[p[i]] ||= {}; }
+  o[p[p.length-1]] = v;
+}
+
+/* =========================================================================
+   APPLIANCE PACKET UPLOAD  (Supabase Storage)
+   ========================================================================= */
+const STORAGE_BUCKET = 'appliance-packets';
+
+function handlePacketDragOver(e) {
+  e.preventDefault();
+  document.getElementById('uploadZone').classList.add('drag-over');
+}
+function handlePacketDragLeave(e) {
+  document.getElementById('uploadZone').classList.remove('drag-over');
+}
+function handlePacketDrop(e) {
+  e.preventDefault();
+  document.getElementById('uploadZone').classList.remove('drag-over');
+  uploadPacketFiles(Array.from(e.dataTransfer.files).filter(f => f.type === 'application/pdf'));
+}
+function handlePacketFileChange(e) {
+  uploadPacketFiles(Array.from(e.target.files));
+  e.target.value = '';
+}
+
+async function uploadPacketFiles(files) {
+  if (!files.length) return;
+  const db = window.SaundersDB;
+  if (!db) {
+    flashToast('Supabase not connected — packets saved locally only');
+    files.forEach(f => addPacketLocal(f.name, null));
+    return;
+  }
+  const prog = document.getElementById('uploadProgress');
+  const bar  = document.getElementById('uploadProgressBar');
+  prog.classList.add('active');
+
+  for (let i = 0; i < files.length; i++) {
+    const file = files[i];
+    bar.style.width = Math.round(((i) / files.length) * 90) + '%';
+    const project = (state.basics.name || 'unknown').replace(/\s+/g, '-').toLowerCase();
+    const ts      = Date.now();
+    const path    = `${project}/${ts}-${file.name}`;
+    const { data, error } = await db.storage
+      .from(STORAGE_BUCKET)
+      .upload(path, file, { contentType: 'application/pdf', upsert: false });
+    if (error) {
+      console.error('[Upload]', error.message);
+      flashToast(`Upload failed: ${file.name} — ${error.message}`);
+      continue;
+    }
+    const { data: urlData } = db.storage.from(STORAGE_BUCKET).getPublicUrl(path);
+    addPacketLocal(file.name, urlData?.publicUrl || null);
+    bar.style.width = Math.round(((i + 1) / files.length) * 100) + '%';
+  }
+  setTimeout(() => { prog.classList.remove('active'); bar.style.width = '0%'; }, 600);
+  flashToast(`${files.length} packet${files.length > 1 ? 's' : ''} uploaded`);
+}
+
+function addPacketLocal(name, url) {
+  state.appliancePackets.push({ name, url, uploadedAt: new Date().toISOString() });
+  renderPackets();
+}
+
+function renderPackets() {
+  const list = document.getElementById('packetList');
+  if (!list) return;
+  list.innerHTML = '';
+  if (!state.appliancePackets.length) return;
+  state.appliancePackets.forEach((p, i) => {
+    const item = document.createElement('div');
+    item.className = 'packet-item';
+    const date = new Date(p.uploadedAt).toLocaleDateString('en-US', { month:'short', day:'numeric', year:'numeric' });
+    item.innerHTML = `
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#C9A44C" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+      ${p.url ? `<a href="${p.url}" target="_blank" rel="noopener">${escape(p.name)}</a>` : `<span style="flex:1;">${escape(p.name)}</span>`}
+      <span class="pk-date">${date}</span>
+      <button class="pk-del" onclick="removePacket(${i})" aria-label="Remove ${escape(p.name)}">✕</button>
+    `;
+    list.appendChild(item);
+  });
+}
+function removePacket(i) {
+  state.appliancePackets.splice(i, 1);
+  renderPackets();
+}
+
+/* =========================================================================
+   SAVE TO DATABASE  (Supabase Table: intake_submissions)
+   ========================================================================= */
+async function saveToDatabase() {
+  const statusEl = document.getElementById('dbStatus');
+  const db = window.SaundersDB;
+  if (!db) {
+    statusEl.textContent = '⚠ Supabase not connected. Use Export JSON instead.';
+    return;
+  }
+  statusEl.textContent = 'Saving…';
+  const record = {
+    client_name:          state.basics.name    || null,
+    client_email:         state.basics.email   || null,
+    project_type:         state.basics.projectType || null,
+    target_date:          state.basics.targetDate  || null,
+    state_json:           state,
+    appliance_packet_urls: state.appliancePackets.map(p => p.url).filter(Boolean)
+  };
+  const { data, error } = await db
+    .from('intake_submissions')
+    .insert([record])
+    .select('id')
+    .single();
+  if (error) {
+    console.error('[DB save]', error);
+    statusEl.textContent = `⚠ Save failed: ${error.message}`;
+    return;
+  }
+  statusEl.textContent = `✓ Saved — record ID: ${data.id}`;
+  flashToast('Saved to Saunders DB');
+}
+
+/* =========================================================================
+   ACTIONS
+   ========================================================================= */
+async function refreshPrices() {
+  // Pull latest prices (today = local catalog; future = API).
+  await fetchLivePrices();
+  render();
+  flashToast("Market prices refreshed");
+}
+function exportJSON() {
+  const blob = new Blob([JSON.stringify(state, null, 2)], { type: "application/json" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  const stamp = new Date().toISOString().slice(0,10);
+  const nm = (state.basics.name || "project").replace(/\s+/g,"_");
+  a.href = url; a.download = `saunders_${nm}_${stamp}.json`;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+function importJSON(ev) {
+  const f = ev.target.files[0]; if (!f) return;
+  const rdr = new FileReader();
+  rdr.onload = () => {
+    try {
+      const data = JSON.parse(rdr.result);
+      Object.assign(state, data);
+      bindStateInputs();
+      renderComponents();
+      renderPackets();
+      render();
+      flashToast("Imported");
+    } catch (e) { alert("Invalid JSON: " + e.message); }
+  };
+  rdr.readAsText(f);
+  ev.target.value = "";
+}
+function resetAll() {
+  if (!confirm("Clear all project data?")) return;
+  state.basics  = { name:"", email:"", phone:"", address:"", projectType:"Kitchen cabinetry",
+                    targetDate:"", narrative:"", siteNotes:"" };
+  state.dims    = { unit: "in" };
+  state.components = [];
+  state.doors      = [];
+  state.drawerBoxes = [];
+  state.materials  = [];
+  state.hardware   = [];
+  state.decoreSpec = {
+    panelDetail: "Standard", insideEdge: "Standard",
+    outsideFaceEdge: "Standard", outsideBackEdge: "Square Back Edge",
+    borePattern: "None", borePosition: "None",
+    dfGrain: "Standard", shipping: "Our Truck", shipDate: "", notes: ""
+  };
+  state.appliancePackets = [];
+  state.budget  = { target: 50000, labor: 0, contingencyPct: 5, wigglePct: 5, projectTolerancePct: 8, showDrops: true };
+  bindStateInputs();
+  renderComponents();
+  render();
+}
+
+/* =========================================================================
+   UTILS
+   ========================================================================= */
+function money(n, signed=false) {
+  const v = Number(n) || 0;
+  const s = v.toLocaleString("en-US", { style:"currency", currency:"USD", maximumFractionDigits: v % 1 === 0 ? 0 : 2 });
+  if (signed && v > 0) return "+" + s;
+  return s;
+}
+function numOrZero(v) { const n = parseFloat(v); return isNaN(n) ? 0 : n; }
+function numOrBlank(v) { if (v === "" || v == null) return ""; const n = parseFloat(v); return isNaN(n) ? "" : n; }
+function escape(s) { return String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])); }
+function truncate(s, n) { return s && s.length > n ? s.slice(0, n-1) + "…" : s; }
+function flashToast(msg) {
+  const t = document.createElement("div");
+  t.textContent = msg;
+  t.style.cssText = "position:fixed;top:24px;right:24px;background:var(--black);color:var(--gold);padding:12px 20px;border:1px solid var(--gold);letter-spacing:0.12em;text-transform:uppercase;font-size:12px;z-index:50;box-shadow:var(--shadow);";
+  document.body.appendChild(t);
+  setTimeout(() => t.remove(), 1800);
+}
+
+/* =========================================================================
+   INIT
+   ========================================================================= */
+bindStateInputs();
+// Seed components — each represents a distinct piece or cabinet run in the project.
+// The client fills in actual dimensions; these are just labels to start.
+addComponent({ label: "Island" });
+addComponent({ label: "Lower Cabinets" });
+addComponent({ label: "Upper Cabinets" });
+addDoor();
+addBox();
+addMaterial();
+addHardware({ category: "Drawer glides (Salice)" });
+render();
+</script>
+
+</body>
+</html>

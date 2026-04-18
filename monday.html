@@ -1,0 +1,1438 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Saunders Wood Works — Monday.com Boards</title>
+<link rel="preconnect" href="https://use.typekit.net" crossorigin/>
+<link rel="stylesheet" href="https://use.typekit.net/syk8hlp.css"/>
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+tailwind.config = {
+  darkMode: 'class',
+  theme: {
+    extend: {
+      colors: {
+        gold:    { DEFAULT: '#C9A44C', light: '#e0bc70', muted: '#a07c30' },
+        forest:  { DEFAULT: '#2e3a2f', mid: '#3d5040' },
+        onyx:    '#0a0a08',
+        board:   { bg: '#f0ece4', 'bg-dark': '#111310' },
+        sidebar: { bg: '#151a14', 'bg-dark': '#0a0c09' },
+      },
+      fontFamily: {
+        body:    ['degular', 'degular-text', 'system-ui', 'sans-serif'],
+        display: ['minerva-modern', 'Minerva', 'Georgia', 'serif'],
+      },
+      fontSize: {
+        '2xs': ['11px', { lineHeight: '15px' }],
+        'xs':  ['12px', { lineHeight: '16px' }],
+        'sm':  ['14px', { lineHeight: '20px' }],
+        'base':['16px', { lineHeight: '24px' }],
+      },
+      boxShadow: {
+        card:     '0 1px 4px rgba(0,0,0,0.07), 0 1px 2px rgba(0,0,0,0.04)',
+        'card-md':'0 6px 20px rgba(0,0,0,0.09), 0 2px 6px rgba(0,0,0,0.05)',
+        kpi:      '0 2px 12px rgba(0,0,0,0.07), 0 1px 4px rgba(0,0,0,0.04)',
+        sidebar:  'inset -1px 0 0 rgba(201,164,76,0.1)',
+      },
+      spacing: {
+        '18': '4.5rem',
+      },
+    }
+  }
+}
+</script>
+<style>
+/* ── Minimal custom CSS — only what Tailwind can't do ─────────────────── */
+*, *::before, *::after { box-sizing: border-box; }
+html { scroll-behavior: smooth; -webkit-font-smoothing: antialiased; }
+body { font-family: degular, 'degular-text', system-ui, sans-serif; font-size: 15px; }
+
+/* Board shell layout */
+.board-shell { display: flex; min-height: 100vh; padding-top: 60px; }
+.board-sidebar {
+  width: 288px; flex-shrink: 0;
+  background: linear-gradient(180deg, #161b15 0%, #111510 100%);
+  display: flex; flex-direction: column;
+  position: fixed; top: 60px; bottom: 0; left: 0; z-index: 40;
+  overflow-y: auto;
+  border-right: 1px solid rgba(201,164,76,0.1);
+}
+.board-main { flex: 1; margin-left: 288px; }
+.dark .board-sidebar { background: linear-gradient(180deg, #0c0f0b 0%, #080b07 100%); }
+
+/* Subtle grid pattern on board background */
+body { background-image: url("data:image/svg+xml,%3Csvg width='32' height='32' viewBox='0 0 32 32' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 0h32v1H0zM0 0v32h1V0z' fill='%23000' fill-opacity='.025'/%3E%3C/svg%3E"); }
+
+/* Boards are hidden by default; JS adds .active */
+.board-content { display: none; flex-direction: column; flex: 1; }
+.board-content.active { display: flex; }
+
+/* Board toolbar sticky */
+.board-toolbar { position: sticky; top: 60px; z-index: 30; }
+
+/* Health bar */
+.health-track { flex: 1; height: 6px; background: rgba(0,0,0,0.08); border-radius: 99px; overflow: hidden; min-width: 60px; }
+.dark .health-track { background: rgba(255,255,255,0.1); }
+.health-fill  { height: 100%; border-radius: 99px; transition: width .6s cubic-bezier(.4,0,.2,1); }
+
+/* Scrollbar */
+.board-sidebar::-webkit-scrollbar { width: 4px; }
+.board-sidebar::-webkit-scrollbar-thumb { background: rgba(201,164,76,0.25); border-radius: 2px; }
+.board-table-wrap::-webkit-scrollbar { height: 4px; }
+.board-table-wrap::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.12); border-radius: 2px; }
+
+/* Sim pulse */
+@keyframes sim-pulse { 0%,100%{opacity:1} 50%{opacity:.35} }
+.sim-dot { animation: sim-pulse 2.2s ease-in-out infinite; }
+
+/* Approval item collapse */
+.approval-item { transition: opacity .3s; }
+.approval-item.dismissed { opacity: .35; pointer-events: none; }
+
+/* CRM row filter */
+.crm-row.hidden { display: none !important; }
+
+/* View tab active */
+.view-tab.active { background: rgba(201,164,76,0.13); color: #C9A44C; border-radius: 6px; }
+
+/* Custom checkbox */
+input[type="checkbox"] { accent-color: #C9A44C; cursor: pointer; width: 15px; height: 15px; }
+
+/* Sticky table header below h-16 toolbar + cred banner */
+.board-table thead th { position: sticky; top: 128px; z-index: 5; }
+
+/* Nav item active left border */
+.board-nav-item { border-left: 3px solid transparent; transition: background .15s, border-color .15s; }
+.board-nav-item.active { border-right: 3px solid #C9A44C !important; background: rgba(201,164,76,0.1) !important; }
+.board-nav-item.active span.flex-1 { color: #fff !important; }
+
+/* Setup panel section divider style */
+.setup-section-head { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; }
+.setup-section-head::after { content:''; flex:1; height:1px; background: rgba(0,0,0,0.08); }
+.dark .setup-section-head::after { background: rgba(255,255,255,0.07); }
+
+/* Table row striping - subtle */
+.board-table tbody tr:nth-child(even) { background: rgba(0,0,0,0.012); }
+.dark .board-table tbody tr:nth-child(even) { background: rgba(255,255,255,0.012); }
+
+/* Kanban column card drop area on empty */
+.kanban-empty { border: 2px dashed rgba(0,0,0,0.1); border-radius: 12px; padding: 32px 16px; text-align: center; color: rgba(0,0,0,0.28); font-size: 13px; line-height: 1.6; }
+.dark .kanban-empty { border-color: rgba(255,255,255,0.08); color: rgba(255,255,255,0.25); }
+
+@media (max-width: 900px) {
+  .board-sidebar { width: 228px; }
+  .board-main    { margin-left: 228px; }
+}
+@media (max-width: 640px) {
+  .board-sidebar { display: none; }
+  .board-main    { margin-left: 0; }
+}
+</style>
+</head>
+<body class="bg-board-bg dark:bg-board-bg-dark text-stone-800 dark:text-stone-100 antialiased">
+
+<!-- Shared header -->
+<div id="site-header-root"></div>
+<script src="./shared-header.js"></script>
+
+<!-- Bridge data-theme → Tailwind dark class -->
+<script>
+(function() {
+  const sync = () => {
+    const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+    document.documentElement.classList.toggle('dark', isDark);
+  };
+  sync();
+  window.addEventListener('saundersThemeChange', e => {
+    document.documentElement.classList.toggle('dark', e.detail === 'dark');
+  });
+})();
+</script>
+
+<!-- ══════════════════════════════════════════════════════════════════════ -->
+<!--  Board Shell                                                          -->
+<!-- ══════════════════════════════════════════════════════════════════════ -->
+<div class="board-shell">
+
+  <!-- ── Sidebar ──────────────────────────────────────────────────────── -->
+  <aside class="board-sidebar">
+
+    <!-- Workspace header -->
+    <div class="px-4 py-4 border-b border-white/5">
+      <div class="text-[13px] font-bold tracking-[.14em] uppercase text-gold mb-0.5">Saunders Wood Works</div>
+      <div class="text-[15px] text-white/30">Monday Pro · Phase 1 Build</div>
+    </div>
+
+    <!-- Board nav -->
+    <div class="pt-3">
+      <div class="px-4 pb-2 pt-1 text-[11px] font-bold tracking-[.16em] uppercase text-white/30">Boards</div>
+
+      <button class="board-nav-item active group w-full flex items-center gap-3 px-4 py-2.5 text-left border-r-[3px] border-transparent transition-all duration-150 hover:bg-white/[.05]"
+              data-board="command" onclick="switchBoard('command')">
+        <span class="w-2.5 h-2.5 rounded-full bg-gold flex-shrink-0"></span>
+        <span class="flex-1 text-[15px] font-medium text-white/70 group-[.active]:text-white">CEO Command Center</span>
+      </button>
+
+      <button class="board-nav-item group w-full flex items-center gap-3 px-4 py-2.5 text-left border-r-[3px] border-transparent transition-all duration-150 hover:bg-white/[.05]"
+              data-board="projects" onclick="switchBoard('projects')">
+        <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 flex-shrink-0"></span>
+        <span class="flex-1 text-[15px] font-medium text-white/70 group-[.active]:text-white">Projects</span>
+        <span class="text-[13px] font-bold bg-white/[.07] text-white/40 px-2 py-0.5 rounded-full group-[.active]:bg-gold/20 group-[.active]:text-gold">5</span>
+      </button>
+
+      <button class="board-nav-item group w-full flex items-center gap-3 px-4 py-2.5 text-left border-r-[3px] border-transparent transition-all duration-150 hover:bg-white/[.05]"
+              data-board="crm" onclick="switchBoard('crm')">
+        <span class="w-2.5 h-2.5 rounded-full bg-forest-mid flex-shrink-0"></span>
+        <span class="flex-1 text-[15px] font-medium text-white/70 group-[.active]:text-white">Customer CRM</span>
+        <span class="text-[13px] font-bold bg-white/[.07] text-white/40 px-2 py-0.5 rounded-full group-[.active]:bg-gold/20 group-[.active]:text-gold">12</span>
+      </button>
+
+      <button class="board-nav-item group w-full flex items-center gap-3 px-4 py-2.5 text-left border-r-[3px] border-transparent transition-all duration-150 hover:bg-white/[.05]"
+              data-board="leads" onclick="switchBoard('leads')">
+        <span class="w-2.5 h-2.5 rounded-full bg-gold flex-shrink-0"></span>
+        <span class="flex-1 text-[15px] font-medium text-white/70 group-[.active]:text-white">Leads &amp; Intake</span>
+        <span class="text-[13px] font-bold bg-white/[.07] text-white/40 px-2 py-0.5 rounded-full group-[.active]:bg-gold/20 group-[.active]:text-gold">4</span>
+      </button>
+    </div>
+
+    <!-- Automations section (disabled) -->
+    <div class="pt-4">
+      <div class="px-4 pb-2 pt-1 text-[11px] font-bold tracking-[.16em] uppercase text-white/30">Automations</div>
+      <div class="flex items-center gap-3 px-4 py-2.5 opacity-40 select-none">
+        <span class="w-2.5 h-2.5 rounded-full bg-orange-400 flex-shrink-0"></span>
+        <span class="text-[15px] text-white/60">n8n Workflows</span>
+        <span class="ml-auto text-[15px] border border-white/15 text-white/30 px-1.5 py-0.5 rounded">Soon</span>
+      </div>
+      <div class="flex items-center gap-3 px-4 py-2.5 opacity-40 select-none">
+        <span class="w-2.5 h-2.5 rounded-full bg-rose-400 flex-shrink-0"></span>
+        <span class="text-[15px] text-white/60">Email Drafts</span>
+        <span class="ml-auto text-[15px] border border-white/15 text-white/30 px-1.5 py-0.5 rounded">Soon</span>
+      </div>
+    </div>
+
+    <!-- Build progress (pushes to bottom) -->
+    <div class="mt-auto border-t border-white/[.06] px-4 py-4">
+      <div class="flex items-center justify-between mb-2">
+        <span class="text-[11px] font-bold tracking-[.13em] uppercase text-white/30">Build Progress</span>
+        <span id="progress-text" class="text-[13px] text-white/55">0 / 39 tasks</span>
+      </div>
+      <div class="h-1.5 bg-white/[.08] rounded-full overflow-hidden mb-4">
+        <div id="progress-fill" class="h-full bg-gradient-to-r from-gold to-gold-light rounded-full transition-all duration-500" style="width:0%"></div>
+      </div>
+
+      <div class="text-[11px] font-bold tracking-[.1em] uppercase text-white/35 mb-2">Pre-kickoff</div>
+      <label class="sidebar-task flex items-start gap-2 py-1" data-task>
+        <input type="checkbox" id="t1" class="mt-0.5 flex-shrink-0" onchange="updateProgress()"/>
+        <span class="text-[14px] text-white/60 leading-snug">Matt confirms Monday account</span>
+      </label>
+      <label class="sidebar-task flex items-start gap-2 py-1" data-task>
+        <input type="checkbox" id="t2" class="mt-0.5 flex-shrink-0" onchange="updateProgress()"/>
+        <span class="text-[14px] text-white/60 leading-snug">QB credentials shared</span>
+      </label>
+      <label class="sidebar-task flex items-start gap-2 py-1" data-task>
+        <input type="checkbox" id="t3" class="mt-0.5 flex-shrink-0" onchange="updateProgress()"/>
+        <span class="text-[14px] text-white/60 leading-snug">Gmail OAuth approved</span>
+      </label>
+      <label class="sidebar-task flex items-start gap-2 py-1" data-task>
+        <input type="checkbox" id="t4" class="mt-0.5 flex-shrink-0" onchange="updateProgress()"/>
+        <span class="text-[14px] text-white/60 leading-snug">Otter.ai account created</span>
+      </label>
+
+      <div class="text-[11px] font-bold tracking-[.1em] uppercase text-white/35 mt-3 mb-2">Discovery (D1–4)</div>
+      <label class="sidebar-task flex items-start gap-2 py-1" data-task>
+        <input type="checkbox" id="t5" class="mt-0.5 flex-shrink-0" onchange="updateProgress()"/>
+        <span class="text-[14px] text-white/60 leading-snug">Kickoff workshop complete</span>
+      </label>
+      <label class="sidebar-task flex items-start gap-2 py-1" data-task>
+        <input type="checkbox" id="t6" class="mt-0.5 flex-shrink-0" onchange="updateProgress()"/>
+        <span class="text-[14px] text-white/60 leading-snug">Process map signed off</span>
+      </label>
+      <label class="sidebar-task flex items-start gap-2 py-1" data-task>
+        <input type="checkbox" id="t7" class="mt-0.5 flex-shrink-0" onchange="updateProgress()"/>
+        <span class="text-[14px] text-white/60 leading-snug">Scope frozen</span>
+      </label>
+
+      <div class="text-[11px] font-bold tracking-[.1em] uppercase text-white/35 mt-3 mb-2">Build (D7–11)</div>
+      <label class="sidebar-task flex items-start gap-2 py-1" data-task>
+        <input type="checkbox" id="t8" class="mt-0.5 flex-shrink-0" onchange="updateProgress()"/>
+        <span class="text-[14px] text-white/60 leading-snug">4 boards configured</span>
+      </label>
+      <label class="sidebar-task flex items-start gap-2 py-1" data-task>
+        <input type="checkbox" id="t9" class="mt-0.5 flex-shrink-0" onchange="updateProgress()"/>
+        <span class="text-[14px] text-white/60 leading-snug">n8n deployed on Railway</span>
+      </label>
+      <label class="sidebar-task flex items-start gap-2 py-1" data-task>
+        <input type="checkbox" id="t10" class="mt-0.5 flex-shrink-0" onchange="updateProgress()"/>
+        <span class="text-[14px] text-white/60 leading-snug">Email draft workflow live</span>
+      </label>
+      <label class="sidebar-task flex items-start gap-2 py-1" data-task>
+        <input type="checkbox" id="t11" class="mt-0.5 flex-shrink-0" onchange="updateProgress()"/>
+        <span class="text-[14px] text-white/60 leading-snug">QB milestone hooks tested</span>
+      </label>
+      <label class="sidebar-task flex items-start gap-2 py-1" data-task>
+        <input type="checkbox" id="t12" class="mt-0.5 flex-shrink-0" onchange="updateProgress()"/>
+        <span class="text-[14px] text-white/60 leading-snug">Health score formula live</span>
+      </label>
+
+      <div class="text-[11px] font-bold tracking-[.1em] uppercase text-white/35 mt-3 mb-2">Launch (D14–20)</div>
+      <label class="sidebar-task flex items-start gap-2 py-1" data-task>
+        <input type="checkbox" id="t13" class="mt-0.5 flex-shrink-0" onchange="updateProgress()"/>
+        <span class="text-[14px] text-white/60 leading-snug">Loom library recorded</span>
+      </label>
+      <label class="sidebar-task flex items-start gap-2 py-1" data-task>
+        <input type="checkbox" id="t14" class="mt-0.5 flex-shrink-0" onchange="updateProgress()"/>
+        <span class="text-[14px] text-white/60 leading-snug">Matt + team trained</span>
+      </label>
+      <label class="sidebar-task flex items-start gap-2 py-1" data-task>
+        <input type="checkbox" id="t15" class="mt-0.5 flex-shrink-0" onchange="updateProgress()"/>
+        <span class="text-[14px] text-white/60 leading-snug">Go-live complete</span>
+      </label>
+    </div>
+  </aside>
+
+  <!-- ── Main Content ──────────────────────────────────────────────────── -->
+  <main class="board-main flex flex-col min-h-[calc(100vh-60px)]">
+
+<!-- ════════════════════════════════════════════════════════════════════════
+     BOARD 1 — CEO COMMAND CENTER
+════════════════════════════════════════════════════════════════════════ -->
+<div class="board-content active" id="board-command">
+
+  <!-- Toolbar -->
+  <div class="board-toolbar bg-white/90 dark:bg-[#181c17]/90 backdrop-blur-sm border-b border-stone-200 dark:border-white/[.06] px-6 h-16 flex items-center justify-between gap-4">
+    <div class="flex items-center gap-3">
+      <h1 class="text-base font-bold text-stone-900 dark:text-white">CEO Command Center</h1>
+      <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-gold/10 border border-gold/20 text-xs font-bold tracking-wide uppercase text-gold">
+        <span class="w-1.5 h-1.5 rounded-full bg-gold sim-dot"></span>Simulation
+      </span>
+    </div>
+    <div class="flex items-center gap-2">
+      <button class="text-sm font-semibold px-3 py-1.5 rounded-lg border border-stone-200 dark:border-white/10 bg-white dark:bg-white/5 text-stone-600 dark:text-white/55 hover:border-gold hover:text-stone-800 dark:hover:text-white/80 transition-all" onclick="showToast('Filters configurable after Monday.com is connected.')">Filter</button>
+      <button class="text-sm font-semibold px-3 py-1.5 rounded-lg border border-stone-200 dark:border-white/10 bg-white dark:bg-white/5 text-stone-600 dark:text-white/55 hover:border-gold hover:text-stone-800 dark:hover:text-white/80 transition-all" onclick="showToast('4 automations pre-built and ready to activate — n8n deploys Day 9.')">
+        ⚡ Automations
+        <span class="ml-1 bg-emerald-100 dark:bg-emerald-500/20 text-emerald-700 dark:text-emerald-400 text-xs font-bold px-1.5 py-0.5 rounded">4 active</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Credential banner -->
+  <div class="flex flex-wrap items-center gap-2 px-6 py-2.5 bg-gold/5 border-b border-gold/15 text-xs text-stone-600 dark:text-stone-400">
+    <span class="font-bold text-sm text-gold/90">Needs:</span>
+    <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full border border-rose-300 dark:border-rose-500/40 bg-rose-50 dark:bg-rose-500/10 text-rose-600 dark:text-rose-400 font-semibold text-[15px]">Monday.com login</span>
+    <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full border border-rose-300 dark:border-rose-500/40 bg-rose-50 dark:bg-rose-500/10 text-rose-600 dark:text-rose-400 font-semibold text-[15px]">QuickBooks credentials</span>
+    <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full border border-emerald-300 dark:border-emerald-500/40 bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 font-semibold text-[15px]">✓ Supabase</span>
+    <span class="ml-auto text-[15px] text-stone-600 dark:text-stone-400">Matt's 15-min morning review</span>
+  </div>
+
+  <!-- KPI strip -->
+  <div class="grid grid-cols-4 gap-5 p-6 pb-5">
+    <div class="rounded-2xl bg-white dark:bg-white/[.04] shadow-kpi ring-1 ring-stone-200/80 dark:ring-white/[.06] p-6 relative overflow-hidden">
+      <div class="absolute top-0 left-0 right-0 h-1 bg-gold rounded-t-2xl"></div>
+      <div class="text-[13px] font-bold tracking-widest uppercase text-stone-600 dark:text-stone-400 mb-2">Active Revenue</div>
+      <div class="text-4xl font-black text-stone-900 dark:text-white leading-none mb-2">$847K</div>
+      <div class="text-[15px] font-semibold text-emerald-600 dark:text-emerald-400">↑ $62K from last month</div>
+    </div>
+    <div class="rounded-2xl bg-white dark:bg-white/[.04] shadow-kpi ring-1 ring-stone-200/80 dark:ring-white/[.06] p-6 relative overflow-hidden">
+      <div class="absolute top-0 left-0 right-0 h-1 bg-forest rounded-t-2xl"></div>
+      <div class="text-[13px] font-bold tracking-widest uppercase text-stone-600 dark:text-stone-400 mb-2">Revenue / Hour</div>
+      <div class="text-4xl font-black text-stone-900 dark:text-white leading-none mb-2">$118</div>
+      <div class="text-[15px] text-stone-600 dark:text-stone-400">Across 5 active projects</div>
+    </div>
+    <div class="rounded-2xl bg-white dark:bg-white/[.04] shadow-kpi ring-1 ring-stone-200/80 dark:ring-white/[.06] p-6 relative overflow-hidden">
+      <div class="absolute top-0 left-0 right-0 h-1 bg-rose-500 rounded-t-2xl"></div>
+      <div class="text-[13px] font-bold tracking-widest uppercase text-stone-600 dark:text-stone-400 mb-2">At Risk</div>
+      <div class="text-4xl font-black text-stone-900 dark:text-white leading-none mb-2">2</div>
+      <div class="text-[15px] font-semibold text-rose-500">↓ Collins &amp; Pemberton</div>
+    </div>
+    <div class="rounded-2xl bg-white dark:bg-white/[.04] shadow-kpi ring-1 ring-stone-200/80 dark:ring-white/[.06] p-6 relative overflow-hidden">
+      <div class="absolute top-0 left-0 right-0 h-1 bg-gold rounded-t-2xl"></div>
+      <div class="text-[13px] font-bold tracking-widest uppercase text-stone-600 dark:text-stone-400 mb-2">Pending Approvals</div>
+      <div class="text-4xl font-black text-stone-900 dark:text-white leading-none mb-2">3</div>
+      <div class="text-[15px] text-stone-600 dark:text-stone-400">Email drafts + invoice</div>
+    </div>
+  </div>
+
+  <!-- Dashboard grid -->
+  <div class="grid grid-cols-[1fr_360px] gap-4 px-5 pb-5 flex-1">
+
+    <!-- Left: health table -->
+    <div class="rounded-2xl bg-white dark:bg-white/[.03] ring-1 ring-stone-200 dark:ring-white/[.06] overflow-hidden shadow-card">
+      <div class="flex items-center justify-between px-5 py-3.5 border-b border-stone-100 dark:border-white/[.05]">
+        <span class="text-[13px] font-bold tracking-widest uppercase text-stone-600 dark:text-stone-400">Project Health — Live</span>
+        <button class="text-[15px] font-semibold text-gold hover:text-gold-light transition-colors" onclick="switchBoard('projects')">View all →</button>
+      </div>
+      <table class="w-full text-sm">
+        <thead>
+          <tr class="bg-stone-50/70 dark:bg-white/[.02]">
+            <th class="px-5 py-2.5 text-left text-[12px] font-bold tracking-wide uppercase text-stone-600 dark:text-stone-400">Project</th>
+            <th class="px-3 py-2.5 text-left text-[12px] font-bold tracking-widest uppercase text-stone-600 dark:text-stone-400">Status</th>
+            <th class="px-3 py-2.5 text-left text-[12px] font-bold tracking-widest uppercase text-stone-600 dark:text-stone-400">Phase</th>
+            <th class="px-3 py-2.5 text-left text-[12px] font-bold tracking-widest uppercase text-stone-600 dark:text-stone-400 w-36">Health</th>
+            <th class="px-3 py-2.5 text-left text-[12px] font-bold tracking-widest uppercase text-stone-600 dark:text-stone-400">Rev/Hr</th>
+            <th class="px-3 py-2.5 text-left text-[12px] font-bold tracking-widest uppercase text-stone-600 dark:text-stone-400">Owner</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-stone-100 dark:divide-white/[.04]">
+          <tr class="hover:bg-gold/[.03] transition-colors">
+            <td class="px-5 py-3 font-semibold text-stone-800 dark:text-stone-100 text-[15px]">Whitmore Kitchen</td>
+            <td class="px-3 py-3"><span class="inline-flex px-2.5 py-1 rounded-full text-xs font-bold uppercase tracking-wide bg-emerald-100 dark:bg-emerald-500/15 text-emerald-700 dark:text-emerald-400">On Track</span></td>
+            <td class="px-3 py-3 text-[14px] text-stone-600 dark:text-stone-400">Build</td>
+            <td class="px-3 py-3">
+              <div class="flex items-center gap-2">
+                <div class="health-track"><div class="health-fill" style="width:94%;background:#10b981"></div></div>
+                <span class="text-[14px] font-bold text-emerald-600 dark:text-emerald-400 w-6 text-right">94</span>
+              </div>
+            </td>
+            <td class="px-3 py-3 text-[15px] font-bold text-gold">$128</td>
+            <td class="px-3 py-3"><span class="inline-flex items-center justify-center w-7 h-7 rounded-full bg-forest text-white text-xs font-bold">JD</span></td>
+          </tr>
+          <tr class="hover:bg-gold/[.03] transition-colors">
+            <td class="px-5 py-3 font-semibold text-stone-800 dark:text-stone-100 text-[15px]">Harris Master Bath</td>
+            <td class="px-3 py-3"><span class="inline-flex px-2.5 py-1 rounded-full text-xs font-bold uppercase tracking-wide bg-emerald-100 dark:bg-emerald-500/15 text-emerald-700 dark:text-emerald-400">On Track</span></td>
+            <td class="px-3 py-3 text-[14px] text-stone-600 dark:text-stone-400">Design</td>
+            <td class="px-3 py-3">
+              <div class="flex items-center gap-2">
+                <div class="health-track"><div class="health-fill" style="width:88%;background:#10b981"></div></div>
+                <span class="text-[14px] font-bold text-emerald-600 dark:text-emerald-400 w-6 text-right">88</span>
+              </div>
+            </td>
+            <td class="px-3 py-3 text-[15px] font-bold text-gold">$106</td>
+            <td class="px-3 py-3"><span class="inline-flex items-center justify-center w-7 h-7 rounded-full bg-forest-mid text-white text-xs font-bold">MR</span></td>
+          </tr>
+          <tr class="hover:bg-gold/[.03] transition-colors">
+            <td class="px-5 py-3 font-semibold text-stone-800 dark:text-stone-100 text-[15px]">Pemberton Pantry</td>
+            <td class="px-3 py-3"><span class="inline-flex px-2.5 py-1 rounded-full text-xs font-bold uppercase tracking-wide bg-amber-100 dark:bg-amber-500/15 text-amber-700 dark:text-amber-400">Watch</span></td>
+            <td class="px-3 py-3 text-[14px] text-stone-600 dark:text-stone-400">Install</td>
+            <td class="px-3 py-3">
+              <div class="flex items-center gap-2">
+                <div class="health-track"><div class="health-fill" style="width:71%;background:#f59e0b"></div></div>
+                <span class="text-[14px] font-bold text-amber-600 dark:text-amber-400 w-6 text-right">71</span>
+              </div>
+            </td>
+            <td class="px-3 py-3 text-[15px] font-bold text-stone-600 dark:text-stone-400">$79</td>
+            <td class="px-3 py-3"><span class="inline-flex items-center justify-center w-7 h-7 rounded-full bg-stone-400 text-white text-xs font-bold">KL</span></td>
+          </tr>
+          <tr class="hover:bg-gold/[.03] transition-colors">
+            <td class="px-5 py-3 font-semibold text-stone-800 dark:text-stone-100 text-[15px]">Collins Library</td>
+            <td class="px-3 py-3"><span class="inline-flex px-2.5 py-1 rounded-full text-xs font-bold uppercase tracking-wide bg-rose-100 dark:bg-rose-500/15 text-rose-700 dark:text-rose-400">At Risk</span></td>
+            <td class="px-3 py-3 text-[14px] text-stone-600 dark:text-stone-400">Build</td>
+            <td class="px-3 py-3">
+              <div class="flex items-center gap-2">
+                <div class="health-track"><div class="health-fill" style="width:54%;background:#ef4444"></div></div>
+                <span class="text-[14px] font-bold text-rose-500 w-6 text-right">54</span>
+              </div>
+            </td>
+            <td class="px-3 py-3 text-[15px] font-bold text-rose-500">$53</td>
+            <td class="px-3 py-3"><span class="inline-flex items-center justify-center w-7 h-7 rounded-full bg-forest text-white text-xs font-bold">JD</span></td>
+          </tr>
+          <tr class="hover:bg-gold/[.03] transition-colors">
+            <td class="px-5 py-3 font-semibold text-stone-800 dark:text-stone-100 text-[15px]">Johnson Dining Room</td>
+            <td class="px-3 py-3"><span class="inline-flex px-2.5 py-1 rounded-full text-xs font-bold uppercase tracking-wide bg-forest/10 dark:bg-forest/30 text-forest dark:text-stone-300">In Design</span></td>
+            <td class="px-3 py-3 text-[14px] text-stone-600 dark:text-stone-400">Design</td>
+            <td class="px-3 py-3">
+              <div class="flex items-center gap-2">
+                <div class="health-track"><div class="health-fill" style="width:82%;background:#C9A44C"></div></div>
+                <span class="text-[14px] font-bold text-gold w-6 text-right">82</span>
+              </div>
+            </td>
+            <td class="px-3 py-3 text-[15px] font-bold text-gold">$94</td>
+            <td class="px-3 py-3"><span class="inline-flex items-center justify-center w-7 h-7 rounded-full bg-forest text-white text-xs font-bold">SR</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Right column -->
+    <div class="flex flex-col gap-4">
+
+      <!-- AI Draft approvals -->
+      <div class="rounded-2xl bg-white dark:bg-white/[.03] ring-1 ring-stone-200 dark:ring-white/[.06] overflow-hidden shadow-card">
+        <div class="flex items-center justify-between px-4 py-3 border-b border-stone-100 dark:border-white/[.05]">
+          <span class="text-[13px] font-bold tracking-widest uppercase text-stone-600 dark:text-stone-400">AI Draft Approvals</span>
+          <span class="text-[13px] font-bold text-gold bg-gold/10 px-2 py-0.5 rounded-full">3 pending</span>
+        </div>
+        <div class="approval-item flex items-start gap-3 p-4 border-b border-stone-100 dark:border-white/[.04] hover:bg-stone-50 dark:hover:bg-white/[.02] transition-colors">
+          <div class="w-9 h-9 rounded-xl bg-gold/10 flex items-center justify-center text-base flex-shrink-0">✉</div>
+          <div class="flex-1 min-w-0">
+            <div class="text-[15px] font-semibold text-stone-800 dark:text-stone-100 mb-1">Reply to Sarah Johnson</div>
+            <div class="text-[15px] text-stone-600 dark:text-stone-400 mb-2">Re: Dining room cabinet depth — 2 min ago</div>
+            <div class="flex gap-2">
+              <button class="approval-btn text-[15px] font-bold px-3 py-1.5 rounded-lg bg-gold text-onyx hover:bg-gold-light transition-all">Approve &amp; Send</button>
+              <button class="approval-btn text-[15px] font-bold px-3 py-1.5 rounded-lg bg-stone-100 dark:bg-white/[.06] text-stone-600 dark:text-stone-400 hover:bg-stone-200 dark:hover:bg-white/[.1] transition-all">Edit first</button>
+            </div>
+          </div>
+        </div>
+        <div class="approval-item flex items-start gap-3 p-4 border-b border-stone-100 dark:border-white/[.04] hover:bg-stone-50 dark:hover:bg-white/[.02] transition-colors">
+          <div class="w-9 h-9 rounded-xl bg-gold/10 flex items-center justify-center text-base flex-shrink-0">📄</div>
+          <div class="flex-1 min-w-0">
+            <div class="text-[15px] font-semibold text-stone-900 dark:text-white mb-1.5">Invoice: Collins Library — M1</div>
+            <div class="text-[15px] text-stone-600 dark:text-stone-400 mb-2">$3,200 — Ready in QuickBooks</div>
+            <div class="flex gap-2">
+              <button class="approval-btn text-[15px] font-bold px-3 py-1.5 rounded-lg bg-gold text-onyx hover:bg-gold-light transition-all">Approve Invoice</button>
+              <button class="approval-btn text-[15px] font-bold px-3 py-1.5 rounded-lg bg-stone-100 dark:bg-white/[.06] text-stone-600 dark:text-stone-400 hover:bg-stone-200 dark:hover:bg-white/[.1] transition-all">Hold</button>
+            </div>
+          </div>
+        </div>
+        <div class="approval-item flex items-start gap-3 p-4 hover:bg-stone-50 dark:hover:bg-white/[.02] transition-colors">
+          <div class="w-9 h-9 rounded-xl bg-gold/10 flex items-center justify-center text-base flex-shrink-0">↩</div>
+          <div class="flex-1 min-w-0">
+            <div class="text-[15px] font-semibold text-stone-900 dark:text-white mb-1.5">Follow-up: Pendleton (2 days)</div>
+            <div class="text-[15px] text-stone-600 dark:text-stone-400 mb-2">Auto-draft ready — $42K kitchen</div>
+            <div class="flex gap-2">
+              <button class="approval-btn text-[15px] font-bold px-3 py-1.5 rounded-lg bg-gold text-onyx hover:bg-gold-light transition-all">Send Follow-up</button>
+              <button class="approval-btn text-[15px] font-bold px-3 py-1.5 rounded-lg bg-stone-100 dark:bg-white/[.06] text-stone-600 dark:text-stone-400 hover:bg-stone-200 dark:hover:bg-white/[.1] transition-all">Dismiss</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Crew workload -->
+      <div class="rounded-2xl bg-white dark:bg-white/[.03] ring-1 ring-stone-200 dark:ring-white/[.06] overflow-hidden shadow-card">
+        <div class="flex items-center justify-between px-4 py-3 border-b border-stone-100 dark:border-white/[.05]">
+          <span class="text-[13px] font-bold tracking-widest uppercase text-stone-600 dark:text-stone-400">Crew Workload</span>
+          <button class="text-[15px] font-semibold text-gold hover:text-gold-light transition-colors" onclick="showToast('Crew scheduling configurable after Monday.com account is connected.')">Adjust →</button>
+        </div>
+        <div class="p-4 space-y-3">
+          <div class="flex items-center gap-3">
+            <span class="text-[14px] font-semibold text-stone-700 dark:text-stone-300 w-16 flex-shrink-0">Jake D.</span>
+            <div class="health-track flex-1"><div class="health-fill" style="width:90%;background:#ef4444"></div></div>
+            <span class="text-[15px] font-semibold text-rose-500 w-28 text-right">45 hrs — overloaded</span>
+          </div>
+          <div class="flex items-center gap-3">
+            <span class="text-[14px] font-semibold text-stone-700 dark:text-stone-300 w-16 flex-shrink-0">Marcus R.</span>
+            <div class="health-track flex-1"><div class="health-fill" style="width:72%;background:#10b981"></div></div>
+            <span class="text-[15px] text-stone-600 dark:text-stone-400 w-28 text-right">36 hrs</span>
+          </div>
+          <div class="flex items-center gap-3">
+            <span class="text-[14px] font-semibold text-stone-700 dark:text-stone-300 w-16 flex-shrink-0">Kyle L.</span>
+            <div class="health-track flex-1"><div class="health-fill" style="width:55%;background:#10b981"></div></div>
+            <span class="text-[15px] text-stone-600 dark:text-stone-400 w-28 text-right">28 hrs</span>
+          </div>
+          <div class="flex items-center gap-3">
+            <span class="text-[14px] font-semibold text-stone-700 dark:text-stone-300 w-16 flex-shrink-0">Sam R.</span>
+            <div class="health-track flex-1"><div class="health-fill" style="width:40%;background:#38bdf8"></div></div>
+            <span class="text-[15px] font-semibold text-sky-500 w-28 text-right">20 hrs — available</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div><!-- /dashboard-grid -->
+
+  <!-- Setup panel -->
+  <div class="bg-stone-50 dark:bg-white/[.015] border-t border-stone-200 dark:border-white/[.06] p-5">
+    <div class="grid grid-cols-3 gap-6">
+      <!-- Credentials -->
+      <div>
+        <div class="flex items-center gap-2 mb-3">
+          <span class="text-[13px] font-semibold tracking-[.1em] uppercase text-stone-600 dark:text-stone-400">Credentials Needed</span>
+          <div class="flex-1 h-px bg-stone-200 dark:bg-white/[.06]"></div>
+        </div>
+        <div class="space-y-2.5">
+          <label class="flex items-start gap-3 py-3 px-4 rounded-xl border border-stone-200 dark:border-white/[.06] bg-white dark:bg-white/[.02] hover:border-gold/40 transition-colors cursor-pointer group">
+            <input type="checkbox" id="cs1" class="mt-0.5 flex-shrink-0" onchange="updateProgress()"/>
+            <div>
+              <div class="text-[14px] font-semibold text-stone-700 dark:text-stone-300 leading-snug">Monday.com Pro — invite Hans as admin <span class="ml-1 text-xs font-bold bg-rose-100 dark:bg-rose-500/15 text-rose-600 dark:text-rose-400 px-2 py-0.5 rounded-md">needs login</span></div>
+              <div class="text-[15px] text-stone-600 dark:text-stone-400 mt-0.5">Hans needs Admin access to build boards and formulas.</div>
+            </div>
+          </label>
+          <label class="flex items-start gap-3 py-3 px-4 rounded-xl border border-stone-200 dark:border-white/[.06] bg-white dark:bg-white/[.02] hover:border-gold/40 transition-colors cursor-pointer group">
+            <input type="checkbox" id="cs2" class="mt-0.5 flex-shrink-0" onchange="updateProgress()"/>
+            <div>
+              <div class="text-[14px] font-semibold text-stone-700 dark:text-stone-300 leading-snug">QuickBooks — add Hans as Accountant <span class="ml-1 text-xs font-bold bg-rose-100 dark:bg-rose-500/15 text-rose-600 dark:text-rose-400 px-2 py-0.5 rounded-md">needs login</span></div>
+              <div class="text-[15px] text-stone-600 dark:text-stone-400 mt-0.5">Accountant role is sufficient for milestone invoicing.</div>
+            </div>
+          </label>
+          <label class="flex items-start gap-3 py-3 px-4 rounded-xl border border-stone-200 dark:border-white/[.06] bg-white dark:bg-white/[.02] hover:border-gold/40 transition-colors cursor-pointer group">
+            <input type="checkbox" id="cs3" class="mt-0.5 flex-shrink-0" onchange="updateProgress()"/>
+            <div>
+              <div class="text-[14px] font-semibold text-stone-700 dark:text-stone-300 leading-snug">Gmail OAuth — Matt approves the n8n app <span class="ml-1 text-xs font-bold bg-rose-100 dark:bg-rose-500/15 text-rose-600 dark:text-rose-400 px-2 py-0.5 rounded-md">needs login</span></div>
+              <div class="text-[15px] text-stone-600 dark:text-stone-400 mt-0.5">Takes ~2 min in browser. Required for email drafts.</div>
+            </div>
+          </label>
+        </div>
+      </div>
+      <!-- Decisions -->
+      <div>
+        <div class="flex items-center gap-2 mb-3">
+          <span class="text-[13px] font-semibold tracking-[.1em] uppercase text-stone-600 dark:text-stone-400">Decisions Matt Makes</span>
+          <div class="flex-1 h-px bg-stone-200 dark:bg-white/[.06]"></div>
+        </div>
+        <div class="space-y-2">
+          <div class="flex items-start gap-3 py-3 px-4 rounded-xl bg-gold/5 border border-gold/15">
+            <span class="w-5 h-5 rounded-md bg-gold/15 text-gold flex items-center justify-center text-[15px] font-bold flex-shrink-0 mt-0.5">?</span>
+            <div>
+              <div class="text-[14px] text-stone-700 dark:text-stone-300 leading-snug">What score triggers "At Risk"? (default: below 65)</div>
+              <div class="text-[15px] text-stone-600 dark:text-stone-400 mt-0.5">Matt decides → Hans programs into formula</div>
+            </div>
+          </div>
+          <div class="flex items-start gap-3 py-3 px-4 rounded-xl bg-gold/5 border border-gold/15">
+            <span class="w-5 h-5 rounded-md bg-gold/15 text-gold flex items-center justify-center text-[15px] font-bold flex-shrink-0 mt-0.5">?</span>
+            <div>
+              <div class="text-[14px] text-stone-700 dark:text-stone-300 leading-snug">Target revenue per hour? (e.g. $90/hr minimum)</div>
+              <div class="text-[15px] text-stone-600 dark:text-stone-400 mt-0.5">Sets the KPI baseline for the Rev/Hr widget</div>
+            </div>
+          </div>
+          <div class="flex items-start gap-3 py-3 px-4 rounded-xl bg-gold/5 border border-gold/15">
+            <span class="w-5 h-5 rounded-md bg-gold/15 text-gold flex items-center justify-center text-[15px] font-bold flex-shrink-0 mt-0.5">?</span>
+            <div>
+              <div class="text-[14px] text-stone-700 dark:text-stone-300 leading-snug">Who sees the Command Center? Matt only, or leads too?</div>
+              <div class="text-[15px] text-stone-600 dark:text-stone-400 mt-0.5">Determines Monday view permissions</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- Build tasks -->
+      <div>
+        <div class="flex items-center gap-2 mb-3">
+          <span class="text-[13px] font-semibold tracking-[.1em] uppercase text-stone-600 dark:text-stone-400">Build Tasks — Dashboard</span>
+          <div class="flex-1 h-px bg-stone-200 dark:bg-white/[.06]"></div>
+        </div>
+        <div class="space-y-2">
+          <label class="flex items-start gap-3 py-3 px-4 rounded-xl border border-stone-200 dark:border-white/[.06] bg-white dark:bg-white/[.02] hover:border-gold/40 transition-colors cursor-pointer">
+            <input type="checkbox" id="cb1" class="mt-0.5 flex-shrink-0" onchange="updateProgress()"/>
+            <div>
+              <div class="text-[14px] font-semibold text-stone-700 dark:text-stone-300">Create Monday Pro workspace</div>
+              <div class="text-[15px] text-stone-600 dark:text-stone-400 mt-0.5">Day 7 — after scope freeze</div>
+            </div>
+          </label>
+          <label class="flex items-start gap-3 py-3 px-4 rounded-xl border border-stone-200 dark:border-white/[.06] bg-white dark:bg-white/[.02] hover:border-gold/40 transition-colors cursor-pointer">
+            <input type="checkbox" id="cb2" class="mt-0.5 flex-shrink-0" onchange="updateProgress()"/>
+            <div>
+              <div class="text-[14px] font-semibold text-stone-700 dark:text-stone-300">Build Health Score formula column</div>
+              <div class="text-[15px] text-stone-600 dark:text-stone-400 mt-0.5">Day 8 — weighted budget + schedule variance</div>
+            </div>
+          </label>
+          <label class="flex items-start gap-3 py-3 px-4 rounded-xl border border-stone-200 dark:border-white/[.06] bg-white dark:bg-white/[.02] hover:border-gold/40 transition-colors cursor-pointer">
+            <input type="checkbox" id="cb3" class="mt-0.5 flex-shrink-0" onchange="updateProgress()"/>
+            <div>
+              <div class="text-[14px] font-semibold text-stone-700 dark:text-stone-300">Configure Rev/Hr widget</div>
+              <div class="text-[15px] text-stone-600 dark:text-stone-400 mt-0.5">Day 9 — links labor hours to revenue</div>
+            </div>
+          </label>
+          <label class="flex items-start gap-3 py-3 px-4 rounded-xl border border-stone-200 dark:border-white/[.06] bg-white dark:bg-white/[.02] hover:border-gold/40 transition-colors cursor-pointer">
+            <input type="checkbox" id="cb4" class="mt-0.5 flex-shrink-0" onchange="updateProgress()"/>
+            <div>
+              <div class="text-[14px] font-semibold text-stone-700 dark:text-stone-300">Set up at-risk notification automation</div>
+              <div class="text-[15px] text-stone-600 dark:text-stone-400 mt-0.5">Day 10 — notify Matt when score drops</div>
+            </div>
+          </label>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /board-command -->
+
+
+<!-- ════════════════════════════════════════════════════════════════════════
+     BOARD 2 — PROJECTS
+════════════════════════════════════════════════════════════════════════ -->
+<div class="board-content" id="board-projects">
+
+  <div class="board-toolbar bg-white/90 dark:bg-[#181c17]/90 backdrop-blur-sm border-b border-stone-200 dark:border-white/[.06] px-6 h-16 flex items-center justify-between gap-4">
+    <div class="flex items-center gap-3">
+      <h1 class="text-base font-bold text-stone-900 dark:text-white">Projects</h1>
+      <div class="flex gap-1">
+        <button class="view-tab active text-[15px] font-semibold px-2.5 py-1 rounded-md border-none bg-transparent text-stone-600 dark:text-stone-400 cursor-pointer hover:bg-stone-100 dark:hover:bg-white/[.05] transition-all" onclick="switchView(this,'table','projects')">Table</button>
+        <button class="view-tab text-[15px] font-semibold px-2.5 py-1 rounded-md border-none bg-transparent text-stone-600 dark:text-stone-400 cursor-pointer hover:bg-stone-100 dark:hover:bg-white/[.05] transition-all" onclick="switchView(this,'gantt','projects')">Gantt</button>
+        <button class="view-tab text-[15px] font-semibold px-2.5 py-1 rounded-md border-none bg-transparent text-stone-600 dark:text-stone-400 cursor-pointer hover:bg-stone-100 dark:hover:bg-white/[.05] transition-all" onclick="switchView(this,'dashboard','projects')">Dashboard</button>
+      </div>
+      <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-gold/10 border border-gold/20 text-xs font-bold tracking-wide uppercase text-gold">
+        <span class="w-1.5 h-1.5 rounded-full bg-gold sim-dot"></span>Simulation
+      </span>
+    </div>
+    <div class="flex items-center gap-2">
+      <button class="text-sm font-semibold px-3 py-1.5 rounded-lg border border-stone-200 dark:border-white/10 bg-white dark:bg-white/5 text-stone-500 dark:text-white/50 hover:border-gold transition-all" onclick="showToast('Grouping available after board is created in Monday.com.')">Group: Phase</button>
+      <button class="text-sm font-semibold px-3 py-1.5 rounded-lg border border-stone-200 dark:border-white/10 bg-white dark:bg-white/5 text-stone-500 dark:text-white/50 hover:border-gold transition-all" onclick="showToast('Filters configurable after Monday.com is connected.')">Filter</button>
+      <button class="text-[13px] font-bold px-3 py-1.5 rounded-lg bg-gold text-onyx hover:bg-gold-light transition-all shadow-sm" onclick="showToast('Project creation available once Monday.com account is connected — Day 11.')">+ Add Project</button>
+    </div>
+  </div>
+
+  <div class="flex flex-wrap items-center gap-2 px-6 py-2.5 bg-gold/5 border-b border-gold/15 text-xs text-stone-600 dark:text-stone-400">
+    <span class="font-bold text-sm text-gold/90">Needs:</span>
+    <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full border border-rose-300 dark:border-rose-500/40 bg-rose-50 dark:bg-rose-500/10 text-rose-600 dark:text-rose-400 font-semibold text-[15px]">Monday.com login</span>
+    <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full border border-rose-300 dark:border-rose-500/40 bg-rose-50 dark:bg-rose-500/10 text-rose-600 dark:text-rose-400 font-semibold text-[15px]">QuickBooks (milestone hooks)</span>
+    <span class="ml-auto text-[15px] text-stone-600 dark:text-stone-400">Core board — health score, Rev/Hr, and QB milestone automation all live here</span>
+  </div>
+
+  <div id="projects-view-table" data-view-board="projects">
+  <div class="overflow-x-auto board-table-wrap p-5">
+    <table class="w-full text-sm min-w-[900px]">
+      <thead>
+        <tr class="bg-stone-50 dark:bg-white/[.025]">
+          <th class="px-4 py-2.5 text-left text-[12px] font-bold tracking-widest uppercase text-stone-600 dark:text-stone-400 rounded-l-lg">Project</th>
+          <th class="px-3 py-2.5 text-left text-[12px] font-bold tracking-widest uppercase text-stone-600 dark:text-stone-400">Status</th>
+          <th class="px-3 py-2.5 text-left text-[12px] font-bold tracking-widest uppercase text-stone-600 dark:text-stone-400">Client</th>
+          <th class="px-3 py-2.5 text-left text-[12px] font-bold tracking-widest uppercase text-stone-600 dark:text-stone-400">Phase</th>
+          <th class="px-3 py-2.5 text-left text-[12px] font-bold tracking-widest uppercase text-stone-600 dark:text-stone-400">Start</th>
+          <th class="px-3 py-2.5 text-left text-[12px] font-bold tracking-widest uppercase text-stone-600 dark:text-stone-400">Est. End</th>
+          <th class="px-3 py-2.5 text-left text-[12px] font-bold tracking-widest uppercase text-stone-600 dark:text-stone-400">Budget</th>
+          <th class="px-3 py-2.5 text-left text-[12px] font-bold tracking-widest uppercase text-stone-600 dark:text-stone-400">Actual</th>
+          <th class="px-3 py-2.5 text-left text-[12px] font-bold tracking-widest uppercase text-stone-600 dark:text-stone-400">Rev/Hr</th>
+          <th class="px-3 py-2.5 text-left text-[12px] font-bold tracking-widest uppercase text-stone-600 dark:text-stone-400 w-32">Health</th>
+          <th class="px-3 py-2.5 text-left text-[12px] font-bold tracking-widest uppercase text-stone-600 dark:text-stone-400 rounded-r-lg">Owner</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-stone-100 dark:divide-white/[.04]">
+        <tr><td colspan="11" class="px-4 py-2 text-[12px] font-bold tracking-widest uppercase text-stone-600 dark:text-stone-400 bg-stone-100/60 dark:bg-white/[.015]">▸ Active (5)</td></tr>
+        <tr class="hover:bg-gold/[.025] dark:hover:bg-gold/[.03] transition-colors">
+          <td class="px-4 py-3 font-semibold text-[15px] text-stone-800 dark:text-stone-100">Whitmore Kitchen</td>
+          <td class="px-3 py-3"><span class="inline-flex px-2.5 py-1 rounded-full text-xs font-bold uppercase tracking-wide bg-emerald-100 dark:bg-emerald-500/15 text-emerald-700 dark:text-emerald-400">On Track</span></td>
+          <td class="px-3 py-3 text-[14px] text-stone-600 dark:text-stone-400">Whitmore, T.</td>
+          <td class="px-3 py-3 text-[14px] text-stone-600 dark:text-stone-400">Build</td>
+          <td class="px-3 py-3 text-[14px] text-stone-600 dark:text-stone-400">Mar 10</td>
+          <td class="px-3 py-3 text-[14px] text-stone-600 dark:text-stone-400">Apr 28</td>
+          <td class="px-3 py-3 text-[15px] text-stone-700 dark:text-stone-300">$68,000</td>
+          <td class="px-3 py-3 text-[15px] text-stone-600 dark:text-stone-400">$31,200</td>
+          <td class="px-3 py-3 text-[15px] font-bold text-gold">$128/hr</td>
+          <td class="px-3 py-3"><div class="flex items-center gap-2"><div class="health-track"><div class="health-fill" style="width:94%;background:#10b981"></div></div><span class="text-[15px] font-bold text-emerald-600 dark:text-emerald-400 w-5">94</span></div></td>
+          <td class="px-3 py-3"><span class="inline-flex items-center justify-center w-7 h-7 rounded-full bg-forest text-white text-xs font-bold" title="Jake D.">JD</span></td>
+        </tr>
+        <tr class="hover:bg-gold/[.025] dark:hover:bg-gold/[.03] transition-colors">
+          <td class="px-4 py-3 font-semibold text-[15px] text-stone-800 dark:text-stone-100">Harris Master Bath</td>
+          <td class="px-3 py-3"><span class="inline-flex px-2.5 py-1 rounded-full text-xs font-bold uppercase tracking-wide bg-emerald-100 dark:bg-emerald-500/15 text-emerald-700 dark:text-emerald-400">On Track</span></td>
+          <td class="px-3 py-3 text-[14px] text-stone-600 dark:text-stone-400">Harris, R.</td>
+          <td class="px-3 py-3 text-[14px] text-stone-600 dark:text-stone-400">Design</td>
+          <td class="px-3 py-3 text-[14px] text-stone-600 dark:text-stone-400">Mar 24</td>
+          <td class="px-3 py-3 text-[14px] text-stone-600 dark:text-stone-400">May 9</td>
+          <td class="px-3 py-3 text-[15px] text-stone-700 dark:text-stone-300">$42,000</td>
+          <td class="px-3 py-3 text-[15px] text-stone-600 dark:text-stone-400">$14,800</td>
+          <td class="px-3 py-3 text-[15px] font-bold text-gold">$106/hr</td>
+          <td class="px-3 py-3"><div class="flex items-center gap-2"><div class="health-track"><div class="health-fill" style="width:88%;background:#10b981"></div></div><span class="text-[15px] font-bold text-emerald-600 dark:text-emerald-400 w-5">88</span></div></td>
+          <td class="px-3 py-3"><span class="inline-flex items-center justify-center w-7 h-7 rounded-full bg-forest-mid text-white text-xs font-bold" title="Marcus R.">MR</span></td>
+        </tr>
+        <tr class="hover:bg-gold/[.025] dark:hover:bg-gold/[.03] transition-colors">
+          <td class="px-4 py-3 font-semibold text-[15px] text-stone-800 dark:text-stone-100">Johnson Dining Room</td>
+          <td class="px-3 py-3"><span class="inline-flex px-2.5 py-1 rounded-full text-xs font-bold uppercase tracking-wide bg-forest/10 dark:bg-forest/30 text-forest dark:text-stone-300">In Design</span></td>
+          <td class="px-3 py-3 text-[14px] text-stone-600 dark:text-stone-400">Johnson, S.</td>
+          <td class="px-3 py-3 text-[14px] text-stone-600 dark:text-stone-400">Design</td>
+          <td class="px-3 py-3 text-[14px] text-stone-600 dark:text-stone-400">Apr 7</td>
+          <td class="px-3 py-3 text-[14px] text-stone-600 dark:text-stone-400">May 23</td>
+          <td class="px-3 py-3 text-[15px] text-stone-700 dark:text-stone-300">$38,500</td>
+          <td class="px-3 py-3 text-[15px] text-stone-600 dark:text-stone-400">$6,400</td>
+          <td class="px-3 py-3 text-[15px] font-bold text-gold">$94/hr</td>
+          <td class="px-3 py-3"><div class="flex items-center gap-2"><div class="health-track"><div class="health-fill" style="width:82%;background:#C9A44C"></div></div><span class="text-[15px] font-bold text-gold w-5">82</span></div></td>
+          <td class="px-3 py-3"><span class="inline-flex items-center justify-center w-7 h-7 rounded-full bg-forest text-white text-xs font-bold" title="Sam R.">SR</span></td>
+        </tr>
+        <tr class="hover:bg-gold/[.025] dark:hover:bg-gold/[.03] transition-colors">
+          <td class="px-4 py-3 font-semibold text-[15px] text-stone-800 dark:text-stone-100">Pemberton Pantry</td>
+          <td class="px-3 py-3"><span class="inline-flex px-2.5 py-1 rounded-full text-xs font-bold uppercase tracking-wide bg-amber-100 dark:bg-amber-500/15 text-amber-700 dark:text-amber-400">Watch</span></td>
+          <td class="px-3 py-3 text-[14px] text-stone-600 dark:text-stone-400">Pemberton, C.</td>
+          <td class="px-3 py-3 text-[14px] text-stone-600 dark:text-stone-400">Install</td>
+          <td class="px-3 py-3 text-[14px] text-stone-600 dark:text-stone-400">Feb 18</td>
+          <td class="px-3 py-3 text-[14px] text-stone-600 dark:text-stone-400">Apr 22</td>
+          <td class="px-3 py-3 text-[15px] text-stone-700 dark:text-stone-300">$24,000</td>
+          <td class="px-3 py-3 text-[15px] text-stone-600 dark:text-stone-400">$22,100</td>
+          <td class="px-3 py-3 text-[15px] font-bold text-stone-600 dark:text-stone-400">$79/hr</td>
+          <td class="px-3 py-3"><div class="flex items-center gap-2"><div class="health-track"><div class="health-fill" style="width:71%;background:#f59e0b"></div></div><span class="text-[15px] font-bold text-amber-600 dark:text-amber-400 w-5">71</span></div></td>
+          <td class="px-3 py-3"><span class="inline-flex items-center justify-center w-7 h-7 rounded-full bg-stone-400 text-white text-xs font-bold" title="Kyle L.">KL</span></td>
+        </tr>
+        <tr class="hover:bg-gold/[.025] dark:hover:bg-gold/[.03] transition-colors">
+          <td class="px-4 py-3 font-semibold text-[15px] text-stone-800 dark:text-stone-100">Collins Library</td>
+          <td class="px-3 py-3"><span class="inline-flex px-2.5 py-1 rounded-full text-xs font-bold uppercase tracking-wide bg-rose-100 dark:bg-rose-500/15 text-rose-700 dark:text-rose-400">At Risk</span></td>
+          <td class="px-3 py-3 text-[14px] text-stone-600 dark:text-stone-400">Collins, M.</td>
+          <td class="px-3 py-3 text-[14px] text-stone-600 dark:text-stone-400">Build</td>
+          <td class="px-3 py-3 text-[14px] text-stone-600 dark:text-stone-400">Mar 3</td>
+          <td class="px-3 py-3 text-[14px] text-stone-600 dark:text-stone-400">Apr 18</td>
+          <td class="px-3 py-3 text-[15px] text-stone-700 dark:text-stone-300">$57,000</td>
+          <td class="px-3 py-3 text-[15px] text-stone-600 dark:text-stone-400">$48,200</td>
+          <td class="px-3 py-3 text-[15px] font-bold text-rose-500">$53/hr</td>
+          <td class="px-3 py-3"><div class="flex items-center gap-2"><div class="health-track"><div class="health-fill" style="width:54%;background:#ef4444"></div></div><span class="text-[15px] font-bold text-rose-500 w-5">54</span></div></td>
+          <td class="px-3 py-3"><span class="inline-flex items-center justify-center w-7 h-7 rounded-full bg-forest text-white text-xs font-bold" title="Jake D.">JD</span></td>
+        </tr>
+        <tr class="bg-stone-50/60 dark:bg-white/[.01]">
+          <td colspan="11" class="px-4 py-2 text-[15px] text-stone-600 dark:text-stone-500 italic cursor-pointer hover:text-stone-600 dark:hover:text-stone-400 transition-colors">▸ Completed (2) — click to expand</td>
+        </tr>
+      </tbody>
+      <tfoot>
+        <tr class="border-t-2 border-stone-200 dark:border-white/[.08] bg-stone-50 dark:bg-white/[.02]">
+          <td colspan="6" class="px-4 py-2.5 text-[15px] text-stone-600 dark:text-stone-400">5 active projects</td>
+          <td class="px-3 py-2.5 text-[15px] font-semibold text-stone-600 dark:text-stone-400">$229,500 budget</td>
+          <td class="px-3 py-2.5 text-[15px] text-stone-600 dark:text-stone-400">$122,700 spent</td>
+          <td class="px-3 py-2.5 text-[15px] font-bold text-gold">$92 avg/hr</td>
+          <td colspan="2"></td>
+        </tr>
+      </tfoot>
+    </table>
+  </div>
+
+  <button class="flex items-center gap-1.5 mx-5 mb-2 px-3 py-2 text-[14px] text-stone-600 dark:text-stone-400 hover:text-gold hover:bg-gold/5 rounded-lg transition-all">
+    <span class="text-base leading-none">+</span> Add project
+  </button>
+  </div><!-- /projects-view-table -->
+
+  <!-- Projects Gantt View -->
+  <div id="projects-view-gantt" data-view-board="projects" style="display:none" class="p-5">
+    <div class="rounded-2xl bg-white dark:bg-white/[.03] ring-1 ring-stone-200 dark:ring-white/[.06] overflow-hidden shadow-card">
+      <div class="px-5 py-3.5 border-b border-stone-100 dark:border-white/[.05] flex items-center justify-between">
+        <span class="text-[13px] font-bold tracking-widest uppercase text-stone-600 dark:text-stone-400">Gantt — Mar to Jun 2026</span>
+        <span class="text-[13px] text-gold font-semibold">◆ Today Apr 17</span>
+      </div>
+      <!-- month header -->
+      <div class="grid border-b border-stone-100 dark:border-white/[.05]" style="grid-template-columns:200px 1fr">
+        <div class="px-4 py-2 text-[12px] font-bold uppercase tracking-wide text-stone-600 dark:text-stone-400 bg-stone-50 dark:bg-white/[.02]">Project</div>
+        <div class="relative bg-stone-50 dark:bg-white/[.02] grid grid-cols-4 border-l border-stone-200 dark:border-white/10">
+          <div class="border-l border-stone-200 dark:border-white/10 px-2 py-2 text-[12px] font-semibold text-stone-500 dark:text-stone-400">March</div>
+          <div class="border-l border-stone-200 dark:border-white/10 px-2 py-2 text-[12px] font-semibold text-stone-500 dark:text-stone-400">April</div>
+          <div class="border-l border-stone-200 dark:border-white/10 px-2 py-2 text-[12px] font-semibold text-stone-500 dark:text-stone-400">May</div>
+          <div class="border-l border-stone-200 dark:border-white/10 px-2 py-2 text-[12px] font-semibold text-stone-500 dark:text-stone-400">June</div>
+        </div>
+      </div>
+      <!-- gantt rows: 121-day timeline Mar1–Jun30, today=Apr17=day47 → 38.8% -->
+      <div class="divide-y divide-stone-100 dark:divide-white/[.04]">
+        <!-- Whitmore: Mar10(d9)–Apr28(d58) left=7.4% width=40.5% health=green -->
+        <div class="grid items-center" style="grid-template-columns:200px 1fr">
+          <div class="px-4 py-3"><div class="text-[15px] font-semibold text-stone-800 dark:text-stone-100">Whitmore Kitchen</div><div class="text-xs text-stone-500 dark:text-stone-400 mt-0.5">Mar 10 → Apr 28</div></div>
+          <div class="relative h-10 border-l border-stone-200 dark:border-white/10">
+            <div class="absolute inset-y-2 rounded-lg bg-emerald-500/85 flex items-center px-2" style="left:7.4%;width:40.5%"><span class="text-xs font-bold text-white whitespace-nowrap">$128/hr · 94</span></div>
+            <div class="absolute top-0 bottom-0 w-px bg-gold/50" style="left:38.8%"></div>
+          </div>
+        </div>
+        <!-- Harris: Mar24(d23)–May9(d69) left=19% width=38% health=green -->
+        <div class="grid items-center" style="grid-template-columns:200px 1fr">
+          <div class="px-4 py-3"><div class="text-[15px] font-semibold text-stone-800 dark:text-stone-100">Harris Master Bath</div><div class="text-xs text-stone-500 dark:text-stone-400 mt-0.5">Mar 24 → May 9</div></div>
+          <div class="relative h-10 border-l border-stone-200 dark:border-white/10">
+            <div class="absolute inset-y-2 rounded-lg bg-emerald-500/85 flex items-center px-2" style="left:19%;width:38%"><span class="text-xs font-bold text-white whitespace-nowrap">$106/hr · 88</span></div>
+            <div class="absolute top-0 bottom-0 w-px bg-gold/50" style="left:38.8%"></div>
+          </div>
+        </div>
+        <!-- Johnson: Apr7(d37)–May23(d83) left=30.6% width=38% health=gold -->
+        <div class="grid items-center" style="grid-template-columns:200px 1fr">
+          <div class="px-4 py-3"><div class="text-[15px] font-semibold text-stone-800 dark:text-stone-100">Johnson Dining Room</div><div class="text-xs text-stone-500 dark:text-stone-400 mt-0.5">Apr 7 → May 23</div></div>
+          <div class="relative h-10 border-l border-stone-200 dark:border-white/10">
+            <div class="absolute inset-y-2 rounded-lg bg-gold/80 flex items-center px-2" style="left:30.6%;width:38%"><span class="text-xs font-bold text-white whitespace-nowrap">$94/hr · 82</span></div>
+            <div class="absolute top-0 bottom-0 w-px bg-gold/50" style="left:38.8%"></div>
+          </div>
+        </div>
+        <!-- Pemberton: Feb18 clip to Mar1(d0)–Apr22(d52) left=0% width=43% amber -->
+        <div class="grid items-center" style="grid-template-columns:200px 1fr">
+          <div class="px-4 py-3"><div class="text-[15px] font-semibold text-stone-800 dark:text-stone-100">Pemberton Pantry</div><div class="text-xs text-stone-500 dark:text-stone-400 mt-0.5">Feb 18 → Apr 22 <span class="text-amber-500 font-semibold">⚠ At Risk</span></div></div>
+          <div class="relative h-10 border-l border-stone-200 dark:border-white/10">
+            <div class="absolute inset-y-2 rounded-lg bg-amber-500/85 flex items-center px-2" style="left:0%;width:43%"><span class="text-xs font-bold text-white whitespace-nowrap">$79/hr · 71</span></div>
+            <div class="absolute top-0 bottom-0 w-px bg-gold/50" style="left:38.8%"></div>
+          </div>
+        </div>
+        <!-- Collins: Mar3(d2)–Apr18(d48) left=1.7% width=38% red -->
+        <div class="grid items-center" style="grid-template-columns:200px 1fr">
+          <div class="px-4 py-3"><div class="text-[15px] font-semibold text-stone-800 dark:text-stone-100">Collins Library</div><div class="text-xs text-stone-500 dark:text-stone-400 mt-0.5">Mar 3 → Apr 18 <span class="text-rose-500 font-semibold">⛔ Critical</span></div></div>
+          <div class="relative h-10 border-l border-stone-200 dark:border-white/10">
+            <div class="absolute inset-y-2 rounded-lg bg-rose-500/85 flex items-center px-2" style="left:1.7%;width:38.4%"><span class="text-xs font-bold text-white whitespace-nowrap">$53/hr · 54</span></div>
+            <div class="absolute top-0 bottom-0 w-px bg-gold/50" style="left:38.8%"></div>
+          </div>
+        </div>
+      </div>
+      <div class="px-5 py-3 bg-stone-50 dark:bg-white/[.02] border-t border-stone-100 dark:border-white/[.05] text-[13px] text-stone-500 dark:text-stone-400">◆ Gold line = today (Apr 17) &nbsp;·&nbsp; Bars show project duration &nbsp;·&nbsp; Color = health status</div>
+    </div>
+  </div>
+
+  <!-- Projects Dashboard View -->
+  <div id="projects-view-dashboard" data-view-board="projects" style="display:none" class="p-5">
+    <div class="grid grid-cols-3 gap-4 mb-4">
+      <div class="rounded-2xl bg-white dark:bg-white/[.04] shadow-kpi ring-1 ring-stone-200/80 dark:ring-white/[.06] p-6 relative overflow-hidden">
+        <div class="absolute top-0 left-0 right-0 h-1 bg-gold rounded-t-2xl"></div>
+        <div class="text-[13px] font-bold tracking-widest uppercase text-stone-600 dark:text-stone-400 mb-2">Total Budget</div>
+        <div class="text-4xl font-black text-stone-900 dark:text-white leading-none mb-2">$229K</div>
+        <div class="text-sm text-stone-600 dark:text-stone-400">Across 5 active projects</div>
+      </div>
+      <div class="rounded-2xl bg-white dark:bg-white/[.04] shadow-kpi ring-1 ring-stone-200/80 dark:ring-white/[.06] p-6 relative overflow-hidden">
+        <div class="absolute top-0 left-0 right-0 h-1 bg-emerald-500 rounded-t-2xl"></div>
+        <div class="text-[13px] font-bold tracking-widest uppercase text-stone-600 dark:text-stone-400 mb-2">Spent to Date</div>
+        <div class="text-4xl font-black text-stone-900 dark:text-white leading-none mb-2">$122K</div>
+        <div class="text-sm font-semibold text-emerald-600 dark:text-emerald-400">53% of budget · on pace</div>
+      </div>
+      <div class="rounded-2xl bg-white dark:bg-white/[.04] shadow-kpi ring-1 ring-stone-200/80 dark:ring-white/[.06] p-6 relative overflow-hidden">
+        <div class="absolute top-0 left-0 right-0 h-1 bg-rose-500 rounded-t-2xl"></div>
+        <div class="text-[13px] font-bold tracking-widest uppercase text-stone-600 dark:text-stone-400 mb-2">Avg Health Score</div>
+        <div class="text-4xl font-black text-stone-900 dark:text-white leading-none mb-2">79.8</div>
+        <div class="text-sm font-semibold text-amber-600 dark:text-amber-400">↓ 2 projects need attention</div>
+      </div>
+    </div>
+    <div class="grid grid-cols-2 gap-4">
+      <div class="rounded-2xl bg-white dark:bg-white/[.03] ring-1 ring-stone-200 dark:ring-white/[.06] shadow-card p-5">
+        <div class="text-[13px] font-bold tracking-widest uppercase text-stone-600 dark:text-stone-400 mb-4">Budget Utilization by Project</div>
+        <div class="space-y-3">
+          <div><div class="flex justify-between text-sm mb-1"><span class="font-semibold text-stone-800 dark:text-stone-200">Whitmore Kitchen</span><span class="text-stone-600 dark:text-stone-400">$31.2K / $68K</span></div><div class="h-2 bg-stone-100 dark:bg-white/10 rounded-full overflow-hidden"><div class="h-full bg-emerald-500 rounded-full" style="width:46%"></div></div></div>
+          <div><div class="flex justify-between text-sm mb-1"><span class="font-semibold text-stone-800 dark:text-stone-200">Harris Master Bath</span><span class="text-stone-600 dark:text-stone-400">$14.8K / $42K</span></div><div class="h-2 bg-stone-100 dark:bg-white/10 rounded-full overflow-hidden"><div class="h-full bg-emerald-500 rounded-full" style="width:35%"></div></div></div>
+          <div><div class="flex justify-between text-sm mb-1"><span class="font-semibold text-stone-800 dark:text-stone-200">Johnson Dining Room</span><span class="text-stone-600 dark:text-stone-400">$6.4K / $38.5K</span></div><div class="h-2 bg-stone-100 dark:bg-white/10 rounded-full overflow-hidden"><div class="h-full bg-gold rounded-full" style="width:17%"></div></div></div>
+          <div><div class="flex justify-between text-sm mb-1"><span class="font-semibold text-stone-800 dark:text-stone-200">Pemberton Pantry</span><span class="text-stone-600 dark:text-stone-400">$38.1K / $41K</span></div><div class="h-2 bg-stone-100 dark:bg-white/10 rounded-full overflow-hidden"><div class="h-full bg-amber-500 rounded-full" style="width:93%"></div></div></div>
+          <div><div class="flex justify-between text-sm mb-1"><span class="font-semibold text-stone-800 dark:text-stone-200">Collins Library</span><span class="text-stone-600 dark:text-stone-400">$32.2K / $40K</span></div><div class="h-2 bg-stone-100 dark:bg-white/10 rounded-full overflow-hidden"><div class="h-full bg-rose-500 rounded-full" style="width:80%"></div></div></div>
+        </div>
+      </div>
+      <div class="rounded-2xl bg-white dark:bg-white/[.03] ring-1 ring-stone-200 dark:ring-white/[.06] shadow-card p-5">
+        <div class="text-[13px] font-bold tracking-widest uppercase text-stone-600 dark:text-stone-400 mb-4">Phase Breakdown</div>
+        <div class="grid grid-cols-3 gap-3 mb-5">
+          <div class="rounded-xl bg-stone-50 dark:bg-white/[.03] ring-1 ring-stone-200 dark:ring-white/[.04] p-3 text-center"><div class="text-3xl font-black text-stone-900 dark:text-white">2</div><div class="text-xs font-bold uppercase tracking-wide text-stone-500 dark:text-stone-400 mt-1">Design</div></div>
+          <div class="rounded-xl bg-stone-50 dark:bg-white/[.03] ring-1 ring-stone-200 dark:ring-white/[.04] p-3 text-center"><div class="text-3xl font-black text-stone-900 dark:text-white">2</div><div class="text-xs font-bold uppercase tracking-wide text-stone-500 dark:text-stone-400 mt-1">Build</div></div>
+          <div class="rounded-xl bg-stone-50 dark:bg-white/[.03] ring-1 ring-stone-200 dark:ring-white/[.04] p-3 text-center"><div class="text-3xl font-black text-stone-900 dark:text-white">1</div><div class="text-xs font-bold uppercase tracking-wide text-stone-500 dark:text-stone-400 mt-1">Install</div></div>
+        </div>
+        <div class="text-[13px] font-bold tracking-widest uppercase text-stone-600 dark:text-stone-400 mb-3">Owner Load</div>
+        <div class="space-y-2">
+          <div class="flex items-center gap-3"><span class="inline-flex items-center justify-center w-7 h-7 rounded-full bg-forest text-white text-xs font-bold flex-shrink-0">JD</span><div class="flex-1 h-2 bg-stone-100 dark:bg-white/10 rounded-full overflow-hidden"><div class="h-full bg-forest rounded-full" style="width:50%"></div></div><span class="text-sm font-semibold text-stone-600 dark:text-stone-400 w-12 text-right">2 jobs</span></div>
+          <div class="flex items-center gap-3"><span class="inline-flex items-center justify-center w-7 h-7 rounded-full bg-forest-mid text-white text-xs font-bold flex-shrink-0">MR</span><div class="flex-1 h-2 bg-stone-100 dark:bg-white/10 rounded-full overflow-hidden"><div class="h-full bg-forest-mid rounded-full" style="width:25%"></div></div><span class="text-sm font-semibold text-stone-600 dark:text-stone-400 w-12 text-right">1 job</span></div>
+          <div class="flex items-center gap-3"><span class="inline-flex items-center justify-center w-7 h-7 rounded-full bg-forest text-white text-xs font-bold flex-shrink-0">SR</span><div class="flex-1 h-2 bg-stone-100 dark:bg-white/10 rounded-full overflow-hidden"><div class="h-full bg-forest rounded-full" style="width:25%"></div></div><span class="text-sm font-semibold text-stone-600 dark:text-stone-400 w-12 text-right">1 job</span></div>
+          <div class="flex items-center gap-3"><span class="inline-flex items-center justify-center w-7 h-7 rounded-full bg-stone-400 text-white text-xs font-bold flex-shrink-0">KL</span><div class="flex-1 h-2 bg-stone-100 dark:bg-white/10 rounded-full overflow-hidden"><div class="h-full bg-stone-400 rounded-full" style="width:25%"></div></div><span class="text-sm font-semibold text-stone-600 dark:text-stone-400 w-12 text-right">1 job</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Setup Panel -->
+  <div class="bg-stone-50 dark:bg-white/[.015] border-t border-stone-200 dark:border-white/[.06] p-5">
+    <div class="grid grid-cols-3 gap-6">
+      <div>
+        <div class="flex items-center gap-2 mb-3"><span class="text-[13px] font-semibold tracking-[.1em] uppercase text-stone-600 dark:text-stone-400">Credentials Needed</span><div class="flex-1 h-px bg-stone-200 dark:bg-white/[.06]"></div></div>
+        <div class="space-y-2">
+          <label class="flex items-start gap-3 py-3 px-4 rounded-xl border border-stone-200 dark:border-white/[.06] bg-white dark:bg-white/[.02] hover:border-gold/40 transition-colors cursor-pointer">
+            <input type="checkbox" id="pcs1" class="mt-0.5 flex-shrink-0" onchange="updateProgress()"/>
+            <div><div class="text-[14px] font-semibold text-stone-700 dark:text-stone-300">Monday.com — board admin access <span class="ml-1 text-xs font-bold bg-rose-100 dark:bg-rose-500/15 text-rose-600 dark:text-rose-400 px-2 py-0.5 rounded-md">needs login</span></div><div class="text-[15px] text-stone-600 dark:text-stone-400 mt-0.5">Same account as Command Center.</div></div>
+          </label>
+          <label class="flex items-start gap-3 py-3 px-4 rounded-xl border border-stone-200 dark:border-white/[.06] bg-white dark:bg-white/[.02] hover:border-gold/40 transition-colors cursor-pointer">
+            <input type="checkbox" id="pcs2" class="mt-0.5 flex-shrink-0" onchange="updateProgress()"/>
+            <div><div class="text-[14px] font-semibold text-stone-700 dark:text-stone-300">QuickBooks — Accountant access <span class="ml-1 text-xs font-bold bg-rose-100 dark:bg-rose-500/15 text-rose-600 dark:text-rose-400 px-2 py-0.5 rounded-md">needs login</span></div><div class="text-[15px] text-stone-600 dark:text-stone-400 mt-0.5">n8n reads milestones and triggers QB invoice.</div></div>
+          </label>
+        </div>
+      </div>
+      <div>
+        <div class="flex items-center gap-2 mb-3"><span class="text-[13px] font-semibold tracking-[.1em] uppercase text-stone-600 dark:text-stone-400">Decisions Matt Makes</span><div class="flex-1 h-px bg-stone-200 dark:bg-white/[.06]"></div></div>
+        <div class="space-y-2">
+          <div class="flex items-start gap-3 py-3 px-4 rounded-xl bg-gold/5 border border-gold/15"><span class="w-5 h-5 rounded-md bg-gold/15 text-gold flex items-center justify-center text-[15px] font-bold flex-shrink-0 mt-0.5">?</span><div><div class="text-[14px] text-stone-700 dark:text-stone-300">What are the 3 invoice milestones? (20%/30%/50%)</div><div class="text-[15px] text-stone-600 dark:text-stone-400 mt-0.5">Powers the QB invoice trigger in n8n</div></div></div>
+          <div class="flex items-start gap-3 py-3 px-4 rounded-xl bg-gold/5 border border-gold/15"><span class="w-5 h-5 rounded-md bg-gold/15 text-gold flex items-center justify-center text-[15px] font-bold flex-shrink-0 mt-0.5">?</span><div><div class="text-[14px] text-stone-700 dark:text-stone-300">Which phases exist? (Quote, Design, Build, Install…)</div><div class="text-[15px] text-stone-600 dark:text-stone-400 mt-0.5">Determines Groups on the Projects board</div></div></div>
+          <div class="flex items-start gap-3 py-3 px-4 rounded-xl bg-gold/5 border border-gold/15"><span class="w-5 h-5 rounded-md bg-gold/15 text-gold flex items-center justify-center text-[15px] font-bold flex-shrink-0 mt-0.5">?</span><div><div class="text-[14px] text-stone-700 dark:text-stone-300">Hardware markup % for Rev/Hr formula?</div><div class="text-[15px] text-stone-600 dark:text-stone-400 mt-0.5">Critical for accurate profitability tracking</div></div></div>
+        </div>
+      </div>
+      <div>
+        <div class="flex items-center gap-2 mb-3"><span class="text-[13px] font-semibold tracking-[.1em] uppercase text-stone-600 dark:text-stone-400">Build Tasks — Projects Board</span><div class="flex-1 h-px bg-stone-200 dark:bg-white/[.06]"></div></div>
+        <div class="space-y-2">
+          <label class="flex items-start gap-3 py-3 px-4 rounded-xl border border-stone-200 dark:border-white/[.06] bg-white dark:bg-white/[.02] hover:border-gold/40 transition-colors cursor-pointer"><input type="checkbox" id="pb1" class="mt-0.5 flex-shrink-0" onchange="updateProgress()"/><div><div class="text-[14px] font-semibold text-stone-700 dark:text-stone-300">Create Projects board with all columns</div><div class="text-[15px] text-stone-600 dark:text-stone-400 mt-0.5">Day 7 — Status, Owner, Phase, Budget, Hours, Health</div></div></label>
+          <label class="flex items-start gap-3 py-3 px-4 rounded-xl border border-stone-200 dark:border-white/[.06] bg-white dark:bg-white/[.02] hover:border-gold/40 transition-colors cursor-pointer"><input type="checkbox" id="pb2" class="mt-0.5 flex-shrink-0" onchange="updateProgress()"/><div><div class="text-[14px] font-semibold text-stone-700 dark:text-stone-300">Build Health Score formula</div><div class="text-[15px] text-stone-600 dark:text-stone-400 mt-0.5">Day 8 — weighted budget + schedule variance</div></div></label>
+          <label class="flex items-start gap-3 py-3 px-4 rounded-xl border border-stone-200 dark:border-white/[.06] bg-white dark:bg-white/[.02] hover:border-gold/40 transition-colors cursor-pointer"><input type="checkbox" id="pb3" class="mt-0.5 flex-shrink-0" onchange="updateProgress()"/><div><div class="text-[14px] font-semibold text-stone-700 dark:text-stone-300">Wire QB milestone n8n workflow</div><div class="text-[15px] text-stone-600 dark:text-stone-400 mt-0.5">Day 9–10 — phase change → trigger QB invoice</div></div></label>
+          <label class="flex items-start gap-3 py-3 px-4 rounded-xl border border-stone-200 dark:border-white/[.06] bg-white dark:bg-white/[.02] hover:border-gold/40 transition-colors cursor-pointer"><input type="checkbox" id="pb4" class="mt-0.5 flex-shrink-0" onchange="updateProgress()"/><div><div class="text-[14px] font-semibold text-stone-700 dark:text-stone-300">Import current active projects</div><div class="text-[15px] text-stone-600 dark:text-stone-400 mt-0.5">Day 11 — Matt supplies list; Hans enters seed data</div></div></label>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /board-projects -->
+
+
+<!-- ════════════════════════════════════════════════════════════════════════
+     BOARD 3 — CUSTOMER CRM
+════════════════════════════════════════════════════════════════════════ -->
+<div class="board-content" id="board-crm">
+
+  <div class="board-toolbar bg-white/90 dark:bg-[#181c17]/90 backdrop-blur-sm border-b border-stone-200 dark:border-white/[.06] px-6 h-16 flex items-center justify-between gap-4">
+    <div class="flex items-center gap-3">
+      <h1 class="text-base font-bold text-stone-900 dark:text-white">Customer CRM</h1>
+      <div class="flex gap-1">
+        <button class="view-tab active text-[15px] font-semibold px-2.5 py-1 rounded-md border-none bg-transparent text-stone-600 dark:text-stone-400 cursor-pointer hover:bg-stone-100 dark:hover:bg-white/[.05] transition-all" onclick="switchView(this,'table','crm')">Table</button>
+        <button class="view-tab text-[15px] font-semibold px-2.5 py-1 rounded-md border-none bg-transparent text-stone-600 dark:text-stone-400 cursor-pointer hover:bg-stone-100 dark:hover:bg-white/[.05] transition-all" onclick="switchView(this,'cards','crm')">Cards</button>
+      </div>
+      <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-gold/10 border border-gold/20 text-xs font-bold tracking-wide uppercase text-gold">
+        <span class="w-1.5 h-1.5 rounded-full bg-gold sim-dot"></span>Simulation
+      </span>
+    </div>
+    <div class="flex items-center gap-2">
+      <button class="text-sm font-semibold px-3 py-1.5 rounded-lg border border-stone-200 dark:border-white/10 bg-white dark:bg-white/5 text-stone-500 dark:text-white/50 hover:border-gold transition-all" onclick="filterCRM('')" id="btn-filter-all">Filter: All</button>
+      <button class="text-[13px] font-bold px-3 py-1.5 rounded-lg bg-gold text-onyx hover:bg-gold-light transition-all shadow-sm" onclick="showToast('Clients auto-populate from Projects board once Monday.com is connected.')">+ Add Client</button>
+    </div>
+  </div>
+
+  <div class="flex flex-wrap items-center gap-2 px-6 py-2.5 bg-gold/5 border-b border-gold/15 text-xs text-stone-600 dark:text-stone-400">
+    <span class="font-bold text-sm text-gold/90">Needs:</span>
+    <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full border border-rose-300 dark:border-rose-500/40 bg-rose-50 dark:bg-rose-500/10 text-rose-600 dark:text-rose-400 font-semibold text-[15px]">Monday.com login</span>
+    <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full border border-gold/30 dark:border-gold/20 bg-gold/5 dark:bg-gold/10 text-gold-muted dark:text-gold font-semibold text-[15px]">↔ Mirror from Projects (auto-synced)</span>
+    <span class="ml-auto text-[15px] text-stone-600 dark:text-stone-400">Search any name — full history, lifetime value, all projects in one click</span>
+  </div>
+
+  <!-- CRM search bar -->
+  <div class="flex items-center gap-3 px-5 py-3 bg-stone-50 dark:bg-white/[.015] border-b border-stone-200 dark:border-white/[.05]">
+    <input class="flex-1 max-w-sm px-4 py-2.5 text-sm rounded-xl border border-stone-200 dark:border-white/[.1] bg-white dark:bg-white/[.04] text-stone-800 dark:text-stone-100 placeholder-stone-400 dark:placeholder-stone-600 focus:outline-none focus:ring-2 focus:ring-gold/40 focus:border-gold transition-all"
+           type="text" placeholder="Search clients by name, address, or project…" oninput="filterCRM(this.value)"/>
+    <span class="text-[15px] text-stone-600 dark:text-stone-400">12 clients · 3 referral sources tracked</span>
+  </div>
+
+  <div id="crm-view-table" data-view-board="crm">
+  <div id="crm-view-table" data-view-board="crm">
+  <div class="overflow-x-auto board-table-wrap p-5">
+    <table class="w-full text-sm min-w-[800px]">
+      <thead>
+        <tr class="bg-stone-50 dark:bg-white/[.025]">
+          <th class="px-4 py-2.5 text-left text-[12px] font-bold tracking-widest uppercase text-stone-600 dark:text-stone-400">Client</th>
+          <th class="px-3 py-2.5 text-left text-[12px] font-bold tracking-widest uppercase text-stone-600 dark:text-stone-400">Status</th>
+          <th class="px-3 py-2.5 text-left text-[12px] font-bold tracking-widest uppercase text-stone-600 dark:text-stone-400">Address</th>
+          <th class="px-3 py-2.5 text-left text-[12px] font-bold tracking-widest uppercase text-stone-600 dark:text-stone-400">Lifetime Value</th>
+          <th class="px-3 py-2.5 text-left text-[12px] font-bold tracking-wide uppercase text-stone-600 dark:text-stone-400">Projects</th>
+          <th class="px-3 py-2.5 text-left text-[12px] font-bold tracking-widest uppercase text-stone-600 dark:text-stone-400">Last Activity</th>
+          <th class="px-3 py-2.5 text-left text-[12px] font-bold tracking-widest uppercase text-stone-600 dark:text-stone-400">Referral</th>
+          <th class="px-3 py-2.5 text-left text-[12px] font-bold tracking-widest uppercase text-stone-600 dark:text-stone-400">Active Project</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-stone-100 dark:divide-white/[.04]" id="crm-tbody">
+        <tr class="crm-row hover:bg-gold/[.025] dark:hover:bg-gold/[.03] transition-colors">
+          <td class="px-4 py-3 font-semibold text-[15px] text-stone-800 dark:text-stone-100">Whitmore, Thomas &amp; Linda</td>
+          <td class="px-3 py-3"><span class="inline-flex px-2.5 py-1 rounded-full text-xs font-bold uppercase tracking-wide bg-emerald-100 dark:bg-emerald-500/15 text-emerald-700 dark:text-emerald-400">Active</span></td>
+          <td class="px-3 py-3 text-[14px] text-stone-600 dark:text-stone-400">42 Magnolia Dr, Mt Pleasant</td>
+          <td class="px-3 py-3 text-[15px] font-bold text-gold">$68,000</td>
+          <td class="px-3 py-3 text-[14px] text-stone-600 dark:text-stone-400">1</td>
+          <td class="px-3 py-3 text-[14px] text-stone-600 dark:text-stone-400">Today</td>
+          <td class="px-3 py-3 text-[14px] text-stone-600 dark:text-stone-400">Real Estate Agent</td>
+          <td class="px-3 py-3"><span class="inline-flex px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-100 dark:bg-emerald-500/15 text-emerald-700 dark:text-emerald-400">Whitmore Kitchen</span></td>
+        </tr>
+        <tr class="crm-row hover:bg-gold/[.025] dark:hover:bg-gold/[.03] transition-colors">
+          <td class="px-4 py-3 font-semibold text-[15px] text-stone-800 dark:text-stone-100">Harris, Robert</td>
+          <td class="px-3 py-3"><span class="inline-flex px-2.5 py-1 rounded-full text-xs font-bold uppercase tracking-wide bg-emerald-100 dark:bg-emerald-500/15 text-emerald-700 dark:text-emerald-400">Active</span></td>
+          <td class="px-3 py-3 text-[14px] text-stone-600 dark:text-stone-400">17 Sycamore Dr, Mt Pleasant</td>
+          <td class="px-3 py-3 text-[15px] font-bold text-gold">$103,500</td>
+          <td class="px-3 py-3 text-[14px] text-stone-600 dark:text-stone-400">2</td>
+          <td class="px-3 py-3 text-[14px] text-stone-600 dark:text-stone-400">Yesterday</td>
+          <td class="px-3 py-3 text-[14px] text-stone-600 dark:text-stone-400">Repeat Client</td>
+          <td class="px-3 py-3"><span class="inline-flex px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-100 dark:bg-emerald-500/15 text-emerald-700 dark:text-emerald-400">Harris Master Bath</span></td>
+        </tr>
+        <tr class="crm-row hover:bg-gold/[.025] dark:hover:bg-gold/[.03] transition-colors">
+          <td class="px-4 py-3 font-semibold text-[15px] text-stone-800 dark:text-stone-100">Johnson, Sarah</td>
+          <td class="px-3 py-3"><span class="inline-flex px-2.5 py-1 rounded-full text-xs font-bold uppercase tracking-wide bg-forest/10 dark:bg-forest/30 text-forest dark:text-stone-300">In Design</span></td>
+          <td class="px-3 py-3 text-[14px] text-stone-600 dark:text-stone-400">891 Oak Bluff Rd, Mt Pleasant</td>
+          <td class="px-3 py-3 text-[15px] font-bold text-gold">$38,500</td>
+          <td class="px-3 py-3 text-[14px] text-stone-600 dark:text-stone-400">1</td>
+          <td class="px-3 py-3 text-[14px] text-stone-600 dark:text-stone-400">Apr 16</td>
+          <td class="px-3 py-3 text-[14px] text-stone-600 dark:text-stone-400">Neighbor Referral</td>
+          <td class="px-3 py-3"><span class="inline-flex px-2.5 py-1 rounded-full text-xs font-bold bg-forest/10 dark:bg-forest/30 text-forest dark:text-stone-300">Johnson Dining Room</span></td>
+        </tr>
+        <tr class="crm-row hover:bg-gold/[.025] dark:hover:bg-gold/[.03] transition-colors">
+          <td class="px-4 py-3 font-semibold text-[15px] text-stone-800 dark:text-stone-100">Pemberton, Craig &amp; Amy</td>
+          <td class="px-3 py-3"><span class="inline-flex px-2.5 py-1 rounded-full text-xs font-bold uppercase tracking-wide bg-amber-100 dark:bg-amber-500/15 text-amber-700 dark:text-amber-400">Wrap-up</span></td>
+          <td class="px-3 py-3 text-[14px] text-stone-600 dark:text-stone-400">203 Harbor View Ln, Isle of Palms</td>
+          <td class="px-3 py-3 text-[15px] font-bold text-gold">$24,000</td>
+          <td class="px-3 py-3 text-[14px] text-stone-600 dark:text-stone-400">1</td>
+          <td class="px-3 py-3 text-[14px] text-stone-600 dark:text-stone-400">Apr 14</td>
+          <td class="px-3 py-3 text-[14px] text-stone-600 dark:text-stone-400">Interior Designer</td>
+          <td class="px-3 py-3"><span class="inline-flex px-2.5 py-1 rounded-full text-xs font-bold bg-amber-100 dark:bg-amber-500/15 text-amber-700 dark:text-amber-400">Pemberton Pantry</span></td>
+        </tr>
+        <tr class="crm-row hover:bg-gold/[.025] dark:hover:bg-gold/[.03] transition-colors">
+          <td class="px-4 py-3 font-semibold text-[15px] text-stone-800 dark:text-stone-100">Collins, Michael &amp; Janet</td>
+          <td class="px-3 py-3"><span class="inline-flex px-2.5 py-1 rounded-full text-xs font-bold uppercase tracking-wide bg-rose-100 dark:bg-rose-500/15 text-rose-700 dark:text-rose-400">At Risk</span></td>
+          <td class="px-3 py-3 text-[14px] text-stone-600 dark:text-stone-400">558 Bayview Ct, Sullivan's Island</td>
+          <td class="px-3 py-3 text-[15px] font-bold text-gold">$57,000</td>
+          <td class="px-3 py-3 text-[14px] text-stone-600 dark:text-stone-400">1</td>
+          <td class="px-3 py-3 text-[14px] text-stone-600 dark:text-stone-400">Apr 10</td>
+          <td class="px-3 py-3 text-[14px] text-stone-600 dark:text-stone-400">Real Estate Agent</td>
+          <td class="px-3 py-3"><span class="inline-flex px-2.5 py-1 rounded-full text-xs font-bold bg-rose-100 dark:bg-rose-500/15 text-rose-700 dark:text-rose-400">Collins Library</span></td>
+        </tr>
+        <tr class="crm-row hover:bg-gold/[.025] dark:hover:bg-gold/[.03] transition-colors">
+          <td class="px-4 py-3 font-semibold text-[15px] text-stone-800 dark:text-stone-100">Pendleton, Grace</td>
+          <td class="px-3 py-3"><span class="inline-flex px-2.5 py-1 rounded-full text-xs font-bold uppercase tracking-wide bg-gold/10 dark:bg-gold/15 text-gold-muted dark:text-gold">Quote Sent</span></td>
+          <td class="px-3 py-3 text-[14px] text-stone-600 dark:text-stone-400">12 Live Oak Blvd, Charleston</td>
+          <td class="px-3 py-3 text-[14px] text-stone-600 dark:text-stone-400">—</td>
+          <td class="px-3 py-3 text-[14px] text-stone-600 dark:text-stone-400">0</td>
+          <td class="px-3 py-3 text-[14px] text-stone-600 dark:text-stone-400">Apr 15</td>
+          <td class="px-3 py-3 text-[14px] text-stone-600 dark:text-stone-400">Interior Designer</td>
+          <td class="px-3 py-3"><span class="inline-flex px-2.5 py-1 rounded-full text-xs font-bold bg-stone-100 dark:bg-white/[.06] text-stone-600 dark:text-stone-400">Pending</span></td>
+        </tr>
+        <tr class="crm-row hover:bg-gold/[.025] dark:hover:bg-gold/[.03] transition-colors">
+          <td class="px-4 py-3 font-semibold text-[15px] text-stone-800 dark:text-stone-100">Martinez, Carlos</td>
+          <td class="px-3 py-3"><span class="inline-flex px-2.5 py-1 rounded-full text-xs font-bold uppercase tracking-wide bg-stone-100 dark:bg-white/[.06] text-stone-600 dark:text-stone-400">Past Client</span></td>
+          <td class="px-3 py-3 text-[14px] text-stone-600 dark:text-stone-400">77 Inlet Point Dr, Pawleys Island</td>
+          <td class="px-3 py-3 text-[15px] font-bold text-gold">$89,400</td>
+          <td class="px-3 py-3 text-[14px] text-stone-600 dark:text-stone-400">3</td>
+          <td class="px-3 py-3 text-[14px] text-stone-600 dark:text-stone-400">Nov 2025</td>
+          <td class="px-3 py-3 text-[14px] text-stone-600 dark:text-stone-400">Repeat Client</td>
+          <td class="px-3 py-3"><span class="inline-flex px-2.5 py-1 rounded-full text-xs font-bold bg-stone-100 dark:bg-white/[.06] text-stone-600 dark:text-stone-400">None</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <button class="flex items-center gap-1.5 mx-5 mb-2 px-3 py-2 text-[14px] text-stone-600 dark:text-stone-400 hover:text-gold hover:bg-gold/5 rounded-lg transition-all">
+    <span class="text-base leading-none">+</span> Add client record
+  </div><!-- /crm-view-table -->
+
+  <!-- CRM Cards View -->
+  <div id="crm-view-cards" data-view-board="crm" style="display:none" class="p-5">
+    <div class="grid grid-cols-3 gap-4">
+      <div class="rounded-2xl bg-white dark:bg-white/[.04] ring-1 ring-stone-200 dark:ring-white/[.06] shadow-card p-5 hover:shadow-card-md hover:-translate-y-0.5 transition-all cursor-default">
+        <div class="flex items-start justify-between mb-3"><div><div class="text-base font-bold text-stone-900 dark:text-white">Thomas Whitmore</div><div class="text-sm text-stone-600 dark:text-stone-400">42 Magnolia Dr, Mt Pleasant</div></div><span class="inline-flex px-2.5 py-1 rounded-full text-xs font-bold uppercase bg-emerald-100 dark:bg-emerald-500/15 text-emerald-700 dark:text-emerald-400">Active</span></div>
+        <div class="grid grid-cols-2 gap-3 mb-3"><div class="rounded-xl bg-stone-50 dark:bg-white/[.03] p-3"><div class="text-[12px] font-bold uppercase tracking-wide text-stone-500 dark:text-stone-400 mb-1">Lifetime Value</div><div class="text-xl font-black text-stone-900 dark:text-white">$68K</div></div><div class="rounded-xl bg-stone-50 dark:bg-white/[.03] p-3"><div class="text-[12px] font-bold uppercase tracking-wide text-stone-500 dark:text-stone-400 mb-1">Projects</div><div class="text-xl font-black text-stone-900 dark:text-white">1</div></div></div>
+        <div class="text-sm text-stone-600 dark:text-stone-400"><span class="font-semibold text-stone-700 dark:text-stone-300">Source:</span> Real Estate Agent &middot; Today</div>
+      </div>
+      <div class="rounded-2xl bg-white dark:bg-white/[.04] ring-1 ring-stone-200 dark:ring-white/[.06] shadow-card p-5 hover:shadow-card-md hover:-translate-y-0.5 transition-all cursor-default">
+        <div class="flex items-start justify-between mb-3"><div><div class="text-base font-bold text-stone-900 dark:text-white">Rebecca Harris</div><div class="text-sm text-stone-600 dark:text-stone-400">17 Sycamore Dr, Mt Pleasant</div></div><span class="inline-flex px-2.5 py-1 rounded-full text-xs font-bold uppercase bg-emerald-100 dark:bg-emerald-500/15 text-emerald-700 dark:text-emerald-400">Active</span></div>
+        <div class="grid grid-cols-2 gap-3 mb-3"><div class="rounded-xl bg-stone-50 dark:bg-white/[.03] p-3"><div class="text-[12px] font-bold uppercase tracking-wide text-stone-500 dark:text-stone-400 mb-1">Lifetime Value</div><div class="text-xl font-black text-stone-900 dark:text-white">$92K</div></div><div class="rounded-xl bg-stone-50 dark:bg-white/[.03] p-3"><div class="text-[12px] font-bold uppercase tracking-wide text-stone-500 dark:text-stone-400 mb-1">Projects</div><div class="text-xl font-black text-stone-900 dark:text-white">2</div></div></div>
+        <div class="text-sm text-stone-600 dark:text-stone-400"><span class="font-semibold text-stone-700 dark:text-stone-300">Source:</span> Repeat Client &middot; Yesterday</div>
+      </div>
+      <div class="rounded-2xl bg-white dark:bg-white/[.04] ring-1 ring-stone-200 dark:ring-white/[.06] shadow-card p-5 hover:shadow-card-md hover:-translate-y-0.5 transition-all cursor-default">
+        <div class="flex items-start justify-between mb-3"><div><div class="text-base font-bold text-stone-900 dark:text-white">Sarah Johnson</div><div class="text-sm text-stone-600 dark:text-stone-400">891 Oak Bluff Rd, Mt Pleasant</div></div><span class="inline-flex px-2.5 py-1 rounded-full text-xs font-bold uppercase bg-emerald-100 dark:bg-emerald-500/15 text-emerald-700 dark:text-emerald-400">Active</span></div>
+        <div class="grid grid-cols-2 gap-3 mb-3"><div class="rounded-xl bg-stone-50 dark:bg-white/[.03] p-3"><div class="text-[12px] font-bold uppercase tracking-wide text-stone-500 dark:text-stone-400 mb-1">Lifetime Value</div><div class="text-xl font-black text-stone-900 dark:text-white">$38.5K</div></div><div class="rounded-xl bg-stone-50 dark:bg-white/[.03] p-3"><div class="text-[12px] font-bold uppercase tracking-wide text-stone-500 dark:text-stone-400 mb-1">Projects</div><div class="text-xl font-black text-stone-900 dark:text-white">1</div></div></div>
+        <div class="text-sm text-stone-600 dark:text-stone-400"><span class="font-semibold text-stone-700 dark:text-stone-300">Source:</span> Neighbor &middot; Apr 16</div>
+      </div>
+      <div class="rounded-2xl bg-white dark:bg-white/[.04] ring-1 ring-stone-200 dark:ring-white/[.06] shadow-card p-5 hover:shadow-card-md hover:-translate-y-0.5 transition-all cursor-default">
+        <div class="flex items-start justify-between mb-3"><div><div class="text-base font-bold text-stone-900 dark:text-white">Patricia Beaumont</div><div class="text-sm text-stone-600 dark:text-stone-400">203 Harbor View Ln, Isle of Palms</div></div><span class="inline-flex px-2.5 py-1 rounded-full text-xs font-bold uppercase bg-emerald-100 dark:bg-emerald-500/15 text-emerald-700 dark:text-emerald-400">Active</span></div>
+        <div class="grid grid-cols-2 gap-3 mb-3"><div class="rounded-xl bg-stone-50 dark:bg-white/[.03] p-3"><div class="text-[12px] font-bold uppercase tracking-wide text-stone-500 dark:text-stone-400 mb-1">Lifetime Value</div><div class="text-xl font-black text-stone-900 dark:text-white">$41K</div></div><div class="rounded-xl bg-stone-50 dark:bg-white/[.03] p-3"><div class="text-[12px] font-bold uppercase tracking-wide text-stone-500 dark:text-stone-400 mb-1">Projects</div><div class="text-xl font-black text-stone-900 dark:text-white">1</div></div></div>
+        <div class="text-sm text-stone-600 dark:text-stone-400"><span class="font-semibold text-stone-700 dark:text-stone-300">Source:</span> Interior Designer &middot; Apr 14</div>
+      </div>
+      <div class="rounded-2xl bg-white dark:bg-white/[.04] ring-1 ring-stone-200/80 dark:ring-rose-500/20 shadow-card border-l-4 border-rose-400 p-5 hover:shadow-card-md hover:-translate-y-0.5 transition-all cursor-default">
+        <div class="flex items-start justify-between mb-3"><div><div class="text-base font-bold text-stone-900 dark:text-white">Michael Collins</div><div class="text-sm text-stone-600 dark:text-stone-400">558 Bayview Ct, Sullivan's Island</div></div><span class="inline-flex px-2.5 py-1 rounded-full text-xs font-bold uppercase bg-rose-100 dark:bg-rose-500/15 text-rose-700 dark:text-rose-400">At Risk</span></div>
+        <div class="grid grid-cols-2 gap-3 mb-3"><div class="rounded-xl bg-stone-50 dark:bg-white/[.03] p-3"><div class="text-[12px] font-bold uppercase tracking-wide text-stone-500 dark:text-stone-400 mb-1">Lifetime Value</div><div class="text-xl font-black text-stone-900 dark:text-white">$40K</div></div><div class="rounded-xl bg-stone-50 dark:bg-white/[.03] p-3"><div class="text-[12px] font-bold uppercase tracking-wide text-stone-500 dark:text-stone-400 mb-1">Projects</div><div class="text-xl font-black text-stone-900 dark:text-white">1</div></div></div>
+        <div class="text-sm text-stone-600 dark:text-stone-400"><span class="font-semibold text-stone-700 dark:text-stone-300">Source:</span> Real Estate Agent &middot; Apr 10</div>
+      </div>
+      <div class="rounded-2xl bg-white dark:bg-white/[.04] ring-1 ring-stone-200 dark:ring-white/[.06] shadow-card p-5 opacity-70 hover:opacity-100 hover:shadow-card-md transition-all cursor-default">
+        <div class="flex items-start justify-between mb-3"><div><div class="text-base font-bold text-stone-900 dark:text-white">Grace Pendleton</div><div class="text-sm text-stone-600 dark:text-stone-400">77 Inlet Point Dr, Pawleys Island</div></div><span class="inline-flex px-2.5 py-1 rounded-full text-xs font-bold uppercase bg-stone-100 dark:bg-white/10 text-stone-600 dark:text-stone-300">Past Client</span></div>
+        <div class="grid grid-cols-2 gap-3 mb-3"><div class="rounded-xl bg-stone-50 dark:bg-white/[.03] p-3"><div class="text-[12px] font-bold uppercase tracking-wide text-stone-500 dark:text-stone-400 mb-1">Lifetime Value</div><div class="text-xl font-black text-stone-900 dark:text-white">$128K</div></div><div class="rounded-xl bg-stone-50 dark:bg-white/[.03] p-3"><div class="text-[12px] font-bold uppercase tracking-wide text-stone-500 dark:text-stone-400 mb-1">Projects</div><div class="text-xl font-black text-stone-900 dark:text-white">3</div></div></div>
+        <div class="text-sm text-stone-600 dark:text-stone-400"><span class="font-semibold text-stone-700 dark:text-stone-300">Source:</span> Repeat Client &middot; Nov 2025</div>
+      </div>
+    </div>
+  </div>
+
+  </button>
+
+  <div class="bg-stone-50 dark:bg-white/[.015] border-t border-stone-200 dark:border-white/[.06] p-5">
+    <div class="grid grid-cols-3 gap-6">
+      <div>
+        <div class="flex items-center gap-2 mb-3"><span class="text-[13px] font-semibold tracking-[.1em] uppercase text-stone-600 dark:text-stone-400">Credentials Needed</span><div class="flex-1 h-px bg-stone-200 dark:bg-white/[.06]"></div></div>
+        <label class="flex items-start gap-3 py-3 px-4 rounded-xl border border-stone-200 dark:border-white/[.06] bg-white dark:bg-white/[.02] hover:border-gold/40 transition-colors cursor-pointer"><input type="checkbox" id="ccs1" class="mt-0.5 flex-shrink-0" onchange="updateProgress()"/><div><div class="text-[14px] font-semibold text-stone-700 dark:text-stone-300">Monday.com — same Pro workspace <span class="ml-1 text-xs font-bold bg-rose-100 dark:bg-rose-500/15 text-rose-600 dark:text-rose-400 px-2 py-0.5 rounded-md">needs login</span></div><div class="text-[15px] text-stone-600 dark:text-stone-400 mt-0.5">CRM auto-mirrors from Projects via column linking.</div></div></label>
+      </div>
+      <div>
+        <div class="flex items-center gap-2 mb-3"><span class="text-[13px] font-semibold tracking-[.1em] uppercase text-stone-600 dark:text-stone-400">Decisions Matt Makes</span><div class="flex-1 h-px bg-stone-200 dark:bg-white/[.06]"></div></div>
+        <div class="space-y-2">
+          <div class="flex items-start gap-3 py-3 px-4 rounded-xl bg-gold/5 border border-gold/15"><span class="w-5 h-5 rounded-md bg-gold/15 text-gold flex items-center justify-center text-[15px] font-bold flex-shrink-0 mt-0.5">?</span><div><div class="text-[14px] text-stone-700 dark:text-stone-300">What fields on every client record? (notes, spouse, pets…)</div><div class="text-[15px] text-stone-600 dark:text-stone-400 mt-0.5">Relationship details matter for repeat business</div></div></div>
+          <div class="flex items-start gap-3 py-3 px-4 rounded-xl bg-gold/5 border border-gold/15"><span class="w-5 h-5 rounded-md bg-gold/15 text-gold flex items-center justify-center text-[15px] font-bold flex-shrink-0 mt-0.5">?</span><div><div class="text-[14px] text-stone-700 dark:text-stone-300">Provide existing client list (names + addresses)</div><div class="text-[15px] text-stone-600 dark:text-stone-400 mt-0.5">Hans imports as seed data on Day 11</div></div></div>
+        </div>
+      </div>
+      <div>
+        <div class="flex items-center gap-2 mb-3"><span class="text-[13px] font-semibold tracking-[.1em] uppercase text-stone-600 dark:text-stone-400">Build Tasks — CRM</span><div class="flex-1 h-px bg-stone-200 dark:bg-white/[.06]"></div></div>
+        <div class="space-y-2">
+          <label class="flex items-start gap-3 py-3 px-4 rounded-xl border border-stone-200 dark:border-white/[.06] bg-white dark:bg-white/[.02] hover:border-gold/40 transition-colors cursor-pointer"><input type="checkbox" id="ccb1" class="mt-0.5 flex-shrink-0" onchange="updateProgress()"/><div><div class="text-[14px] font-semibold text-stone-700 dark:text-stone-300">Create CRM board with mirrored columns</div><div class="text-[15px] text-stone-600 dark:text-stone-400 mt-0.5">Day 7 — Lifetime value, active project mirror</div></div></label>
+          <label class="flex items-start gap-3 py-3 px-4 rounded-xl border border-stone-200 dark:border-white/[.06] bg-white dark:bg-white/[.02] hover:border-gold/40 transition-colors cursor-pointer"><input type="checkbox" id="ccb2" class="mt-0.5 flex-shrink-0" onchange="updateProgress()"/><div><div class="text-[14px] font-semibold text-stone-700 dark:text-stone-300">Referral source dropdown + filter</div><div class="text-[15px] text-stone-600 dark:text-stone-400 mt-0.5">Day 8 — lead origin for marketing attribution</div></div></label>
+          <label class="flex items-start gap-3 py-3 px-4 rounded-xl border border-stone-200 dark:border-white/[.06] bg-white dark:bg-white/[.02] hover:border-gold/40 transition-colors cursor-pointer"><input type="checkbox" id="ccb3" class="mt-0.5 flex-shrink-0" onchange="updateProgress()"/><div><div class="text-[14px] font-semibold text-stone-700 dark:text-stone-300">Import existing clients from Matt's list</div><div class="text-[15px] text-stone-600 dark:text-stone-400 mt-0.5">Day 11 — seed data from Matt's spreadsheet</div></div></label>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /board-crm -->
+
+
+<!-- ════════════════════════════════════════════════════════════════════════
+     BOARD 4 — LEADS & INTAKE
+════════════════════════════════════════════════════════════════════════ -->
+<div class="board-content" id="board-leads">
+
+  <div class="board-toolbar bg-white/90 dark:bg-[#181c17]/90 backdrop-blur-sm border-b border-stone-200 dark:border-white/[.06] px-6 h-16 flex items-center justify-between gap-4">
+    <div class="flex items-center gap-3">
+      <h1 class="text-base font-bold text-stone-900 dark:text-white">Leads &amp; Intake</h1>
+      <div class="flex gap-1">
+        <button class="view-tab active text-[15px] font-semibold px-2.5 py-1 rounded-md border-none bg-transparent text-stone-600 dark:text-stone-400 cursor-pointer hover:bg-stone-100 dark:hover:bg-white/[.05] transition-all" onclick="switchView(this,'kanban','leads')">Kanban</button>
+        <button class="view-tab text-[15px] font-semibold px-2.5 py-1 rounded-md border-none bg-transparent text-stone-600 dark:text-stone-400 cursor-pointer hover:bg-stone-100 dark:hover:bg-white/[.05] transition-all" onclick="switchView(this,'table','leads')">Table</button>
+      </div>
+      <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-gold/10 border border-gold/20 text-xs font-bold tracking-wide uppercase text-gold">
+        <span class="w-1.5 h-1.5 rounded-full bg-gold sim-dot"></span>Simulation
+      </span>
+    </div>
+    <div class="flex items-center gap-2">
+      <a href="intake.html" class="text-sm font-semibold px-3 py-1.5 rounded-lg border border-gold/40 bg-gold/5 text-gold hover:bg-gold/10 transition-all">⚡ Open Intake Form →</a>
+      <a href="intake.html" class="text-[13px] font-bold px-3 py-1.5 rounded-lg bg-gold text-onyx hover:bg-gold-light transition-all shadow-sm">+ Add Lead via Intake →</a>
+    </div>
+  </div>
+
+  <div class="flex flex-wrap items-center gap-2 px-6 py-2.5 bg-gold/5 border-b border-gold/15 text-xs text-stone-600 dark:text-stone-400">
+    <span class="font-bold text-sm text-gold/90">Needs:</span>
+    <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full border border-rose-300 dark:border-rose-500/40 bg-rose-50 dark:bg-rose-500/10 text-rose-600 dark:text-rose-400 font-semibold text-[15px]">Monday.com login</span>
+    <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full border border-rose-300 dark:border-rose-500/40 bg-rose-50 dark:bg-rose-500/10 text-rose-600 dark:text-rose-400 font-semibold text-[15px]">Gmail (auto-notify)</span>
+    <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full border border-emerald-300 dark:border-emerald-500/40 bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 font-semibold text-[15px]">✓ intake.html live</span>
+    <span class="ml-auto text-[15px] text-stone-600 dark:text-stone-400">Form submit → item appears here instantly + Matt gets notified</span>
+  </div>
+
+  <div id="leads-view-kanban" data-view-board="leads">
+  <!-- Kanban -->
+  <div class="flex gap-3 p-5 overflow-x-auto flex-1 items-start">
+
+    <!-- New Lead -->
+    <div class="min-w-[210px] max-w-[210px] flex-shrink-0">
+      <div class="flex items-center justify-between px-3 py-2 mb-2 rounded-lg bg-stone-600">
+        <span class="text-[15px] font-bold uppercase tracking-wide text-white">New Lead</span>
+        <span class="text-[13px] font-bold bg-white/20 text-white px-1.5 py-0.5 rounded-full">2</span>
+      </div>
+      <div class="rounded-xl bg-white dark:bg-white/[.04] ring-1 ring-stone-200 dark:ring-white/[.06] p-3.5 mb-2 shadow-card hover:shadow-card-md hover:-translate-y-0.5 transition-all cursor-default">
+        <div class="text-base font-semibold text-stone-900 dark:text-white mb-1.5">Beaumont, Patricia</div>
+        <div class="text-[15px] text-stone-600 dark:text-stone-400 mb-2.5">Kitchen remodel · Shaker style<br/>Coleman Blvd, Mt Pleasant</div>
+        <div class="flex items-center justify-between">
+          <span class="text-[15px] font-bold text-gold">Est. $48K</span>
+          <span class="text-[12px] text-stone-600 dark:text-stone-400">Apr 17 — intake form</span>
+        </div>
+      </div>
+      <div class="rounded-xl bg-white dark:bg-white/[.04] ring-1 ring-stone-200 dark:ring-white/[.06] p-3.5 mb-2 shadow-card hover:shadow-card-md hover:-translate-y-0.5 transition-all cursor-default">
+        <div class="text-base font-semibold text-stone-900 dark:text-white mb-1.5">Nguyen, David</div>
+        <div class="text-[15px] text-stone-600 dark:text-stone-400 mb-2.5">Master bath + laundry<br/>Referred by Harris</div>
+        <div class="flex items-center justify-between">
+          <span class="text-[15px] font-bold text-gold">Est. $31K</span>
+          <span class="text-xs text-stone-600 dark:text-stone-400">Apr 16 — phone call</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Qualified -->
+    <div class="min-w-[210px] max-w-[210px] flex-shrink-0">
+      <div class="flex items-center justify-between px-3 py-2 mb-2 rounded-lg bg-forest">
+        <span class="text-[15px] font-bold uppercase tracking-wide text-white">Qualified</span>
+        <span class="text-[13px] font-bold bg-white/20 text-white px-1.5 py-0.5 rounded-full">1</span>
+      </div>
+      <div class="rounded-xl bg-white dark:bg-white/[.04] ring-1 ring-stone-200 dark:ring-white/[.06] p-3.5 mb-2 shadow-card hover:shadow-card-md hover:-translate-y-0.5 transition-all cursor-default">
+        <div class="text-base font-semibold text-stone-900 dark:text-white mb-1.5">Pendleton, Grace</div>
+        <div class="text-[15px] text-stone-600 dark:text-stone-400 mb-2.5">Library + home office<br/>Charleston</div>
+        <div class="flex items-center justify-between">
+          <span class="text-[15px] font-bold text-gold">Est. $42K</span>
+          <span class="text-xs text-stone-600 dark:text-stone-400">Apr 12 — site visit done</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Quote Sent -->
+    <div class="min-w-[210px] max-w-[210px] flex-shrink-0">
+      <div class="flex items-center justify-between px-3 py-2 mb-2 rounded-lg bg-[#7a6030]">
+        <span class="text-[15px] font-bold uppercase tracking-wide text-white">Quote Sent</span>
+        <span class="text-[13px] font-bold bg-white/20 text-white px-1.5 py-0.5 rounded-full">1</span>
+      </div>
+      <div class="rounded-xl bg-white dark:bg-white/[.04] ring-1 ring-stone-200 dark:ring-white/[.06] p-4 mb-2 shadow-card hover:shadow-card-md hover:-translate-y-0.5 transition-all cursor-default border-l-4 border-rose-400">
+        <div class="text-base font-semibold text-stone-900 dark:text-white mb-1.5">Pendleton, Grace</div>
+        <div class="text-[15px] text-stone-600 dark:text-stone-400 mb-1">Quote sent Apr 15</div>
+        <div class="inline-flex items-center gap-1 text-xs font-bold text-rose-500 bg-rose-50 dark:bg-rose-500/10 px-2 py-1 rounded-lg mb-2">⚠ Follow-up overdue (2 days)</div>
+        <div class="flex items-center justify-between">
+          <span class="text-[15px] font-bold text-gold">$42,000</span>
+          <span class="text-xs text-stone-600 dark:text-stone-400">Auto follow-up queued</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Accepted -->
+    <div class="min-w-[210px] max-w-[210px] flex-shrink-0">
+      <div class="flex items-center justify-between px-3 py-2 mb-2 rounded-lg bg-emerald-500">
+        <span class="text-[15px] font-bold uppercase tracking-wide text-white">Accepted</span>
+        <span class="text-[13px] font-bold bg-white/20 text-white px-1.5 py-0.5 rounded-full">0</span>
+      </div>
+      <div class="rounded-xl ring-1 ring-dashed ring-stone-300 dark:ring-white/[.08] p-6 text-center text-[14px] text-stone-600 dark:text-stone-500">
+        No accepted leads<br/><span class="text-[15px]">Move a card here when quote is signed</span>
+      </div>
+    </div>
+
+    <!-- Lost -->
+    <div class="min-w-[210px] max-w-[210px] flex-shrink-0">
+      <div class="flex items-center justify-between px-3 py-2 mb-2 rounded-lg bg-rose-600">
+        <span class="text-[15px] font-bold uppercase tracking-wide text-white">Lost / Cold</span>
+        <span class="text-[13px] font-bold bg-white/20 text-white px-1.5 py-0.5 rounded-full">1</span>
+      </div>
+      <div class="rounded-xl bg-white dark:bg-white/[.04] ring-1 ring-stone-200 dark:ring-white/[.06] p-4 mb-2 shadow-card opacity-50 cursor-default">
+        <div class="text-base font-semibold text-stone-900 dark:text-white mb-1.5">Anderson, Ray</div>
+        <div class="text-[15px] text-stone-600 dark:text-stone-400 mb-2.5">Went with competitor<br/>Jan 2026</div>
+        <div class="flex items-center justify-between">
+          <span class="text-[14px] font-bold text-stone-500 dark:text-stone-400">Est. $22K</span>
+          <span class="text-xs text-stone-500 dark:text-stone-400">Lost — price</span>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /kanban -->
+  </div><!-- /leads-view-kanban -->
+
+  <!-- Leads Table View -->
+  <div id="leads-view-table" data-view-board="leads" style="display:none">
+  <div class="overflow-x-auto board-table-wrap p-5">
+    <table class="w-full text-sm">
+      <thead>
+        <tr class="bg-stone-50 dark:bg-white/[.025]">
+          <th class="px-4 py-2.5 text-left text-[12px] font-bold tracking-widest uppercase text-stone-600 dark:text-stone-400">Name</th>
+          <th class="px-3 py-2.5 text-left text-[12px] font-bold tracking-widest uppercase text-stone-600 dark:text-stone-400">Stage</th>
+          <th class="px-3 py-2.5 text-left text-[12px] font-bold tracking-widest uppercase text-stone-600 dark:text-stone-400">Project Type</th>
+          <th class="px-3 py-2.5 text-left text-[12px] font-bold tracking-widest uppercase text-stone-600 dark:text-stone-400">Est. Value</th>
+          <th class="px-3 py-2.5 text-left text-[12px] font-bold tracking-widest uppercase text-stone-600 dark:text-stone-400">Source</th>
+          <th class="px-3 py-2.5 text-left text-[12px] font-bold tracking-widest uppercase text-stone-600 dark:text-stone-400">Last Activity</th>
+          <th class="px-3 py-2.5 text-left text-[12px] font-bold tracking-widest uppercase text-stone-600 dark:text-stone-400">Follow-up</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-stone-100 dark:divide-white/[.04]">
+        <tr class="hover:bg-gold/[.025] transition-colors">
+          <td class="px-4 py-3 font-semibold text-[15px] text-stone-900 dark:text-white">Beaumont, Patricia</td>
+          <td class="px-3 py-3"><span class="inline-flex px-2.5 py-1 rounded-full text-xs font-bold uppercase tracking-wide bg-stone-100 dark:bg-white/10 text-stone-600 dark:text-stone-300">New Lead</span></td>
+          <td class="px-3 py-3 text-[14px] text-stone-600 dark:text-stone-400">Kitchen remodel &middot; Shaker</td>
+          <td class="px-3 py-3 text-[15px] font-bold text-gold">$48,000</td>
+          <td class="px-3 py-3 text-[14px] text-stone-600 dark:text-stone-400">Intake Form</td>
+          <td class="px-3 py-3 text-[14px] text-stone-600 dark:text-stone-400">Apr 17</td>
+          <td class="px-3 py-3"><span class="inline-flex px-2 py-1 rounded-lg text-xs font-bold bg-emerald-100 dark:bg-emerald-500/15 text-emerald-700 dark:text-emerald-400">Queued</span></td>
+        </tr>
+        <tr class="hover:bg-gold/[.025] transition-colors">
+          <td class="px-4 py-3 font-semibold text-[15px] text-stone-900 dark:text-white">Nguyen, David</td>
+          <td class="px-3 py-3"><span class="inline-flex px-2.5 py-1 rounded-full text-xs font-bold uppercase tracking-wide bg-stone-100 dark:bg-white/10 text-stone-600 dark:text-stone-300">New Lead</span></td>
+          <td class="px-3 py-3 text-[14px] text-stone-600 dark:text-stone-400">Master bath + laundry</td>
+          <td class="px-3 py-3 text-[15px] font-bold text-gold">$31,000</td>
+          <td class="px-3 py-3 text-[14px] text-stone-600 dark:text-stone-400">Referral (Harris)</td>
+          <td class="px-3 py-3 text-[14px] text-stone-600 dark:text-stone-400">Apr 16</td>
+          <td class="px-3 py-3"><span class="inline-flex px-2 py-1 rounded-lg text-xs font-bold bg-emerald-100 dark:bg-emerald-500/15 text-emerald-700 dark:text-emerald-400">Queued</span></td>
+        </tr>
+        <tr class="hover:bg-gold/[.025] transition-colors">
+          <td class="px-4 py-3 font-semibold text-[15px] text-stone-900 dark:text-white">Pendleton, Grace</td>
+          <td class="px-3 py-3"><span class="inline-flex px-2.5 py-1 rounded-full text-xs font-bold uppercase tracking-wide bg-forest/10 dark:bg-forest/30 text-forest dark:text-stone-300">Qualified</span></td>
+          <td class="px-3 py-3 text-[14px] text-stone-600 dark:text-stone-400">Library + home office</td>
+          <td class="px-3 py-3 text-[15px] font-bold text-gold">$42,000</td>
+          <td class="px-3 py-3 text-[14px] text-stone-600 dark:text-stone-400">Site Visit</td>
+          <td class="px-3 py-3 text-[14px] text-stone-600 dark:text-stone-400">Apr 12</td>
+          <td class="px-3 py-3"><span class="inline-flex px-2 py-1 rounded-lg text-xs font-bold bg-amber-100 dark:bg-amber-500/15 text-amber-700 dark:text-amber-400">Overdue 2d</span></td>
+        </tr>
+        <tr class="hover:bg-gold/[.025] transition-colors opacity-50">
+          <td class="px-4 py-3 font-semibold text-[15px] text-stone-900 dark:text-white">Anderson, Ray</td>
+          <td class="px-3 py-3"><span class="inline-flex px-2.5 py-1 rounded-full text-xs font-bold uppercase tracking-wide bg-rose-100 dark:bg-rose-500/15 text-rose-700 dark:text-rose-400">Lost</span></td>
+          <td class="px-3 py-3 text-[14px] text-stone-600 dark:text-stone-400">Custom cabinetry</td>
+          <td class="px-3 py-3 text-[15px] font-bold text-stone-500 dark:text-stone-400">$22,000</td>
+          <td class="px-3 py-3 text-[14px] text-stone-600 dark:text-stone-400">Cold Inquiry</td>
+          <td class="px-3 py-3 text-[14px] text-stone-600 dark:text-stone-400">Jan 2026</td>
+          <td class="px-3 py-3"><span class="inline-flex px-2 py-1 rounded-lg text-xs font-bold bg-stone-100 dark:bg-white/10 text-stone-500 dark:text-stone-400">None</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  </div><!-- /leads-view-table -->
+
+
+  <div class="bg-stone-50 dark:bg-white/[.015] border-t border-stone-200 dark:border-white/[.06] p-5">
+    <div class="grid grid-cols-3 gap-6">
+      <div>
+        <div class="flex items-center gap-2 mb-3"><span class="text-[13px] font-semibold tracking-[.1em] uppercase text-stone-600 dark:text-stone-400">Credentials Needed</span><div class="flex-1 h-px bg-stone-200 dark:bg-white/[.06]"></div></div>
+        <div class="space-y-2">
+          <label class="flex items-start gap-3 py-3 px-4 rounded-xl border border-stone-200 dark:border-white/[.06] bg-white dark:bg-white/[.02] hover:border-gold/40 transition-colors cursor-pointer"><input type="checkbox" id="lcs1" class="mt-0.5 flex-shrink-0" onchange="updateProgress()"/><div><div class="text-[14px] font-semibold text-stone-700 dark:text-stone-300">Monday.com Pro workspace <span class="ml-1 text-xs font-bold bg-rose-100 dark:bg-rose-500/15 text-rose-600 dark:text-rose-400 px-2 py-0.5 rounded-md">needs login</span></div><div class="text-[15px] text-stone-600 dark:text-stone-400 mt-0.5">Board auto-populated when intake.html form submits via n8n.</div></div></label>
+          <label class="flex items-start gap-3 py-3 px-4 rounded-xl border border-stone-200 dark:border-white/[.06] bg-white dark:bg-white/[.02] hover:border-gold/40 transition-colors cursor-pointer"><input type="checkbox" id="lcs2" class="mt-0.5 flex-shrink-0" onchange="updateProgress()"/><div><div class="text-[14px] font-semibold text-stone-700 dark:text-stone-300">Gmail — n8n notification sender <span class="ml-1 text-xs font-bold bg-rose-100 dark:bg-rose-500/15 text-rose-600 dark:text-rose-400 px-2 py-0.5 rounded-md">needs login</span></div><div class="text-[15px] text-stone-600 dark:text-stone-400 mt-0.5">Matt gets instant email notification + link to new item.</div></div></label>
+          <label class="flex items-start gap-3 py-3 px-4 rounded-xl border border-stone-200 dark:border-white/[.06] bg-white dark:bg-white/[.02] hover:border-gold/40 transition-colors cursor-pointer"><input type="checkbox" id="lcs3" class="mt-0.5 flex-shrink-0" onchange="updateProgress()"/><div><div class="text-[14px] font-semibold text-stone-700 dark:text-stone-300">n8n webhook URL → add to intake form <span class="ml-1 text-xs font-bold bg-forest/10 dark:bg-forest/25 text-forest dark:text-stone-300 px-2 py-0.5 rounded-md">build step</span></div><div class="text-[15px] text-stone-600 dark:text-stone-400 mt-0.5">After n8n deployed, Hans adds endpoint to intake.html.</div></div></label>
+        </div>
+      </div>
+      <div>
+        <div class="flex items-center gap-2 mb-3"><span class="text-[13px] font-semibold tracking-[.1em] uppercase text-stone-600 dark:text-stone-400">Decisions Matt Makes</span><div class="flex-1 h-px bg-stone-200 dark:bg-white/[.06]"></div></div>
+        <div class="space-y-2">
+          <div class="flex items-start gap-3 py-3 px-4 rounded-xl bg-gold/5 border border-gold/15"><span class="w-5 h-5 rounded-md bg-gold/15 text-gold flex items-center justify-center text-[15px] font-bold flex-shrink-0 mt-0.5">?</span><div><div class="text-[14px] text-stone-700 dark:text-stone-300">What defines a "qualified" lead? (budget, job type, geography?)</div><div class="text-[15px] text-stone-600 dark:text-stone-400 mt-0.5">When Matt manually moves a card New → Qualified</div></div></div>
+          <div class="flex items-start gap-3 py-3 px-4 rounded-xl bg-gold/5 border border-gold/15"><span class="w-5 h-5 rounded-md bg-gold/15 text-gold flex items-center justify-center text-[15px] font-bold flex-shrink-0 mt-0.5">?</span><div><div class="text-[14px] text-stone-700 dark:text-stone-300">How many days before auto follow-up triggers?</div><div class="text-[15px] text-stone-600 dark:text-stone-400 mt-0.5">Default: 2 business days after quote sent</div></div></div>
+          <div class="flex items-start gap-3 py-3 px-4 rounded-xl bg-gold/5 border border-gold/15"><span class="w-5 h-5 rounded-md bg-gold/15 text-gold flex items-center justify-center text-[15px] font-bold flex-shrink-0 mt-0.5">?</span><div><div class="text-[14px] text-stone-700 dark:text-stone-300">Which email address should follow-ups send from?</div><div class="text-[15px] text-stone-600 dark:text-stone-400 mt-0.5">Matt's Gmail is preferred. Needs OAuth once.</div></div></div>
+        </div>
+      </div>
+      <div>
+        <div class="flex items-center gap-2 mb-3"><span class="text-[13px] font-semibold tracking-[.1em] uppercase text-stone-600 dark:text-stone-400">Build Tasks — Leads Board</span><div class="flex-1 h-px bg-stone-200 dark:bg-white/[.06]"></div></div>
+        <div class="space-y-2">
+          <label class="flex items-start gap-3 py-3 px-4 rounded-xl border border-stone-200 dark:border-white/[.06] bg-white dark:bg-white/[.02] hover:border-gold/40 transition-colors cursor-pointer"><input type="checkbox" id="lb1" class="mt-0.5 flex-shrink-0" onchange="updateProgress()"/><div><div class="text-[14px] font-semibold text-stone-700 dark:text-stone-300">Create Leads &amp; Intake board with kanban view</div><div class="text-[15px] text-stone-600 dark:text-stone-400 mt-0.5">Day 7 — New → Qualified → Quote Sent → Accepted</div></div></label>
+          <label class="flex items-start gap-3 py-3 px-4 rounded-xl border border-stone-200 dark:border-white/[.06] bg-white dark:bg-white/[.02] hover:border-gold/40 transition-colors cursor-pointer"><input type="checkbox" id="lb2" class="mt-0.5 flex-shrink-0" onchange="updateProgress()"/><div><div class="text-[14px] font-semibold text-stone-700 dark:text-stone-300">Build n8n intake webhook → Monday item</div><div class="text-[15px] text-stone-600 dark:text-stone-400 mt-0.5">Day 9 — form submit → Monday item + email Matt</div></div></label>
+          <label class="flex items-start gap-3 py-3 px-4 rounded-xl border border-stone-200 dark:border-white/[.06] bg-white dark:bg-white/[.02] hover:border-gold/40 transition-colors cursor-pointer"><input type="checkbox" id="lb3" class="mt-0.5 flex-shrink-0" onchange="updateProgress()"/><div><div class="text-[14px] font-semibold text-stone-700 dark:text-stone-300">Build follow-up automation (n8n)</div><div class="text-[15px] text-stone-600 dark:text-stone-400 mt-0.5">Day 10 — stale Quote Sent → draft follow-up</div></div></label>
+          <label class="flex items-start gap-3 py-3 px-4 rounded-xl border border-stone-200 dark:border-white/[.06] bg-white dark:bg-white/[.02] hover:border-gold/40 transition-colors cursor-pointer"><input type="checkbox" id="lb4" class="mt-0.5 flex-shrink-0" onchange="updateProgress()"/><div><div class="text-[14px] font-semibold text-stone-700 dark:text-stone-300">Test: intake form → item appears in Monday</div><div class="text-[15px] text-stone-600 dark:text-stone-400 mt-0.5">Day 12 UAT — end-to-end with Matt watching</div></div></label>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /board-leads -->
+
+  </main>
+</div><!-- /board-shell -->
+
+<script>
+/* ── Board switching ─────────────────────────────────────────────────────── */
+const switchBoard = (id) => {
+  document.querySelectorAll('.board-content').forEach(el => el.classList.remove('active'));
+  document.querySelectorAll('.board-nav-item').forEach(btn => {
+    btn.classList.remove('active', 'bg-gold/[.12]', 'border-r-gold');
+  });
+  const content = document.getElementById('board-' + id);
+  if (content) content.classList.add('active');
+  const btn = document.querySelector(`[data-board="${id}"]`);
+  if (btn) btn.classList.add('active', 'bg-gold/[.12]', 'border-r-gold');
+};
+
+/* ── View switching (Table/Gantt/Dashboard/Kanban/Cards) ─────────────────── */
+const switchView = (tabEl, viewId, boardId) => {
+  // Update active tab
+  const tabGroup = tabEl.closest('[class*="flex gap-1"], .view-tab-group');
+  if (tabGroup) {
+    tabGroup.querySelectorAll('.view-tab').forEach(t => t.classList.remove('active'));
+  }
+  tabEl.classList.add('active');
+  // Hide all panels for this board
+  document.querySelectorAll(`[data-view-board="${boardId}"]`).forEach(p => {
+    p.style.display = 'none';
+  });
+  // Show the selected panel
+  const panel = document.getElementById(`${boardId}-view-${viewId}`);
+  if (panel) panel.style.display = '';
+};
+
+/* ── Toast notification ──────────────────────────────────────────────────── */
+let toastTimer;
+const showToast = (msg) => {
+  let toast = document.getElementById('board-toast');
+  if (!toast) {
+    toast = document.createElement('div');
+    toast.id = 'board-toast';
+    toast.style.cssText = [
+      'position:fixed', 'bottom:24px', 'left:50%', 'transform:translateX(-50%)',
+      'background:#1a1f19', 'color:#e5e2da', 'font-size:14px', 'font-weight:500',
+      'padding:12px 20px', 'border-radius:10px', 'box-shadow:0 4px 20px rgba(0,0,0,0.35)',
+      'border:1px solid rgba(201,164,76,0.25)', 'z-index:9999',
+      'transition:opacity .25s', 'white-space:nowrap', 'max-width:90vw',
+      'white-space:normal', 'text-align:center'
+    ].join(';');
+    document.body.appendChild(toast);
+  }
+  toast.textContent = msg;
+  toast.style.opacity = '1';
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => { toast.style.opacity = '0'; }, 3200);
+};
+
+/* ── Progress tracker ────────────────────────────────────────────────────── */
+const updateProgress = () => {
+  const all     = document.querySelectorAll('input[type="checkbox"]');
+  const checked = document.querySelectorAll('input[type="checkbox"]:checked');
+  const pct     = Math.round((checked.length / all.length) * 100);
+  const fill    = document.getElementById('progress-fill');
+  const text    = document.getElementById('progress-text');
+  if (fill) fill.style.width = pct + '%';
+  if (text) text.textContent = `${checked.length} / ${all.length} tasks`;
+  const state = {};
+  all.forEach(cb => { if (cb.id) state[cb.id] = cb.checked; });
+  localStorage.setItem('saundersChecklistState', JSON.stringify(state));
+};
+
+/* ── Restore checkbox state ──────────────────────────────────────────────── */
+const restoreState = () => {
+  try {
+    const saved = JSON.parse(localStorage.getItem('saundersChecklistState') || '{}');
+    Object.entries(saved).forEach(([id, val]) => {
+      const el = document.getElementById(id);
+      if (el) el.checked = val;
+    });
+  } catch (e) {}
+  updateProgress();
+};
+
+/* ── CRM search ──────────────────────────────────────────────────────────── */
+const filterCRM = (query) => {
+  const q = query.toLowerCase().trim();
+  document.querySelectorAll('.crm-row').forEach(row => {
+    row.classList.toggle('hidden', !(!q || row.textContent.toLowerCase().includes(q)));
+  });
+};
+
+/* ── Approval buttons ────────────────────────────────────────────────────── */
+document.querySelectorAll('.approval-btn').forEach(btn => {
+  btn.addEventListener('click', (e) => {
+    const item = e.target.closest('.approval-item');
+    if (!item) return;
+    item.classList.add('dismissed');
+    // Update pending count badge
+    const remaining = document.querySelectorAll('.approval-item:not(.dismissed)').length;
+    const badge = document.querySelector('.approval-item')
+      ?.closest('.rounded-2xl')
+      ?.querySelector('.text-gold.bg-gold\\/10');
+    if (badge) badge.textContent = `${remaining} pending`;
+  });
+});
+
+/* ── Init ────────────────────────────────────────────────────────────────── */
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', restoreState);
+} else {
+  restoreState();
+}
+</script>
+</body>
+</html>
