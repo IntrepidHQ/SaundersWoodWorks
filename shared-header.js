@@ -14,7 +14,7 @@
   const THEME_KEY = 'saundersTheme';
 
   function getTheme() {
-    return localStorage.getItem(THEME_KEY) || 'light';
+    return localStorage.getItem(THEME_KEY) || 'dark';
   }
 
   window.applyTheme = function (t) {
@@ -94,13 +94,57 @@
     flex-shrink: 0;
   }
   .shdr-toggle:hover { border-color: #C9A44C; color: #C9A44C; }
+
+  /* Hamburger */
+  .shdr-burger {
+    display: none;
+    background: none; border: 1px solid rgba(201,164,76,.28);
+    border-radius: 8px; width: 36px; height: 36px;
+    align-items: center; justify-content: center;
+    cursor: pointer; color: rgba(255,255,255,.75);
+    flex-shrink: 0; transition: border-color .2s, background .2s;
+  }
+  .shdr-burger:hover { border-color: #C9A44C; background: rgba(201,164,76,.08); }
+  .shdr-burger svg { width: 18px; height: 18px; }
+
+  /* Mobile nav dropdown */
+  .shdr-mobile-nav {
+    display: none;
+    position: fixed; top: 60px; left: 0; right: 0; z-index: 99;
+    background: #0a0a08;
+    border-bottom: 1px solid rgba(201,164,76,.18);
+    flex-direction: column; gap: 0;
+    padding: 8px 0 12px;
+    animation: shdrNavIn .22s ease both;
+  }
+  @keyframes shdrNavIn {
+    from { opacity:0; transform: translateY(-8px); }
+    to   { opacity:1; transform: translateY(0); }
+  }
+  .shdr-mobile-nav.open { display: flex; }
+  .shdr-mobile-nav a {
+    color: rgba(255,255,255,.72); text-decoration: none;
+    font-size: .88rem; font-weight: 500;
+    letter-spacing: .09em; text-transform: uppercase;
+    padding: 13px 5%;
+    border-bottom: 1px solid rgba(255,255,255,.05);
+    transition: color .2s, background .2s;
+  }
+  .shdr-mobile-nav a:hover { color: #C9A44C; background: rgba(201,164,76,.06); }
+
   @media (max-width: 860px) {
     #site-header nav a.shdr-hide-sm { display: none; }
   }
-  @media (max-width: 560px) {
+  @media (max-width: 680px) {
     #site-header { padding: 0 4%; }
     .shdr-name { display: none; }
-    #site-header nav { gap: 14px; }
+    #site-header nav { gap: 10px; }
+    /* Hide desktop nav links, show burger */
+    #site-header nav a:not(.shdr-always-show) { display: none; }
+    .shdr-burger { display: flex; }
+  }
+  @media (max-width: 560px) {
+    #site-header nav { gap: 8px; }
   }
   `;
   document.head.appendChild(styleEl);
@@ -152,8 +196,63 @@
       <span id="shdr-icon">${t === 'dark' ? '☀️' : '🌙'}</span>
       <span id="shdr-label">${t === 'dark' ? 'Light' : 'Dark'}</span>
     </button>
+    <button class="shdr-burger" id="shdr-burger" onclick="shdrToggleMenu()" aria-label="Open navigation menu" aria-expanded="false">
+      <svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
+        <line x1="2" y1="5" x2="16" y2="5"/>
+        <line x1="2" y1="9" x2="16" y2="9"/>
+        <line x1="2" y1="13" x2="16" y2="13"/>
+      </svg>
+    </button>
   `;
 
   root.replaceWith(header);
+
+  /* ── Mobile nav ──────────────────────────────────────────────────────── */
+  const mobileNav = document.createElement('div');
+  mobileNav.id    = 'shdr-mobile-nav';
+  mobileNav.className = 'shdr-mobile-nav';
+  mobileNav.setAttribute('role', 'navigation');
+  mobileNav.setAttribute('aria-label', 'Mobile navigation');
+
+  const mobileLinks = isIntake ? `
+    <a href="monday.html" onclick="shdrCloseMenu()">Boards</a>
+    <a href="brain.html"  onclick="shdrCloseMenu()">Agent Brain</a>
+    <a href="index.html"  onclick="shdrCloseMenu()">Strategy</a>
+  ` : isBrain ? `
+    <a href="monday.html" onclick="shdrCloseMenu()">Boards</a>
+    <a href="intake.html" onclick="shdrCloseMenu()">Intake Form</a>
+    <a href="index.html"  onclick="shdrCloseMenu()">Strategy</a>
+  ` : isMonday ? `
+    <a href="intake.html" onclick="shdrCloseMenu()">Intake Form</a>
+    <a href="brain.html"  onclick="shdrCloseMenu()">Agent Brain</a>
+    <a href="index.html"  onclick="shdrCloseMenu()">Strategy</a>
+  ` : `
+    <a href="#problem"          onclick="shdrCloseMenu()">Problems</a>
+    <a href="#solution"         onclick="shdrCloseMenu()">Solution</a>
+    <a href="#investment"       onclick="shdrCloseMenu()">Investment</a>
+    <a href="#invoice-document" onclick="shdrCloseMenu()">Invoice</a>
+    <a href="monday.html"       onclick="shdrCloseMenu()">Boards</a>
+    <a href="brain.html"        onclick="shdrCloseMenu()">Brain</a>
+    <a href="intake.html"       onclick="shdrCloseMenu()">Intake</a>
+  `;
+  mobileNav.innerHTML = mobileLinks;
+  document.body.insertBefore(mobileNav, document.body.firstChild);
+
+  window.shdrToggleMenu = function () {
+    const open    = mobileNav.classList.toggle('open');
+    const burger  = document.getElementById('shdr-burger');
+    if (burger) burger.setAttribute('aria-expanded', open ? 'true' : 'false');
+  };
+  window.shdrCloseMenu = function () {
+    mobileNav.classList.remove('open');
+    const burger = document.getElementById('shdr-burger');
+    if (burger) burger.setAttribute('aria-expanded', 'false');
+  };
+  // Close on outside tap
+  document.addEventListener('click', (e) => {
+    if (!mobileNav.contains(e.target) && !document.getElementById('shdr-burger')?.contains(e.target)) {
+      shdrCloseMenu();
+    }
+  });
 
 })();
