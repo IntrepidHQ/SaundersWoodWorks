@@ -26,8 +26,12 @@
       display: flex; align-items: center; justify-content: center;
       font-family: degular, "degular-text", system-ui, sans-serif;
       padding: 20px;
+      color: rgba(255,255,255,.75);
     }
-    #sw-gate-overlay * { box-sizing: border-box; }
+    #sw-gate-overlay * {
+      box-sizing: border-box;
+      font-family: degular, "degular-text", system-ui, sans-serif !important;
+    }
 
     .sw-gate-card {
       background: #111210;
@@ -66,7 +70,7 @@
     }
     .sw-gate-sub {
       text-align: center;
-      font-size: .83rem; color: rgba(255,255,255,.42);
+      font-size: .85rem; color: rgba(255,255,255,.58);
       margin-bottom: 32px; line-height: 1.55;
     }
 
@@ -115,31 +119,48 @@
 
     /* ── NDA step ── */
     .sw-nda-scroll {
-      background: rgba(255,255,255,.04);
-      border: 1px solid rgba(255,255,255,.1);
+      background: rgba(255,255,255,.06);
+      border: 1px solid rgba(255,255,255,.14);
       border-radius: 10px;
       height: 280px; overflow-y: auto;
       padding: 22px 20px;
       margin-bottom: 18px;
-      font-size: .82rem; color: rgba(255,255,255,.7);
-      line-height: 1.7;
+      font-size: 13px !important;
+      line-height: 1.75 !important;
       scroll-behavior: smooth;
+      color: rgba(255,255,255,.82) !important;
     }
     .sw-nda-scroll::-webkit-scrollbar { width: 4px; }
     .sw-nda-scroll::-webkit-scrollbar-track { background: transparent; }
     .sw-nda-scroll::-webkit-scrollbar-thumb { background: rgba(201,164,76,.35); border-radius: 4px; }
 
     .sw-nda-scroll h3 {
-      font-family: "minerva-modern", Georgia, serif;
-      color: #fff; font-size: 1rem; font-weight: 500;
-      margin: 0 0 14px; letter-spacing: .03em;
+      font-family: "minerva-modern", Georgia, serif !important;
+      color: #ffffff !important;
+      font-size: 1.05rem !important;
+      font-weight: 500 !important;
+      margin: 0 0 14px !important;
+      letter-spacing: .03em !important;
     }
     .sw-nda-scroll h4 {
-      color: #C9A44C; font-size: .75rem;
-      letter-spacing: .12em; text-transform: uppercase;
-      margin: 20px 0 5px; font-weight: 600;
+      color: #C9A44C !important;
+      font-size: 10px !important;
+      letter-spacing: .14em !important;
+      text-transform: uppercase !important;
+      margin: 20px 0 6px !important;
+      font-weight: 700 !important;
     }
-    .sw-nda-scroll p { margin: 0 0 10px; }
+    .sw-nda-scroll p {
+      margin: 0 0 10px !important;
+      color: rgba(255,255,255,.82) !important;
+      font-size: 13px !important;
+      line-height: 1.75 !important;
+    }
+    .sw-nda-scroll strong {
+      color: #ffffff !important;
+      font-weight: 600 !important;
+      font-size: inherit !important;
+    }
 
     .sw-nda-sig {
       border-top: 1px solid rgba(201,164,76,.2);
@@ -149,24 +170,27 @@
     }
     .sw-sig-block { display: flex; flex-direction: column; gap: 3px; }
     .sw-sig-label {
-      font-size: .68rem; letter-spacing: .12em; text-transform: uppercase;
-      color: rgba(255,255,255,.35);
+      font-size: 10px !important; letter-spacing: .14em !important;
+      text-transform: uppercase !important;
+      color: rgba(255,255,255,.5) !important;
+      font-weight: 600 !important;
     }
     .sw-sig-name {
-      font-family: "minerva-modern", Georgia, serif;
-      font-size: 1.05rem; color: #C9A44C; font-style: italic;
+      font-family: "minerva-modern", Georgia, serif !important;
+      font-size: 1.1rem !important; color: #C9A44C !important;
+      font-style: italic !important;
     }
     .sw-sig-sub {
-      font-size: .72rem; color: rgba(255,255,255,.45);
+      font-size: 11px !important; color: rgba(255,255,255,.6) !important;
     }
     .sw-sig-you {
-      font-size: .8rem; color: rgba(255,255,255,.4);
-      font-style: italic;
+      font-size: 12px !important; color: rgba(255,255,255,.5) !important;
+      font-style: italic !important;
     }
 
     .sw-scroll-hint {
       display: flex; align-items: center; gap: 7px;
-      font-size: .75rem; color: rgba(255,255,255,.35);
+      font-size: 12px !important; color: rgba(255,255,255,.55) !important;
       margin-bottom: 14px; transition: opacity .3s;
     }
     .sw-scroll-hint svg { flex-shrink:0; }
@@ -182,8 +206,8 @@
       accent-color: #C9A44C; cursor: pointer;
     }
     .sw-check-label {
-      font-size: .84rem; color: rgba(255,255,255,.65); line-height: 1.5;
-      cursor: pointer;
+      font-size: 13px !important; color: rgba(255,255,255,.8) !important;
+      line-height: 1.55 !important; cursor: pointer;
     }
 
     @media (max-width: 560px) {
