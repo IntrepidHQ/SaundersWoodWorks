@@ -765,49 +765,57 @@
 
   .page-outer {
     display: grid;
-    grid-template-columns: minmax(0, 128px) 1fr;
-    gap: 18px;
+    grid-template-columns: 188px minmax(0, 1fr);
+    gap: 26px;
     max-width: 1380px;
     margin: 0 auto;
     padding: 28px 28px 40px;
     align-items: start;
   }
 
+  .form-content {
+    min-width: 0;
+    position: relative;
+    z-index: 1;
+  }
+
   .section-nav-sidebar {
     position: sticky;
     top: 110px;
+    width: 100%;
+    max-width: 188px;
     background: var(--paper);
     border: 1px solid var(--line);
-    border-radius: var(--r-md);
-    padding: 7px 0 5px;
+    border-radius: var(--r-lg);
+    padding: 12px 0 10px;
     box-shadow: var(--shadow-sm);
-    max-width: 128px;
+    align-self: start;
   }
 
   .section-nav-sidebar .nav-title {
-    font-size: 7.5px;
+    font-size: 9px;
     font-weight: 700;
-    letter-spacing: 0.16em;
+    letter-spacing: 0.18em;
     text-transform: uppercase;
     color: var(--gold-dk);
-    padding: 0 8px 6px;
+    padding: 0 14px 9px;
     border-bottom: 1px solid var(--line-gold);
-    margin-bottom: 3px;
+    margin-bottom: 5px;
   }
 
   .section-nav-sidebar a {
     display: flex;
-    align-items: center;
-    gap: 5px;
-    padding: 3px 6px 3px 5px;
-    font-size: 9.5px;
+    align-items: flex-start;
+    gap: 8px;
+    padding: 6px 12px 6px 10px;
+    font-size: 11px;
     font-weight: 600;
-    letter-spacing: 0.01em;
+    letter-spacing: 0.02em;
     color: var(--ink-soft);
     text-decoration: none;
     border-left: 2px solid transparent;
-    transition: all 0.15s var(--ease);
-    line-height: 1.2;
+    transition: background 0.15s var(--ease), border-color 0.15s var(--ease), color 0.15s var(--ease);
+    line-height: 1.35;
   }
   .section-nav-sidebar a:hover {
     color: var(--sage);
@@ -820,15 +828,22 @@
     background: var(--gold-soft);
   }
   .section-nav-sidebar .snav-dot {
-    width: 5px; height: 5px;
+    width: 6px;
+    height: 6px;
     border-radius: 50%;
     background: var(--line-strong);
     flex-shrink: 0;
+    margin-top: 4px;
     transition: background 0.2s;
   }
   .section-nav-sidebar a.snav-filled .snav-dot { background: #4a8850; }
   .section-nav-sidebar a.snav-active .snav-dot { background: var(--gold); }
-  .section-nav-sidebar .snav-label { flex: 1; }
+  .section-nav-sidebar .snav-label {
+    flex: 1;
+    min-width: 0;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+  }
 
   /* =================================================================
      SECTION CARD IMPROVEMENTS
@@ -1005,6 +1020,11 @@
     display: flex;
     gap: 16px;
     align-items: flex-start;
+    position: relative;
+    isolation: isolate;
+  }
+  .deliverable-banner > div:first-child {
+    flex-shrink: 0;
   }
   .deliverable-banner p { margin: 0; font-size: 13px; color: var(--ink-soft); line-height: 1.55; }
   .deliverable-banner strong { color: var(--ink); }
