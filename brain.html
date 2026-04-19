@@ -228,12 +228,13 @@
       margin-bottom: 48px;
       scrollbar-gutter: stable;
     }
-    .doc-scroll-region--grid .file-grid,
-    .doc-scroll-region .pdf-grid {
+    .doc-scroll-region--grid .file-grid {
       margin-bottom: 0;
     }
     .doc-scroll-region--pdfs {
-      padding: 16px 18px 20px;
+      padding: 12px 14px 16px;
+      max-height: none;
+      overflow: visible;
     }
     .doc-scroll-region .doc-table {
       margin-bottom: 0;
@@ -333,25 +334,102 @@
     }
     .open-btn:hover { background: var(--gold-light); }
 
-    /* PDF section */
-    .pdf-cat-section {
-      margin-bottom: 2.25rem;
+    /* PDF section — one row per category, horizontal scroll for docs */
+    .pdf-doc-rows {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
     }
-    .pdf-cat-section:last-child {
-      margin-bottom: 0;
-    }
-    .pdf-grid {
+    .pdf-doc-row {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-      gap: 1.5rem;
-      margin-bottom: 0;
-      padding: 6px 4px 8px;
+      grid-template-columns: minmax(110px, 10.5rem) 1fr;
+      gap: 12px 18px;
+      align-items: stretch;
+      padding: 12px 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .pdf-doc-row:last-child {
+      border-bottom: none;
+      padding-bottom: 4px;
+    }
+    .pdf-row-label {
+      font-family: var(--font-display);
+      font-size: 0.74rem;
+      font-weight: 500;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      line-height: 1.35;
+      padding-top: 4px;
+    }
+    .pdf-row-count {
+      display: block;
+      margin-top: 6px;
+      font-size: 0.65rem;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--text-subtle);
+    }
+    .pdf-row-track {
+      display: flex;
+      flex-direction: row;
+      flex-wrap: nowrap;
+      gap: 10px;
+      overflow-x: auto;
+      overflow-y: hidden;
+      padding: 2px 2px 10px;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-gutter: stable;
+    }
+    .pdf-row-track:focus-within {
+      outline: none;
     }
     .pdf-card {
       background: var(--card-bg); border: 1px solid var(--border);
       padding: 1.75rem 1.65rem;
       display: flex; flex-direction: column;
       gap: 0.9rem; transition: all 0.18s;
+    }
+    .pdf-card--compact {
+      flex: 0 0 auto;
+      width: 210px;
+      max-width: 46vw;
+      padding: 0.75rem 0.85rem;
+      gap: 0.45rem;
+      min-height: 0;
+    }
+    .pdf-card--compact .pdf-desc,
+    .pdf-card--compact .pdf-pills {
+      display: none;
+    }
+    .pdf-card--compact .pdf-header {
+      gap: 0.5rem;
+      align-items: center;
+    }
+    .pdf-card--compact .pdf-icon-wrap {
+      width: 34px;
+      height: 34px;
+      font-size: 0.95rem;
+    }
+    .pdf-card--compact .pdf-title {
+      font-size: 0.8rem;
+      line-height: 1.28;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+    .pdf-card--compact .pdf-footer {
+      border-top: none;
+      padding-top: 0;
+      margin-top: 0;
+      flex-wrap: wrap;
+      gap: 0.45rem;
+    }
+    .pdf-card--compact .pdf-link {
+      padding: 0.38rem 0.65rem;
+      font-size: 0.7rem;
     }
     .pdf-card:hover { border-color: var(--gold); box-shadow: var(--shadow-md); }
     .pdf-header { display: flex; align-items: flex-start; gap: 0.9rem; }
@@ -563,19 +641,6 @@
     .auth-actions { display: flex; gap: 0.75rem; justify-content: flex-end; }
 
 
-    /* PDF category headings */
-    .pdf-cat-heading {
-      font-family: var(--font-display);
-      font-weight: 500;
-      letter-spacing: 0.1em;
-      color: var(--text-muted);
-      margin: 0 0 1.1rem 0;
-      padding: 0 2px 12px 2px;
-      border-bottom: 1px solid var(--border);
-      text-transform: uppercase;
-      font-size: 0.82rem;
-      line-height: 1.35;
-    }
     .pdf-card-clickable { cursor: pointer; }
     .pdf-card-clickable:hover { border-color: var(--gold); box-shadow: var(--shadow-md); }
     /* Responsive */
@@ -590,6 +655,11 @@
       .cta-bar { flex-direction: column; text-align: center; }
       .modal-box { max-height: 95vh; }
       .modal-body { padding: 1.25rem; }
+      .pdf-doc-row {
+        grid-template-columns: 1fr;
+        gap: 8px;
+      }
+      .pdf-row-label { padding-top: 0; }
       .doc-table .col-meta { display: none; }
     }
     @media (max-width: 480px) {
@@ -692,7 +762,7 @@
       Source Documents <span class="section-count" id="pdfCount">0</span>
     </h2>
     <div class="doc-scroll-region doc-scroll-region--pdfs" role="region" aria-label="Source PDF documents">
-      <div class="pdf-grid" id="pdfSection"></div>
+      <div class="pdf-doc-rows" id="pdfSection"></div>
     </div>
 
     <!-- CTA -->
@@ -952,16 +1022,22 @@
         var catPdfs = groups[cat];
 
         var section = document.createElement('div');
-        section.className = 'pdf-cat-section';
+        section.className = 'pdf-doc-row';
 
-        var heading = document.createElement('h3');
-        heading.className = 'pdf-cat-heading';
-        heading.textContent = PDF_CAT_LABEL[cat] || cat;
-        section.appendChild(heading);
+        var labelWrap = document.createElement('div');
+        labelWrap.className = 'pdf-row-label';
+        var labelTitle = document.createElement('span');
+        labelTitle.textContent = PDF_CAT_LABEL[cat] || cat;
+        labelWrap.appendChild(labelTitle);
+        var countEl = document.createElement('span');
+        countEl.className = 'pdf-row-count';
+        countEl.textContent = catPdfs.length + ' PDF' + (catPdfs.length === 1 ? '' : 's');
+        labelWrap.appendChild(countEl);
+        section.appendChild(labelWrap);
 
-        var grid = document.createElement('div');
-        grid.className = 'pdf-grid';
-        section.appendChild(grid);
+        var track = document.createElement('div');
+        track.className = 'pdf-row-track';
+        track.setAttribute('aria-label', (PDF_CAT_LABEL[cat] || cat) + ' documents');
 
         catPdfs.forEach(function(pdf) {
           var pills = (pdf.relatedTo || []).map(function(id) {
@@ -972,7 +1048,8 @@
           var pdfHref = pdf.localPath || null;
 
           var div = document.createElement('div');
-          div.className = 'pdf-card' + (pdfHref ? ' pdf-card-clickable' : '');
+          div.className = 'pdf-card pdf-card--compact' + (pdfHref ? ' pdf-card-clickable' : '');
+          if (pdf.description) div.title = pdf.description;
           if (pdfHref) {
             div.setAttribute('role', 'button');
             div.setAttribute('tabindex', '0');
@@ -993,13 +1070,14 @@
             '<div class="pdf-footer">' +
               '<span>' + (pdf.size || '') + '</span>' +
               (pdfHref
-                ? '<a class="pdf-link" href="' + pdfHref + '" target="_blank" rel="noopener" onclick="event.stopPropagation()">&#8599;&nbsp;Open PDF</a>'
-                : '<a class="pdf-link" href="https://decore.com" target="_blank" rel="noopener">&#128279;&nbsp;Decore.com</a>') +
+                ? '<a class="pdf-link" href="' + pdfHref + '" target="_blank" rel="noopener" onclick="event.stopPropagation()">&#8599;&nbsp;Open</a>'
+                : '<a class="pdf-link" href="https://decore.com" target="_blank" rel="noopener">&#128279;&nbsp;Decore</a>') +
             '</div>';
 
-          grid.appendChild(div);
+          track.appendChild(div);
         });
 
+        section.appendChild(track);
         container.appendChild(section);
       });
     }
