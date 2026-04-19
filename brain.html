@@ -24,13 +24,14 @@
       --gold-light:   #e0bc70;
       --green:        #2e3a2f;
     }
-    [data-theme="dark"] {
+    /* Light theme — was wrongly tagged as [data-theme="dark"], so light mode had no tokens */
+    [data-theme="light"] {
       --bg:           #f4f0e8;
       --bg2:          #ede8de;
       --surface:      #faf7f2;
       --surface2:     #f0ebe0;
-      --border:       rgba(46,58,47,0.14);
-      --border-gold:  rgba(201,164,76,0.28);
+      --border:       rgba(46,58,47,0.18);
+      --border-gold:  rgba(201,164,76,0.35);
       --text:         #1a1c18;
       --text-muted:   rgba(26,28,24,0.55);
       --text-subtle:  rgba(26,28,24,0.38);
@@ -216,7 +217,32 @@
     /* Table view */
     #viewTable { display: block; }
     #viewGrid  { display: none; }
-    .doc-table { width: 100%; border-collapse: collapse; margin-bottom: 60px; }
+    /* Fixed-height scroll areas — keeps long lists from dominating the page */
+    .doc-scroll-region {
+      max-height: min(400px, 44vh);
+      overflow: auto;
+      -webkit-overflow-scrolling: touch;
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      background: var(--surface);
+      margin-bottom: 48px;
+      scrollbar-gutter: stable;
+    }
+    .doc-scroll-region--grid .file-grid,
+    .doc-scroll-region .pdf-grid {
+      margin-bottom: 0;
+    }
+    .doc-scroll-region .doc-table {
+      margin-bottom: 0;
+    }
+    .doc-scroll-region .doc-table thead th {
+      position: sticky;
+      top: 0;
+      z-index: 2;
+      box-shadow: 0 1px 0 var(--border);
+    }
+
+    .doc-table { width: 100%; border-collapse: collapse; margin-bottom: 0; }
     .doc-table thead th {
       padding: 0.6rem 1rem; text-align: left;
       font-size: 0.72rem; font-weight: 700;
@@ -252,7 +278,9 @@
     .file-grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-      gap: 1.25rem; margin-bottom: 60px;
+      gap: 1.25rem;
+      margin-bottom: 0;
+      padding: 4px;
     }
     .file-card {
       background: var(--card-bg); border: 1px solid var(--border);
@@ -306,7 +334,9 @@
     .pdf-grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-      gap: 1.25rem; margin-bottom: 60px;
+      gap: 1.25rem;
+      margin-bottom: 0;
+      padding: 4px;
     }
     .pdf-card {
       background: var(--card-bg); border: 1px solid var(--border);
@@ -421,7 +451,23 @@
       font-family: var(--font-mono); font-size: 0.76rem;
       color: var(--text-subtle); margin-left: auto;
     }
-    .modal-body { flex: 1; overflow-y: auto; padding: 2rem 2rem; }
+    .modal-body {
+      flex: 1; overflow-y: auto; padding: 2rem 2rem;
+      background: var(--surface);
+    }
+
+    /* Light mode: scrim + depth so popups don’t look washed out */
+    [data-theme="light"] .modal-overlay {
+      background: rgba(26, 28, 24, 0.42);
+      backdrop-filter: blur(2px);
+    }
+    [data-theme="light"] .modal-box {
+      box-shadow: var(--shadow-lg), 0 0 0 1px rgba(46, 58, 47, 0.07);
+    }
+    [data-theme="light"] .modal-head,
+    [data-theme="light"] .modal-toolbar {
+      border-color: var(--border);
+    }
 
     /* Markdown renderer */
     .md-render h1 {
@@ -599,19 +645,21 @@
       <h2 class="section-heading">
         Training Files <span class="section-count" id="fileCount">0</span>
       </h2>
-      <table class="doc-table">
-        <thead>
-          <tr>
-            <th style="width:130px">Category</th>
-            <th>File</th>
-            <th class="col-desc">Description</th>
-            <th class="col-meta" style="width:80px">Words</th>
-            <th class="col-meta" style="width:90px">Updated</th>
-            <th style="width:90px"></th>
-          </tr>
-        </thead>
-        <tbody id="fileTableBody"></tbody>
-      </table>
+      <div class="doc-scroll-region" role="region" aria-label="Training files table">
+        <table class="doc-table">
+          <thead>
+            <tr>
+              <th style="width:130px">Category</th>
+              <th>File</th>
+              <th class="col-desc">Description</th>
+              <th class="col-meta" style="width:80px">Words</th>
+              <th class="col-meta" style="width:90px">Updated</th>
+              <th style="width:90px"></th>
+            </tr>
+          </thead>
+          <tbody id="fileTableBody"></tbody>
+        </table>
+      </div>
     </div>
 
     <!-- Grid view -->
@@ -619,14 +667,18 @@
       <h2 class="section-heading">
         Training Files <span class="section-count" id="fileCountGrid">0</span>
       </h2>
-      <div class="file-grid" id="fileGridBody"></div>
+      <div class="doc-scroll-region doc-scroll-region--grid" role="region" aria-label="Training files grid">
+        <div class="file-grid" id="fileGridBody"></div>
+      </div>
     </div>
 
     <!-- Source Documents -->
     <h2 class="section-heading">
       Source Documents <span class="section-count" id="pdfCount">0</span>
     </h2>
-    <div class="pdf-grid" id="pdfSection"></div>
+    <div class="doc-scroll-region doc-scroll-region--pdfs" role="region" aria-label="Source PDF documents">
+      <div class="pdf-grid" id="pdfSection"></div>
+    </div>
 
     <!-- CTA -->
     <div class="cta-bar">

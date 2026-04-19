@@ -648,6 +648,368 @@
     footer.summary .cell .val { color: var(--sage); }
     button, .actions-bar, .no-print { display: none !important; }
   }
+
+  /* =================================================================
+     DARK MODE
+     ================================================================= */
+  [data-theme="dark"] {
+    --ink:         #ddd8c8;
+    --ink-soft:    #8f8878;
+    --paper:       #17160f;
+    --paper-2:     #1d1c14;
+    --ivory:       #17160f;
+    --sage:        #c8c3b3;
+    --sage-hi:     #d8d3c3;
+    --sage-soft:   rgba(200,195,179,0.07);
+    --line:        rgba(201,164,76,0.08);
+    --line-strong: rgba(201,164,76,0.16);
+    --shadow-sm:   0 1px 3px rgba(0,0,0,0.3);
+    --shadow-md:   0 2px 4px rgba(0,0,0,0.25), 0 8px 24px rgba(0,0,0,0.18);
+    --shadow-lg:   0 3px 6px rgba(0,0,0,0.3), 0 18px 44px rgba(0,0,0,0.22);
+  }
+  [data-theme="dark"] body {
+    background: #0f0e09;
+    background-attachment: fixed;
+    color: var(--ink);
+  }
+  [data-theme="dark"] section.card {
+    background: #1c1b13;
+    border-color: rgba(201,164,76,0.1);
+  }
+  [data-theme="dark"] section.card:hover { box-shadow: 0 3px 6px rgba(0,0,0,0.3), 0 18px 44px rgba(0,0,0,0.22); }
+  [data-theme="dark"] input[type=text],
+  [data-theme="dark"] input[type=email],
+  [data-theme="dark"] input[type=tel],
+  [data-theme="dark"] input[type=number],
+  [data-theme="dark"] input[type=date],
+  [data-theme="dark"] select,
+  [data-theme="dark"] textarea {
+    background: #0f0e09;
+    color: #dbd6c5;
+    border-color: rgba(201,164,76,0.22);
+  }
+  [data-theme="dark"] input:hover,
+  [data-theme="dark"] select:hover,
+  [data-theme="dark"] textarea:hover { border-color: var(--gold); }
+  [data-theme="dark"] input:focus,
+  [data-theme="dark"] select:focus,
+  [data-theme="dark"] textarea:focus {
+    background: #141309;
+    border-color: var(--gold);
+    box-shadow: 0 0 0 3px rgba(201,164,76,0.14);
+  }
+  [data-theme="dark"] table.estimator th {
+    background: #1c1b13;
+    border-bottom-color: rgba(201,164,76,0.15);
+  }
+  [data-theme="dark"] table.estimator td { border-bottom-color: rgba(201,164,76,0.07); }
+  [data-theme="dark"] table.estimator tr:hover td { background: rgba(201,164,76,0.05); }
+  [data-theme="dark"] table.estimator input,
+  [data-theme="dark"] table.estimator select {
+    background: #141309 !important;
+    color: #dbd6c5 !important;
+    border-color: rgba(201,164,76,0.2) !important;
+  }
+  [data-theme="dark"] table.estimator input:focus,
+  [data-theme="dark"] table.estimator select:focus {
+    border-color: var(--gold) !important;
+    box-shadow: 0 0 0 2px rgba(201,164,76,0.15) !important;
+  }
+  [data-theme="dark"] .section-nav-sidebar {
+    background: #1c1b13;
+    border-color: rgba(201,164,76,0.1);
+  }
+  [data-theme="dark"] #quotePersistBar {
+    background: #1c1b13;
+    border-color: rgba(201,164,76,0.12);
+  }
+  [data-theme="dark"] footer.summary {
+    background: #141309;
+    border-top-color: rgba(201,164,76,0.15);
+  }
+  [data-theme="dark"] .chip-group label {
+    border-color: rgba(201,164,76,0.2);
+    color: var(--ink-soft);
+  }
+  [data-theme="dark"] .chip-group label:has(input:checked) {
+    background: var(--sage);
+    color: #0f0e09;
+    border-color: var(--sage);
+  }
+  [data-theme="dark"] .deliverable-banner {
+    background: linear-gradient(135deg, rgba(46,58,47,0.2) 0%, rgba(201,164,76,0.1) 100%);
+    border-color: rgba(201,164,76,0.28);
+  }
+  [data-theme="dark"] select option { background: #1c1b13; color: #dbd6c5; }
+
+  /* =================================================================
+     PAGE LAYOUT — left section nav + form content
+     ================================================================= */
+  main { padding: 0; max-width: none; }
+
+  .page-outer {
+    display: grid;
+    grid-template-columns: 196px 1fr;
+    gap: 28px;
+    max-width: 1380px;
+    margin: 0 auto;
+    padding: 28px 28px 40px;
+    align-items: start;
+  }
+
+  .section-nav-sidebar {
+    position: sticky;
+    top: 110px;
+    background: var(--paper);
+    border: 1px solid var(--line);
+    border-radius: var(--r-lg);
+    padding: 16px 0 12px;
+    box-shadow: var(--shadow-sm);
+  }
+
+  .section-nav-sidebar .nav-title {
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--gold-dk);
+    padding: 0 16px 10px;
+    border-bottom: 1px solid var(--line-gold);
+    margin-bottom: 6px;
+  }
+
+  .section-nav-sidebar a {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    padding: 8px 16px;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    color: var(--ink-soft);
+    text-decoration: none;
+    border-left: 2px solid transparent;
+    transition: all 0.15s var(--ease);
+    line-height: 1.3;
+  }
+  .section-nav-sidebar a:hover {
+    color: var(--sage);
+    background: var(--gold-soft);
+    border-left-color: var(--gold);
+  }
+  .section-nav-sidebar a.snav-active {
+    color: var(--sage);
+    border-left-color: var(--gold);
+    background: var(--gold-soft);
+  }
+  .section-nav-sidebar .snav-dot {
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    background: var(--line-strong);
+    flex-shrink: 0;
+    transition: background 0.2s;
+  }
+  .section-nav-sidebar a.snav-filled .snav-dot { background: #4a8850; }
+  .section-nav-sidebar a.snav-active .snav-dot { background: var(--gold); }
+  .section-nav-sidebar .snav-label { flex: 1; }
+
+  /* =================================================================
+     SECTION CARD IMPROVEMENTS
+     ================================================================= */
+  section.card {
+    padding: 28px 32px;
+    scroll-margin-top: 120px;
+  }
+
+  .sec-head {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    margin-bottom: 22px;
+  }
+  .sec-badge {
+    font-family: var(--serif);
+    font-size: 34px;
+    font-weight: 600;
+    color: var(--gold);
+    opacity: 0.3;
+    line-height: 1;
+    letter-spacing: -0.02em;
+    flex-shrink: 0;
+    margin-top: 1px;
+    user-select: none;
+  }
+  .sec-head-inner { min-width: 0; flex: 1; }
+  .sec-head-inner h2 {
+    margin: 0 0 3px;
+    font-family: var(--serif);
+    font-weight: 600;
+    font-size: 24px;
+    line-height: 1.1;
+    letter-spacing: -0.005em;
+    color: var(--sage);
+  }
+  .sec-head-inner .kicker {
+    font-size: 9.5px;
+    font-weight: 700;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--gold-dk);
+    margin: 0 0 0;
+    padding-bottom: 0;
+    border-bottom: none;
+    line-height: 1.4;
+  }
+  /* Remove the old direct h2/kicker from cards since they're now inside .sec-head */
+  section.card > h2:not(.sec-head-inner h2) {
+    font-size: 24px;
+    margin-bottom: 4px;
+  }
+  section.card > .kicker:not(.sec-head-inner .kicker) {
+    margin-bottom: 20px;
+  }
+
+  .sec-divider {
+    width: 100%;
+    height: 1px;
+    background: var(--line-gold);
+    margin: 0 0 22px;
+    opacity: 0.6;
+  }
+
+  /* =================================================================
+     TABLE IMPROVEMENTS
+     ================================================================= */
+  /* Remove number spinners */
+  input[type=number]::-webkit-inner-spin-button,
+  input[type=number]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    appearance: none;
+    margin: 0;
+  }
+  input[type=number] { -moz-appearance: textfield; appearance: textfield; }
+
+  table.estimator {
+    min-width: 720px;
+    font-size: 13px;
+  }
+  table.estimator th {
+    padding: 11px 10px;
+    font-size: 9.5px;
+    letter-spacing: 0.14em;
+  }
+  table.estimator td {
+    padding: 10px 8px;
+  }
+  table.estimator input,
+  table.estimator select {
+    padding: 9px 10px;
+    font-size: 13px;
+    min-height: 38px;
+    color: #1a1914 !important;
+    background: #fdfbf5 !important;
+    border-color: rgba(100,80,30,0.2) !important;
+  }
+  table.estimator input[type="number"] {
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+    font-weight: 500;
+  }
+  table.estimator input[readonly] {
+    cursor: default;
+  }
+  table.estimator input:focus,
+  table.estimator select:focus {
+    border-color: var(--gold) !important;
+    box-shadow: 0 0 0 2px rgba(201,164,76,0.18) !important;
+    background: #fff !important;
+  }
+
+  /* =================================================================
+     FORM FIELDS
+     ================================================================= */
+  label.field {
+    font-size: 10.5px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    gap: 7px;
+  }
+  input[type=text], input[type=email], input[type=tel], input[type=number],
+  input[type=date], select, textarea {
+    padding: 12px 15px;
+    font-size: 15px;
+    border-radius: var(--r-sm);
+    min-height: 46px;
+  }
+  textarea { min-height: 108px; }
+  .grid.cols-2 { gap: 20px; }
+  .grid.cols-3 { gap: 18px; }
+
+  /* chip group as radio pill selector */
+  .chip-group {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .chip-group label {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    padding: 7px 16px;
+    border: 1.5px solid var(--line-strong);
+    border-radius: var(--r-pill);
+    font-size: 12.5px;
+    font-weight: 500;
+    letter-spacing: 0.03em;
+    color: var(--ink-soft);
+    cursor: pointer;
+    transition: all 0.15s var(--ease);
+    line-height: 1.3;
+    text-transform: none;
+  }
+  .chip-group label:has(input:checked) {
+    background: var(--sage);
+    color: var(--ivory);
+    border-color: var(--sage);
+    box-shadow: var(--shadow-sm);
+  }
+  .chip-group label input { display: none; }
+
+  /* =================================================================
+     DELIVERABLE BANNER
+     ================================================================= */
+  .deliverable-banner {
+    background: linear-gradient(135deg, rgba(46,58,47,0.06) 0%, rgba(201,164,76,0.08) 100%);
+    border: 1px solid rgba(201,164,76,0.32);
+    border-left: 3px solid var(--gold);
+    border-radius: var(--r-md);
+    padding: 18px 24px;
+    margin-bottom: 24px;
+    display: flex;
+    gap: 16px;
+    align-items: flex-start;
+  }
+  .deliverable-banner p { margin: 0; font-size: 13px; color: var(--ink-soft); line-height: 1.55; }
+  .deliverable-banner strong { color: var(--ink); }
+
+  /* =================================================================
+     RESPONSIVE
+     ================================================================= */
+  @media (max-width: 900px) {
+    .page-outer {
+      grid-template-columns: 1fr;
+    }
+    .section-nav-sidebar {
+      display: none;
+    }
+  }
+  @media (max-width: 600px) {
+    .page-outer { padding: 16px 14px 32px; }
+    section.card { padding: 20px 16px; }
+    .grid.cols-2, .grid.cols-3, .grid.cols-4 {
+      grid-template-columns: 1fr;
+    }
+  }
 </style>
 </head>
 <body>
@@ -663,7 +1025,7 @@
 <div id="quotePersistBar" style="
   display:none; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:10px;
   padding:9px 24px; background:var(--paper-2); border-bottom:1px solid var(--line-gold);
-  font-size:11.5px; font-family:var(--sans); letter-spacing:.04em; position:sticky; top:56px; z-index:90;
+  font-size:11.5px; font-family:var(--sans); letter-spacing:.04em; position:sticky; top:57px; z-index:90;
 ">
   <span id="quoteSlugWrap" style="display:none;gap:10px;align-items:center;">
     <span style="text-transform:uppercase;letter-spacing:.12em;color:var(--ink-soft);font-size:10px;font-weight:700;">Quote ID</span>
@@ -678,25 +1040,49 @@
 </div>
 
 <main>
+<div class="page-outer">
+
+  <!-- ═══════════ SECTION NAV SIDEBAR ═══════════ -->
+  <aside class="section-nav-sidebar" aria-label="Form sections">
+    <div class="nav-title">Sections</div>
+    <a href="#sec-basics"    id="snav-basics"    class="snav-active"><span class="snav-dot"></span><span class="snav-label">Project</span></a>
+    <a href="#sec-dims"      id="snav-dims"     ><span class="snav-dot"></span><span class="snav-label">Dimensions</span></a>
+    <a href="#sec-doors"     id="snav-doors"    ><span class="snav-dot"></span><span class="snav-label">Doors & Fronts</span></a>
+    <a href="#sec-materials" id="snav-materials"><span class="snav-dot"></span><span class="snav-label">Materials</span></a>
+    <a href="#sec-hardware"  id="snav-hardware" ><span class="snav-dot"></span><span class="snav-label">Hardware</span></a>
+    <a href="#sec-boxes"     id="snav-boxes"    ><span class="snav-dot"></span><span class="snav-label">Drawer Boxes</span></a>
+    <a href="#sec-budget"    id="snav-budget"   ><span class="snav-dot"></span><span class="snav-label">Budget</span></a>
+    <a href="#sec-packets"   id="snav-packets"  ><span class="snav-dot"></span><span class="snav-label">Appliance Docs</span></a>
+    <a href="#sec-actions"   id="snav-actions"  ><span class="snav-dot"></span><span class="snav-label">Save & Share</span></a>
+  </aside>
+
+  <!-- ═══════════ FORM CONTENT ═══════════ -->
+  <div class="form-content">
 
   <!-- ============ 0. DELIVERABLE CONTEXT BANNER ============ -->
-  <div style="background:linear-gradient(135deg,rgba(46,58,47,0.06) 0%,rgba(201,164,76,0.08) 100%);border:1px solid rgba(201,164,76,0.32);border-left:3px solid var(--gold);border-radius:var(--r-md);padding:22px 28px;margin-bottom:28px;display:flex;gap:20px;align-items:flex-start;">
-    <div style="flex-shrink:0;width:36px;height:36px;background:var(--gold);border-radius:50%;display:flex;align-items:center;justify-content:center;margin-top:2px;">
-      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M8 1.5a6.5 6.5 0 1 0 0 13 6.5 6.5 0 0 0 0-13zM7 7h2v5H7V7zm0-3h2v2H7V4z" fill="#0a0a08"/></svg>
+  <div class="deliverable-banner">
+    <div style="flex-shrink:0;width:34px;height:34px;background:var(--gold);border-radius:50%;display:flex;align-items:center;justify-content:center;margin-top:1px;">
+      <svg width="15" height="15" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M8 1.5a6.5 6.5 0 1 0 0 13 6.5 6.5 0 0 0 0-13zM7 7h2v5H7V7zm0-3h2v2H7V4z" fill="#0a0a08"/></svg>
     </div>
     <div style="min-width:0;">
-      <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px;flex-wrap:wrap;">
-        <span style="font-family:var(--serif);font-size:17px;font-weight:600;color:var(--sage);line-height:1.2;">Client Intake Form</span>
-        <span style="display:inline-flex;align-items:center;gap:5px;background:var(--gold);color:#0a0a08;font-size:9.5px;font-weight:700;letter-spacing:0.16em;text-transform:uppercase;padding:3px 10px;border-radius:var(--r-pill);">Deliverable · V1</span>
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:5px;flex-wrap:wrap;">
+        <span style="font-family:var(--serif);font-size:16px;font-weight:600;color:var(--sage);line-height:1.2;">Client Intake Form</span>
+        <span style="display:inline-flex;align-items:center;gap:5px;background:var(--gold);color:#0a0a08;font-size:9px;font-weight:700;letter-spacing:0.16em;text-transform:uppercase;padding:2px 9px;border-radius:var(--r-pill);">Deliverable · V1</span>
       </div>
-      <p style="margin:0;font-size:13.5px;color:var(--ink-soft);line-height:1.55;">This is <strong style="color:var(--ink);">Version 1</strong> of a client onboarding tool built as part of the <a href="index.html" style="color:var(--gold-dk);text-decoration:underline;text-underline-offset:2px;">Monday Automation Strategy</a>. Door styles, finishes, and hardware mirror Saunders' primary supplier, <strong style="color:var(--ink);">Decore-ative Specialties (decore.com)</strong> — including model codes, Sherwin-Williams paint palette, and Salice hardware. Future versions will submit into Monday.com and auto-generate Decore orders.</p>
+      <p>This is <strong style="color:var(--ink);">Version 1</strong> of a client onboarding tool built as part of the <a href="index.html" style="color:var(--gold-dk);text-decoration:underline;text-underline-offset:2px;">Monday Automation Strategy</a>. Door styles, finishes, and hardware mirror Saunders' primary supplier, <strong style="color:var(--ink);">Decore-ative Specialties (decore.com)</strong> — including model codes, Sherwin-Williams paint palette, and Salice hardware. Future versions will submit into Monday.com and auto-generate Decore orders.</p>
     </div>
   </div>
 
   <!-- ============ 1. PROJECT BASICS ============ -->
-  <section class="card">
-    <h2>Tell us about your project</h2>
-    <div class="kicker">Project Basics</div>
+  <section class="card" id="sec-basics">
+    <div class="sec-head">
+      <span class="sec-badge">01</span>
+      <div class="sec-head-inner">
+        <h2>Tell us about your project</h2>
+        <div class="kicker">Project Basics · Client info, project type, vision</div>
+      </div>
+    </div>
+    <div class="sec-divider"></div>
     <div class="grid cols-2">
       <label class="field">Customer name
         <input type="text" data-state="basics.name" placeholder="Full name" />
@@ -752,10 +1138,15 @@
   </section>
 
   <!-- ============ 2. DIMENSIONS / COMPONENTS ============ -->
-  <section class="card">
-    <h2>Dimensions</h2>
-    <p style="font-size:13px;color:var(--ink-soft);margin-bottom:12px;line-height:1.5;">Each row is a discrete piece or cabinet run — e.g. <em>Island</em>, <em>Upper Cabinets (East Wall)</em>, <em>Vanity</em>, etc. Add as many as the job has. Dimensions feed into the materials estimator below.</p>
-    <div class="kicker">Break the project into components — island, perimeter run, pantry, deck section, etc.</div>
+  <section class="card" id="sec-dims">
+    <div class="sec-head">
+      <span class="sec-badge">02</span>
+      <div class="sec-head-inner">
+        <h2>Dimensions</h2>
+        <div class="kicker">Each row = one cabinet run, island, or piece · Dimensions feed the estimator</div>
+      </div>
+    </div>
+    <div class="sec-divider"></div>
 
     <div style="margin-bottom: 16px; display:flex; align-items:center; gap:14px; flex-wrap:wrap;" class="no-print">
       <span style="font-size:11px; font-weight:600; letter-spacing:0.12em; text-transform:uppercase; color:var(--ink-soft);">Units</span>
@@ -787,9 +1178,15 @@
   </section>
 
   <!-- ============ 3. DOORS & DRAWER FRONTS (DECORE) ============ -->
-  <section class="card">
-    <h2>Doors &amp; Drawer Fronts</h2>
-    <div class="kicker">Decore-ative Specialties · Wood · Miter · Veneer · Deco-Form®</div>
+  <section class="card" id="sec-doors">
+    <div class="sec-head">
+      <span class="sec-badge">03</span>
+      <div class="sec-head-inner">
+        <h2>Doors &amp; Drawer Fronts</h2>
+        <div class="kicker">Decore-ative Specialties · Wood · Miter · Veneer · Deco-Form® · SW Finishes</div>
+      </div>
+    </div>
+    <div class="sec-divider"></div>
 
     <div class="table-wrap">
     <table class="estimator" id="doorsTable">
@@ -884,9 +1281,15 @@
   </section>
 
   <!-- ============ 4. MATERIALS ============ -->
-  <section class="card">
-    <h2>Materials</h2>
-    <div class="kicker">Hardwood lumber · Sheet goods · Deck &amp; outdoor · Shop finishes — Saunders-sourced, pricing tracked against market</div>
+  <section class="card" id="sec-materials">
+    <div class="sec-head">
+      <span class="sec-badge">04</span>
+      <div class="sec-head-inner">
+        <h2>Materials</h2>
+        <div class="kicker">Hardwood · Sheet goods · Deck · Finishes · Live pricing from Supabase</div>
+      </div>
+    </div>
+    <div class="sec-divider"></div>
     <div class="table-wrap">
     <table class="estimator" id="materialsTable">
       <thead>
@@ -915,10 +1318,16 @@
     </div>
   </section>
 
-  <!-- ============ 4. HARDWARE ============ -->
-  <section class="card">
-    <h2>Hardware</h2>
-    <div class="kicker">Salice glides &amp; hinges · Decore knobs &amp; pulls · Fasteners · Specialty</div>
+  <!-- ============ 5. HARDWARE ============ -->
+  <section class="card" id="sec-hardware">
+    <div class="sec-head">
+      <span class="sec-badge">05</span>
+      <div class="sec-head-inner">
+        <h2>Hardware</h2>
+        <div class="kicker">Salice glides &amp; hinges · Decore knobs &amp; pulls · Fasteners · Specialty</div>
+      </div>
+    </div>
+    <div class="sec-divider"></div>
     <div class="table-wrap">
     <table class="estimator" id="hardwareTable">
       <thead>
@@ -941,9 +1350,15 @@
   </section>
 
   <!-- ============ 6. DRAWER BOXES (DECORE) ============ -->
-  <section class="card">
-    <h2>Drawer Boxes</h2>
-    <div class="kicker">Decore-ative Specialties · Dovetail Plywood (659) · Doweled Plywood (649) · Dovetail Solid (613)</div>
+  <section class="card" id="sec-boxes">
+    <div class="sec-head">
+      <span class="sec-badge">06</span>
+      <div class="sec-head-inner">
+        <h2>Drawer Boxes</h2>
+        <div class="kicker">Decore-ative Specialties · Dovetail Plywood (659) · Doweled Plywood (649) · Dovetail Solid (613)</div>
+      </div>
+    </div>
+    <div class="sec-divider"></div>
     <div class="table-wrap">
     <table class="estimator" id="boxesTable">
       <thead>
@@ -968,9 +1383,15 @@
   </section>
 
   <!-- ============ 7. BUDGET CONTROLS ============ -->
-  <section class="card">
-    <h2>Budget Controls</h2>
-    <div class="kicker">Set your target and how much price movement you'll tolerate before we flag it</div>
+  <section class="card" id="sec-budget">
+    <div class="sec-head">
+      <span class="sec-badge">07</span>
+      <div class="sec-head-inner">
+        <h2>Budget Controls</h2>
+        <div class="kicker">Target budget · Labor · Contingency · Price movement tolerance</div>
+      </div>
+    </div>
+    <div class="sec-divider"></div>
     <div class="grid cols-3">
       <label class="field">Target budget ($)
         <input type="number" min="0" step="100" data-state="budget.target" value="50000" />
@@ -1006,9 +1427,15 @@
   </section>
 
   <!-- ============ 8. APPLIANCE PACKETS ============ -->
-  <section class="card no-print">
-    <h2>Appliance Packets</h2>
-    <div class="kicker">Upload manufacturer PDF spec sheets — model numbers and cut-out dimensions saved to the project record</div>
+  <section class="card no-print" id="sec-packets">
+    <div class="sec-head">
+      <span class="sec-badge">08</span>
+      <div class="sec-head-inner">
+        <h2>Appliance Packets</h2>
+        <div class="kicker">Upload manufacturer PDF spec sheets · Saved to project record in Supabase</div>
+      </div>
+    </div>
+    <div class="sec-divider"></div>
     <p style="font-size:13px;color:var(--ink-soft);margin-bottom:18px;line-height:1.5;">Drop the PDF that ships with each appliance. Future automation will extract model numbers, cut-out W&nbsp;×&nbsp;H&nbsp;×&nbsp;D, and push specs into Monday.com before design starts.</p>
 
     <div class="upload-zone" id="uploadZone"
@@ -1035,9 +1462,15 @@
   </section>
 
   <!-- ============ 9. ACTIONS ============ -->
-  <section class="card no-print">
-    <h2>Save &amp; Share</h2>
-    <div class="kicker">Save this intake to the Saunders database, export a copy, or print to PDF</div>
+  <section class="card no-print" id="sec-actions">
+    <div class="sec-head">
+      <span class="sec-badge">09</span>
+      <div class="sec-head-inner">
+        <h2>Save &amp; Share</h2>
+        <div class="kicker">Export · Print to PDF · Import · Quick submit</div>
+      </div>
+    </div>
+    <div class="sec-divider"></div>
     <div class="actions-bar" style="justify-content:flex-start;flex-wrap:wrap;gap:10px;margin-bottom:16px;">
       <button class="gold" onclick="saveToDatabase()">Save to Saunders DB</button>
       <button class="ghost" onclick="window.print()">Print / Save as PDF</button>
@@ -1051,6 +1484,8 @@
     </div>
   </section>
 
+  </div><!-- /.form-content -->
+</div><!-- /.page-outer -->
 </main>
 
 <footer class="summary">
@@ -2210,6 +2645,59 @@ render();
 
 // Boot Supabase (runs after page is ready; overwrites seeds if saved data exists)
 initSupabase();
+
+/* =========================================================================
+   SECTION NAV — scroll spy + active state
+   ========================================================================= */
+(function () {
+  const SECTIONS = [
+    { id: 'sec-basics',    nav: 'snav-basics'    },
+    { id: 'sec-dims',      nav: 'snav-dims'      },
+    { id: 'sec-doors',     nav: 'snav-doors'     },
+    { id: 'sec-materials', nav: 'snav-materials' },
+    { id: 'sec-hardware',  nav: 'snav-hardware'  },
+    { id: 'sec-boxes',     nav: 'snav-boxes'     },
+    { id: 'sec-budget',    nav: 'snav-budget'    },
+    { id: 'sec-packets',   nav: 'snav-packets'   },
+    { id: 'sec-actions',   nav: 'snav-actions'   },
+  ];
+
+  function updateActive() {
+    const scrollY = window.scrollY + 160;
+    let active = SECTIONS[0].nav;
+    for (const { id, nav } of SECTIONS) {
+      const el = document.getElementById(id);
+      if (el && el.offsetTop <= scrollY) active = nav;
+    }
+    SECTIONS.forEach(({ nav }) => {
+      const a = document.getElementById(nav);
+      if (a) a.classList.toggle('snav-active', nav === active);
+    });
+    updateFilled();
+  }
+
+  function updateFilled() {
+    SECTIONS.forEach(({ id, nav }) => {
+      const sec = document.getElementById(id);
+      const a   = document.getElementById(nav);
+      if (!sec || !a) return;
+      // "filled" if any input/select in the section has a value
+      const inputs = sec.querySelectorAll('input:not([type=radio]):not([type=checkbox]), select, textarea');
+      const filled = [...inputs].some(el => el.value && el.value !== '' && el.value !== '0');
+      a.classList.toggle('snav-filled', filled);
+    });
+  }
+
+  let scrollTimer;
+  window.addEventListener('scroll', () => {
+    clearTimeout(scrollTimer);
+    scrollTimer = setTimeout(updateActive, 60);
+  }, { passive: true });
+
+  // Run after a brief delay so layout is settled
+  setTimeout(updateActive, 500);
+  setTimeout(updateFilled, 1500);
+})();
 </script>
 
 </body>
