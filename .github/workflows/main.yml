@@ -1,0 +1,26 @@
+# Manual deploy: Actions → Run workflow
+# Repo secret: SUPABASE_ACCESS_TOKEN — https://supabase.com/dashboard/account/tokens
+
+name: Deploy mapbox-geocode Edge Function
+
+on:
+  workflow_dispatch:
+
+defaults:
+  run:
+    working-directory: .
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: supabase/setup-cli@v1
+        with:
+          version: latest
+
+      - name: Deploy mapbox-geocode
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+        run: supabase functions deploy mapbox-geocode --project-ref usdenbguhahvzmufwvgo
