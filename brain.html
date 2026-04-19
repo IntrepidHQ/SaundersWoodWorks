@@ -188,7 +188,7 @@
     .section-heading {
       font-family: var(--font-display); font-size: 1.5rem;
       font-weight: 400; letter-spacing: var(--track-tight);
-      color: var(--text); margin-bottom: 20px; padding-bottom: 12px;
+      color: var(--text); margin-bottom: 22px; padding-bottom: 14px;
       border-bottom: 1px solid var(--border);
       display: flex; align-items: center; gap: 0.75rem;
     }
@@ -231,6 +231,9 @@
     .doc-scroll-region--grid .file-grid,
     .doc-scroll-region .pdf-grid {
       margin-bottom: 0;
+    }
+    .doc-scroll-region--pdfs {
+      padding: 16px 18px 20px;
     }
     .doc-scroll-region .doc-table {
       margin-bottom: 0;
@@ -331,43 +334,52 @@
     .open-btn:hover { background: var(--gold-light); }
 
     /* PDF section */
+    .pdf-cat-section {
+      margin-bottom: 2.25rem;
+    }
+    .pdf-cat-section:last-child {
+      margin-bottom: 0;
+    }
     .pdf-grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-      gap: 1.25rem;
+      gap: 1.5rem;
       margin-bottom: 0;
-      padding: 4px;
+      padding: 6px 4px 8px;
     }
     .pdf-card {
       background: var(--card-bg); border: 1px solid var(--border);
-      padding: 1.5rem; display: flex; flex-direction: column;
-      gap: 0.75rem; transition: all 0.18s;
+      padding: 1.75rem 1.65rem;
+      display: flex; flex-direction: column;
+      gap: 0.9rem; transition: all 0.18s;
     }
     .pdf-card:hover { border-color: var(--gold); box-shadow: var(--shadow-md); }
-    .pdf-header { display: flex; align-items: center; gap: 0.75rem; }
+    .pdf-header { display: flex; align-items: flex-start; gap: 0.9rem; }
     .pdf-icon-wrap {
-      width: 44px; height: 44px;
+      width: 46px; height: 46px;
       background: rgba(201,164,76,0.1);
       border: 1px solid var(--border-gold); border-radius: 4px;
       display: flex; align-items: center; justify-content: center;
       font-size: 1.3rem; flex-shrink: 0;
     }
-    .pdf-title { font-weight: 600; font-size: 0.95rem; color: var(--text); line-height: 1.3; }
-    .pdf-desc { font-size: 0.85rem; color: var(--text-muted); line-height: 1.5; }
-    .pdf-pills { display: flex; flex-wrap: wrap; gap: 4px; margin-top: auto; }
+    .pdf-title { font-weight: 600; font-size: 0.95rem; color: var(--text); line-height: 1.35; }
+    .pdf-desc { font-size: 0.85rem; color: var(--text-muted); line-height: 1.55; margin: 0; }
+    .pdf-pills { display: flex; flex-wrap: wrap; gap: 6px; margin-top: auto; }
     .related-pill {
-      display: inline-block; padding: 0.18rem 0.5rem;
+      display: inline-block; padding: 0.28rem 0.65rem;
       background: var(--bg2); border: 1px solid var(--border);
       border-radius: 20px; font-size: 0.68rem; color: var(--text-muted);
     }
     .pdf-footer {
       display: flex; justify-content: space-between; align-items: center;
       font-size: 0.78rem; color: var(--text-subtle);
-      padding-top: 0.5rem; border-top: 1px solid var(--border);
+      padding-top: 0.85rem; margin-top: 0.15rem;
+      border-top: 1px solid var(--border);
+      gap: 0.75rem;
     }
     .pdf-link {
-      display: inline-flex; align-items: center; gap: 0.3rem;
-      padding: 0.38rem 0.8rem;
+      display: inline-flex; align-items: center; gap: 0.35rem;
+      padding: 0.52rem 1rem;
       border: 1px solid var(--border-gold); background: transparent;
       color: var(--gold); font-family: var(--font-body);
       font-size: 0.76rem; font-weight: 600;
@@ -554,12 +566,15 @@
     /* PDF category headings */
     .pdf-cat-heading {
       font-family: var(--font-display);
-      font-size: 1.1rem; font-weight: 400;
-      letter-spacing: var(--track-tight);
-      color: var(--text-muted); margin-bottom: 14px;
-      padding-bottom: 8px; border-bottom: 1px solid var(--border);
-      text-transform: uppercase; letter-spacing: 0.1em;
+      font-weight: 500;
+      letter-spacing: 0.1em;
+      color: var(--text-muted);
+      margin: 0 0 1.1rem 0;
+      padding: 0 2px 12px 2px;
+      border-bottom: 1px solid var(--border);
+      text-transform: uppercase;
       font-size: 0.82rem;
+      line-height: 1.35;
     }
     .pdf-card-clickable { cursor: pointer; }
     .pdf-card-clickable:hover { border-color: var(--gold); box-shadow: var(--shadow-md); }
@@ -923,7 +938,7 @@
         var catPdfs = groups[cat];
 
         var section = document.createElement('div');
-        section.style.marginBottom = '48px';
+        section.className = 'pdf-cat-section';
 
         var heading = document.createElement('h3');
         heading.className = 'pdf-cat-heading';

@@ -298,6 +298,22 @@
   }
   table.estimator .num { text-align: right; font-variant-numeric: tabular-nums; font-weight: 500; }
 
+  /* Doors & drawer fronts — style / type / qty need room; keys contain quotes → values must be escaped in JS */
+  #doorsTable {
+    min-width: 72rem;
+  }
+  #doorsTable td:nth-child(2) select {
+    min-width: min(22rem, 100%);
+  }
+  #doorsTable td:nth-child(3) select {
+    min-width: 7.5rem;
+    width: auto;
+  }
+  #doorsTable td:nth-child(4) input[type="number"] {
+    min-width: 5rem;
+    max-width: 7rem;
+  }
+
   .flag {
     display: inline-block;
     padding: 4px 12px;
@@ -1069,7 +1085,7 @@
         <span style="font-family:var(--serif);font-size:16px;font-weight:600;color:var(--sage);line-height:1.2;">Client Intake Form</span>
         <span style="display:inline-flex;align-items:center;gap:5px;background:var(--gold);color:#0a0a08;font-size:9px;font-weight:700;letter-spacing:0.16em;text-transform:uppercase;padding:2px 9px;border-radius:var(--r-pill);">Deliverable · V1</span>
       </div>
-      <p>This is <strong style="color:var(--ink);">Version 1</strong> of a client onboarding tool built as part of the <a href="index.html" style="color:var(--gold-dk);text-decoration:underline;text-underline-offset:2px;">Monday Automation Strategy</a>. Door styles, finishes, and hardware mirror Saunders' primary supplier, <strong style="color:var(--ink);">Decore-ative Specialties (decore.com)</strong> — including model codes, Sherwin-Williams paint palette, and Salice hardware. Future versions will submit into Monday.com and auto-generate Decore orders.</p>
+      <p>This is <strong style="color:var(--ink);">Version 1</strong> of the shop intake — built alongside the <a href="index.html" style="color:var(--gold-dk);text-decoration:underline;text-underline-offset:2px;">Monday Automation Strategy</a>. <strong style="color:var(--ink);">Decore-ative Specialties (decore.com)</strong> is the familiar catalog: same door and drawer-front model codes, Sherwin-Williams finishes, and Salice hardware SKUs you already use on Decore order forms and brochures. <strong style="color:var(--ink);">Enter the unit prices from your Decore quote</strong> for doors, drawer fronts, boxes, and catalog hardware — Decore does not publish list pricing online, so there are no fake “list” numbers here. Shop lumber and other non-Decore stock are tracked separately; optional reference pricing can sync from your database.</p>
     </div>
   </div>
 
@@ -1183,7 +1199,8 @@
       <span class="sec-badge">03</span>
       <div class="sec-head-inner">
         <h2>Doors &amp; Drawer Fronts</h2>
-        <div class="kicker">Decore-ative Specialties · Wood · Miter · Veneer · Deco-Form® · SW Finishes</div>
+        <div class="kicker">Decore-ative Specialties · Same codes as decore.com catalogs &amp; order forms · Wood · Miter · Veneer · Deco-Form® · SW finishes</div>
+        <p style="font-size:13px;color:var(--ink-soft);margin:12px 0 0;line-height:1.55;max-width:52rem;">Use the style and finish lists like you would on a Decore line sheet. <strong style="color:var(--ink);">Quoted $</strong> is the unit price from <em>your</em> Decore quote or acknowledgment — nothing is prefilled.</p>
       </div>
     </div>
     <div class="sec-divider"></div>
@@ -1286,7 +1303,8 @@
       <span class="sec-badge">04</span>
       <div class="sec-head-inner">
         <h2>Materials</h2>
-        <div class="kicker">Hardwood · Sheet goods · Deck · Finishes · Live pricing from Supabase</div>
+        <div class="kicker">Shop-sourced stock (not Decore-shipped) · Hardwood · Sheet goods · Deck · Finishes</div>
+        <p style="font-size:13px;color:var(--ink-soft);margin:12px 0 0;line-height:1.55;max-width:52rem;"><strong style="color:var(--ink);">Quoted $</strong> drives line totals. <strong style="color:var(--ink);">Ref. $</strong> is an optional shop reference (from Supabase when connected) for comparing to your quote — not a Decore price.</p>
       </div>
     </div>
     <div class="sec-divider"></div>
@@ -1302,7 +1320,7 @@
           <th>H / Thk</th>
           <th>Unit</th>
           <th class="num">Quoted $</th>
-          <th class="num">Market $</th>
+          <th class="num">Ref. $</th>
           <th class="num">Δ %</th>
           <th class="num">Line Total</th>
           <th>Status</th>
@@ -1324,7 +1342,7 @@
       <span class="sec-badge">05</span>
       <div class="sec-head-inner">
         <h2>Hardware</h2>
-        <div class="kicker">Salice glides &amp; hinges · Decore knobs &amp; pulls · Fasteners · Specialty</div>
+        <div class="kicker">Salice (Decore) glides &amp; hinges · Decore pulls · Shop fasteners — enter quoted unit $ from your Decore order</div>
       </div>
     </div>
     <div class="sec-divider"></div>
@@ -1355,7 +1373,7 @@
       <span class="sec-badge">06</span>
       <div class="sec-head-inner">
         <h2>Drawer Boxes</h2>
-        <div class="kicker">Decore-ative Specialties · Dovetail Plywood (659) · Doweled Plywood (649) · Dovetail Solid (613)</div>
+        <div class="kicker">Decore-ative Specialties · Models 659 · 649 · 613 — enter quoted unit $ from Decore (not prefilled)</div>
       </div>
     </div>
     <div class="sec-divider"></div>
@@ -1517,12 +1535,9 @@
 
 <script>
 /* =========================================================================
-   PRICE CATALOG — Saunders-sourced lumber, sheet goods, shop finishes.
-   Does NOT include Decore-shipped doors / drawer fronts / hardware / boxes;
-   those live in DECORE_CATALOG below.  Prices are placeholder "market"
-   reference values — quoted prices lock on first entry.
-   Manually maintained today. `fetchLivePrices()` below is the stub hook
-   for a future supplier integration.
+   PRICE CATALOG — Shop-sourced lumber, sheet goods, finishes (not Decore).
+   Used only as optional “Ref. $” on material lines when comparing to your
+   quoted unit cost. Supabase `material_prices` overwrites these when synced.
    ========================================================================= */
 const PRICE_CATALOG = {
   "Hardwood lumber (bd-ft)": {
@@ -1588,9 +1603,8 @@ const PRICE_CATALOG = {
 };
 
 /* =========================================================================
-   DECORE CATALOG — Doors, drawer fronts, finishes, drawer boxes.
-   Mirrors brain/products.json (authoritative copy).  Update both together.
-   Prices are Saunders-entered at time of quote (Decore doesn't publish).
+   DECORE CATALOG — Doors, drawer fronts, finishes (brain/products.json).
+   Line-item $ are not listed here — user enters Decore quoted unit prices in the form.
    ========================================================================= */
 const DECORE_DOORS = {
   "Wood — Butt Joint (3/4\")": [
@@ -1686,58 +1700,65 @@ const DECORE_FINISHES = {
 };
 
 const DRAWER_BOX_CATALOG = {
-  "659 — Dovetail Plywood (1/2\" sides, 9-Ply Birch)":  { code: "659", price: 42.00 },
-  "649 — Doweled Plywood (1/2\" sides, 9-Ply Birch)":    { code: "649", price: 36.00 },
-  "613 — Dovetail Solid Maple (5/8\" sides)":            { code: "613", price: 68.00 }
+  "659 — Dovetail Plywood (1/2\" sides, 9-Ply Birch)":  { code: "659", price: null },
+  "649 — Doweled Plywood (1/2\" sides, 9-Ply Birch)":    { code: "649", price: null },
+  "613 — Dovetail Solid Maple (5/8\" sides)":            { code: "613", price: null }
 };
 
+/* Unit prices left null — enter quoted $ from Decore (no prefilled “list” numbers). */
 const HARDWARE_CATALOG = {
   "Drawer glides (Salice)": {
-    "Soft Close Undermount 12\"":             { unit: "pr", price: 28.00, code: "Salice U-12" },
-    "Soft Close Undermount 15\"":             { unit: "pr", price: 30.00, code: "Salice U-15" },
-    "Soft Close Undermount 18\"":             { unit: "pr", price: 34.00, code: "Salice U-18" },
-    "Soft Close Undermount 21\" (w/ socket)": { unit: "pr", price: 38.00, code: "Salice U-21" },
-    "Soft Close Undermount 23-5/8\"":         { unit: "pr", price: 42.00, code: "Salice U-24" },
-    "Side Mount 20\" — 12\"":                 { unit: "pr", price: 16.00, code: "Salice S-12" },
-    "Side Mount 20\" — 14\"":                 { unit: "pr", price: 17.00, code: "Salice S-14" },
-    "Side Mount 20\" — 16\"":                 { unit: "pr", price: 18.00, code: "Salice S-16" },
-    "Side Mount 20\" — 18\"":                 { unit: "pr", price: 19.00, code: "Salice S-18" },
-    "Side Mount 20\" — 22\"":                 { unit: "pr", price: 21.00, code: "Salice S-22" },
-    "Side Mount 20\" — 24\"":                 { unit: "pr", price: 23.00, code: "Salice S-24" }
+    "Soft Close Undermount 12\"":             { unit: "pr", price: null, code: "Salice U-12" },
+    "Soft Close Undermount 15\"":             { unit: "pr", price: null, code: "Salice U-15" },
+    "Soft Close Undermount 18\"":             { unit: "pr", price: null, code: "Salice U-18" },
+    "Soft Close Undermount 21\" (w/ socket)": { unit: "pr", price: null, code: "Salice U-21" },
+    "Soft Close Undermount 23-5/8\"":         { unit: "pr", price: null, code: "Salice U-24" },
+    "Side Mount 20\" — 12\"":                 { unit: "pr", price: null, code: "Salice S-12" },
+    "Side Mount 20\" — 14\"":                 { unit: "pr", price: null, code: "Salice S-14" },
+    "Side Mount 20\" — 16\"":                 { unit: "pr", price: null, code: "Salice S-16" },
+    "Side Mount 20\" — 18\"":                 { unit: "pr", price: null, code: "Salice S-18" },
+    "Side Mount 20\" — 22\"":                 { unit: "pr", price: null, code: "Salice S-22" },
+    "Side Mount 20\" — 24\"":                 { unit: "pr", price: null, code: "Salice S-24" }
   },
   "Hinges (Salice)": {
-    "Soft Close Compact Hinge (7802)":    { unit: "ea", price: 4.50, code: "7802" },
-    "Soft Close Traditional Hinge (7821)": { unit: "ea", price: 5.20, code: "7821" },
-    "Hinge Plate (7111)":                  { unit: "ea", price: 1.80, code: "7111" }
+    "Soft Close Compact Hinge (7802)":    { unit: "ea", price: null, code: "7802" },
+    "Soft Close Traditional Hinge (7821)": { unit: "ea", price: null, code: "7821" },
+    "Hinge Plate (7111)":                  { unit: "ea", price: null, code: "7111" }
   },
   "Knobs & pulls (Decore)": {
-    "Round Knob — Satin Nickel (7275)":           { unit: "ea", price: 6.50,  code: "7275" },
-    "T-Bar Pull 96mm — Satin Nickel (7185)":      { unit: "ea", price: 9.00,  code: "7185" },
-    "Mandara Pull 96mm — Satin Nickel (1691)":    { unit: "ea", price: 10.00, code: "1691" },
-    "Custom pull (specify in notes)":              { unit: "ea", price: 0 }
+    "Round Knob — Satin Nickel (7275)":           { unit: "ea", price: null,  code: "7275" },
+    "T-Bar Pull 96mm — Satin Nickel (7185)":      { unit: "ea", price: null,  code: "7185" },
+    "Mandara Pull 96mm — Satin Nickel (1691)":    { unit: "ea", price: null, code: "1691" },
+    "Custom pull (specify in notes)":              { unit: "ea", price: null }
   },
   "Fasteners (shop stock)": {
-    "Wood screws #8 x 1-1/4\"":    { unit: "ea", price: 0.08 },
-    "Wood screws #8 x 2-1/2\"":    { unit: "ea", price: 0.12 },
-    "Finish nails 16ga":            { unit: "ea", price: 0.04 },
-    "Brad nails 18ga":              { unit: "ea", price: 0.02 },
-    "Pocket screws (Kreg)":         { unit: "ea", price: 0.10 },
-    "Dowels 3/8\" fluted":          { unit: "ea", price: 0.15 },
-    "Biscuits #20":                 { unit: "ea", price: 0.08 },
-    "Confirmat screws":             { unit: "ea", price: 0.22 },
-    "Deck screws, stainless #10 x 3\"": { unit: "ea", price: 0.35 }
+    "Wood screws #8 x 1-1/4\"":    { unit: "ea", price: null },
+    "Wood screws #8 x 2-1/2\"":    { unit: "ea", price: null },
+    "Finish nails 16ga":            { unit: "ea", price: null },
+    "Brad nails 18ga":              { unit: "ea", price: null },
+    "Pocket screws (Kreg)":         { unit: "ea", price: null },
+    "Dowels 3/8\" fluted":          { unit: "ea", price: null },
+    "Biscuits #20":                 { unit: "ea", price: null },
+    "Confirmat screws":             { unit: "ea", price: null },
+    "Deck screws, stainless #10 x 3\"": { unit: "ea", price: null }
   },
   "Specialty": {
-    "Lazy-susan bearing":           { unit: "ea",  price: 24.00 },
-    "Pull-out waste bin kit":       { unit: "ea",  price: 120.00 },
-    "Tip-out tray":                 { unit: "ea",  price: 28.00 },
-    "LED strip + driver (10ft)":    { unit: "kit", price: 85.00 },
-    "Glass-door clip":              { unit: "ea",  price: 3.20 },
-    "Shelf pin, 5mm":               { unit: "ea",  price: 0.10 },
-    "Corbel, carved":               { unit: "ea",  price: 42.00 },
-    "Marine cleat (dock)":          { unit: "ea",  price: 32.00 }
+    "Lazy-susan bearing":           { unit: "ea",  price: null },
+    "Pull-out waste bin kit":       { unit: "ea",  price: null },
+    "Tip-out tray":                 { unit: "ea",  price: null },
+    "LED strip + driver (10ft)":    { unit: "kit", price: null },
+    "Glass-door clip":              { unit: "ea",  price: null },
+    "Shelf pin, 5mm":               { unit: "ea",  price: null },
+    "Corbel, carved":               { unit: "ea",  price: null },
+    "Marine cleat (dock)":          { unit: "ea",  price: null }
   }
 };
+
+function priceOrEmpty(v) {
+  if (v == null || v === "") return "";
+  const n = Number(v);
+  return isNaN(n) ? "" : n.toFixed(2);
+}
 
 /* ------------------------------------------------------------------ */
 /*  Future live-pricing hook.  Today returns the local catalog as-is. */
@@ -1850,11 +1871,10 @@ function renderMaterials() {
   state.materials.forEach((m, idx) => {
     const mat = resolveMaterial(m.materialKey);
     const market = mat ? mat.price : 0;
-    if (m.quotedPrice == null && mat) m.quotedPrice = market; // first-set lock
-    const quoted = m.quotedPrice ?? 0;
-    const delta = quoted > 0 ? ((market - quoted) / quoted) * 100 : 0;
-    const lineTotal = market * (Number(m.qty) || 0);
-    const flag = classifyFlag(delta);
+    const quoted = m.quotedPrice;
+    const quotedNum = quoted != null && quoted !== "" ? Number(quoted) : 0;
+    const delta = quotedNum > 0 && market ? ((market - quotedNum) / quotedNum) * 100 : 0;
+    const flag = quotedNum > 0 ? classifyFlag(delta) : "green";
 
     const compOpts = ['<option value="">—</option>']
       .concat(state.components.map(c => `<option value="${c.id}" ${c.id===m.componentId?"selected":""}>${escape(c.label || "(unlabeled)")}</option>`))
@@ -1879,7 +1899,7 @@ function renderMaterials() {
     if (autoQty !== null && Math.abs((Number(m.qty) || 0) - autoQty) > 0.001) {
       state.materials[idx].qty = autoQty;
     }
-    const lineTotalCalc = market * (Number(displayQty) || 0);
+    const lineTotalCalc = quotedNum * (Number(displayQty) || 0);
 
     const tr = document.createElement("tr");
     tr.innerHTML = `
@@ -1898,9 +1918,9 @@ function renderMaterials() {
       <td><input type="number" min="0" step="0.125" value="${m.H}"
           oninput="state.materials[${idx}].H=numOrBlank(this.value);"></td>
       <td style="font-size:11px; color:var(--ink-soft); font-weight:600; white-space:nowrap;">${mat ? mat.unit : "—"}</td>
-      <td class="num"><input type="number" min="0" step="0.01" value="${quoted.toFixed(2)}" oninput="state.materials[${idx}].quotedPrice=numOrZero(this.value); render();" style="text-align:right;"></td>
-      <td class="num">${money(market)}</td>
-      <td class="num" style="color:${flag==='red'?'var(--red)':flag==='blue'?'var(--blue)':'var(--ink-soft)'}">${quoted>0 ? (delta>=0?"+":"") + delta.toFixed(1) + "%" : "—"}</td>
+      <td class="num"><input type="number" min="0" step="0.01" value="${quoted != null && quoted !== "" ? Number(quoted).toFixed(2) : ""}" placeholder="Your quote" oninput="state.materials[${idx}].quotedPrice=this.value===''?null:numOrZero(this.value); render();" style="text-align:right;"></td>
+      <td class="num">${mat && market ? money(market) : "—"}</td>
+      <td class="num" style="color:${flag==='red'?'var(--red)':flag==='blue'?'var(--blue)':'var(--ink-soft)'}">${quotedNum > 0 && mat && market ? (delta>=0?"+":"") + delta.toFixed(1) + "%" : "—"}</td>
       <td class="num">${money(lineTotalCalc)}</td>
       <td><span class="flag ${flag}">${flag==='red'?'▲ OVER': flag==='blue'?'▼ UNDER':'✓ OK'}</span></td>
       <td class="no-print"><button class="danger small" onclick="removeMaterial('${m.id}')">✕</button></td>
@@ -1919,9 +1939,7 @@ function recalcSqftQty(idx) {
 
 function pickMaterial(idx, key) {
   state.materials[idx].materialKey = key;
-  // reset quoted price to current market when material changes
-  const mat = resolveMaterial(key);
-  state.materials[idx].quotedPrice = mat ? mat.price : 0;
+  state.materials[idx].quotedPrice = null;
   render();
 }
 function resolveMaterial(key) {
@@ -1964,7 +1982,7 @@ function renderHardware() {
       .concat(Object.keys(items).map(k => `<option value="${k}" ${k===h.itemKey?"selected":""}>${k}</option>`))
       .join("");
     const base = items[h.itemKey];
-    if (h.unitPrice == null && base) h.unitPrice = base.price;
+    if (h.unitPrice == null && base && base.price != null) h.unitPrice = base.price;
     const unit = base ? base.unit : "";
     const lineTotal = (Number(h.qty)||0) * (Number(h.unitPrice)||0);
 
@@ -1974,7 +1992,7 @@ function renderHardware() {
       <td><select onchange="pickHardwareItem(${idx}, this.value)">${itemOpts}</select></td>
       <td><input type="text" value="${escape(h.variant)}" placeholder="e.g. brushed brass / 3\\" / #10" oninput="state.hardware[${idx}].variant=this.value"></td>
       <td><input type="number" min="0" step="1" value="${h.qty}" oninput="state.hardware[${idx}].qty=numOrZero(this.value); render();"></td>
-      <td class="num"><input type="number" min="0" step="0.01" value="${(h.unitPrice||0).toFixed(2)}" oninput="state.hardware[${idx}].unitPrice=numOrZero(this.value); render();" style="text-align:right;"> <span style="font-size:10px;color:#888;">/${unit||"ea"}</span></td>
+      <td class="num"><input type="number" min="0" step="0.01" value="${priceOrEmpty(h.unitPrice)}" placeholder="Quote" oninput="state.hardware[${idx}].unitPrice=this.value===''?null:numOrZero(this.value); render();" style="text-align:right;"> <span style="font-size:10px;color:#888;">/${unit||"ea"}</span></td>
       <td class="num">${money(lineTotal)}</td>
       <td class="no-print"><button class="danger small" onclick="removeHardware('${h.id}')">✕</button></td>
     `;
@@ -1991,12 +2009,121 @@ function pickHardwareCategory(idx, cat) {
 function pickHardwareItem(idx, key) {
   state.hardware[idx].itemKey = key;
   const base = HARDWARE_CATALOG[state.hardware[idx].category]?.[key];
-  state.hardware[idx].unitPrice = base ? base.price : 0;
+  state.hardware[idx].unitPrice = base && base.price != null ? base.price : null;
   renderHardware();
   updateSummary();
 }
 
 /* ---------- doors & drawer fronts (Decore) ---------- */
+const DECO_FORM_STYLE_GROUP = "Deco-Form® (thermofoil)";
+const DOOR_TYPES = ["S", "DF", "Special", "Bore"];
+
+function finishCategory(finish) {
+  if (!finish) return null;
+  for (const group of Object.keys(DECORE_FINISHES)) {
+    const arr = DECORE_FINISHES[group];
+    if (Array.isArray(arr) && arr.includes(finish)) {
+      if (group === "Clear / Natural") return "clear";
+      if (group === "Stain (Maple Finish Grade)") return "stain";
+      if (group === "Paint — Sherwin-Williams") return "paint";
+      if (group === "Deco-Form® integrated color") return "decoform";
+      if (group === "Unfinished") return "unfinished";
+    }
+  }
+  return null;
+}
+function isDecoFormStyleKey(styleKey) {
+  return !!(styleKey && styleKey.startsWith(DECO_FORM_STYLE_GROUP + "::"));
+}
+function isFinishValidForStyle(finish, styleKey) {
+  if (!finish || !styleKey) return true;
+  const cat = finishCategory(finish);
+  if (cat === null) return true;
+  if (isDecoFormStyleKey(styleKey)) return cat === "decoform" || cat === "unfinished";
+  return cat !== "decoform";
+}
+function getSheenListForFinish(finish) {
+  if (!finish) return [];
+  const cat = finishCategory(finish);
+  if (cat === "unfinished") return [];
+  if (cat === "clear" || cat === "stain") return ["Matte 10", "Satin 35"];
+  if (cat === "paint") return ["Matte 10", "Satin 30", "Sheen SBF", "Matte 10 Sheen SBF"];
+  if (cat === "decoform") return ["Matte 10", "Satin 30"];
+  return ["Matte 10", "Satin 30", "Satin 35", "Sheen SBF", "Matte 10 Sheen SBF"];
+}
+function normalizeDoorSheen(d) {
+  if (!d.finish) {
+    d.sheen = "";
+    return;
+  }
+  if (finishCategory(d.finish) === "unfinished") {
+    d.sheen = "";
+    return;
+  }
+  const list = getSheenListForFinish(d.finish);
+  if (list.length && !list.includes(d.sheen)) d.sheen = list[0];
+}
+function buildStyleSelectOptions(selectedKey) {
+  let html = '<option value="">— choose style —</option>';
+  for (const group of Object.keys(DECORE_DOORS)) {
+    html += `<optgroup label="${escape(group)}">`;
+    for (const [code, name, species] of DECORE_DOORS[group]) {
+      const key = `${group}::${code}`;
+      const sel = key === selectedKey ? " selected" : "";
+      html += `<option value="${escape(key)}"${sel}>${escape(code)} — ${escape(name)} · ${escape(species)}</option>`;
+    }
+    html += "</optgroup>";
+  }
+  return html;
+}
+function buildFinishSelectOptions(selectedFinish, styleKey) {
+  if (!styleKey) {
+    return '<option value="">— Select style first —</option>';
+  }
+  const deco = isDecoFormStyleKey(styleKey);
+  let html = '<option value="">— choose finish —</option>';
+  for (const group of Object.keys(DECORE_FINISHES)) {
+    const include = deco
+      ? (group === "Deco-Form® integrated color" || group === "Unfinished")
+      : (group !== "Deco-Form® integrated color");
+    if (!include) continue;
+    html += `<optgroup label="${escape(group)}">`;
+    for (const f of DECORE_FINISHES[group]) {
+      const sel = f === selectedFinish ? " selected" : "";
+      html += `<option${sel}>${escape(f)}</option>`;
+    }
+    html += "</optgroup>";
+  }
+  return html;
+}
+function buildSheenSelectOptions(selectedSheen, finish) {
+  if (!finish) {
+    return '<option value="">— Select finish first —</option>';
+  }
+  if (finishCategory(finish) === "unfinished") {
+    return '<option value="" selected>N/A (unfinished)</option>';
+  }
+  const list = getSheenListForFinish(finish);
+  return list.map(s => {
+    const sel = s === selectedSheen ? " selected" : "";
+    return `<option${sel}>${escape(s)}</option>`;
+  }).join("");
+}
+function pickDoorStyle(idx, key) {
+  const d = state.doors[idx];
+  d.styleKey = key;
+  if (d.finish && !isFinishValidForStyle(d.finish, key)) {
+    d.finish = "";
+    d.sheen = "";
+  }
+  render();
+}
+function onFinishDoorChange(idx, val) {
+  state.doors[idx].finish = val;
+  normalizeDoorSheen(state.doors[idx]);
+  render();
+}
+
 function addDoor(data = {}) {
   state.doors.push({
     id: uid(),
@@ -2007,14 +2134,14 @@ function addDoor(data = {}) {
     width:      data.width ?? "",
     height:     data.height ?? "",
     finish:     data.finish ?? "",
-    sheen:      data.sheen ?? "Satin 35",
-    unitPrice:  data.unitPrice ?? 0
+    sheen:      data.sheen ?? "",
+    unitPrice:  data.unitPrice ?? null
   });
-  renderDoors();
+  render();
 }
 function removeDoor(id) {
   state.doors = state.doors.filter(d => d.id !== id);
-  renderDoors();
+  render();
 }
 function renderDoors() {
   const tbody = document.querySelector("#doorsTable tbody");
@@ -2023,55 +2150,41 @@ function renderDoors() {
   const compOptsBase = ['<option value="">—</option>']
     .concat(state.components.map(c => `<option value="${c.id}">${escape(c.label || "(unlabeled)")}</option>`));
 
-  let styleOpts = '<option value="">— choose style —</option>';
-  for (const group of Object.keys(DECORE_DOORS)) {
-    styleOpts += `<optgroup label="${group}">`;
-    for (const [code, name, species] of DECORE_DOORS[group]) {
-      const key = `${group}::${code}`;
-      styleOpts += `<option value="${key}" data-species="${escape(species)}">${code} — ${name} · ${species}</option>`;
-    }
-    styleOpts += "</optgroup>";
-  }
-
-  let finishOpts = '<option value="">— choose finish —</option>';
-  for (const group of Object.keys(DECORE_FINISHES)) {
-    finishOpts += `<optgroup label="${group}">`;
-    for (const f of DECORE_FINISHES[group]) {
-      finishOpts += `<option>${f}</option>`;
-    }
-    finishOpts += "</optgroup>";
-  }
-
-  const typeOpts = ["S","DF","Special","Bore"].map(t => `<option>${t}</option>`).join("");
-  const sheenOpts = ["Matte 10","Satin 30","Satin 35","Sheen SBF","Matte 10 Sheen SBF"]
-    .map(s => `<option>${s}</option>`).join("");
-
   state.doors.forEach((d, idx) => {
+    normalizeDoorSheen(d);
+
     const compOpts = compOptsBase.map(o => {
-      // mark the selected option
       return o.replace(`value="${d.componentId}"`, `value="${d.componentId}" selected`);
     }).join("");
+
+    const styleOpts = buildStyleSelectOptions(d.styleKey);
+    const finishOpts = buildFinishSelectOptions(d.finish, d.styleKey);
+    const sheenOpts = buildSheenSelectOptions(d.sheen, d.finish);
+
+    const typeOpts = DOOR_TYPES.map(t =>
+      `<option value="${t}"${t === d.type ? " selected" : ""}>${t}</option>`
+    ).join("");
+
     const lineTotal = (Number(d.qty)||0) * (Number(d.unitPrice)||0);
+    const finDis = !d.styleKey ? " disabled" : "";
+    const sheenDis = !d.finish ? " disabled" : "";
+
     const tr = document.createElement("tr");
     tr.innerHTML = `
       <td><select onchange="state.doors[${idx}].componentId=this.value; render();">${compOpts}</select></td>
-      <td><select onchange="pickDoorStyle(${idx}, this.value)">${styleOpts.replace(`value="${d.styleKey}"`, `value="${d.styleKey}" selected`)}</select></td>
-      <td><select onchange="state.doors[${idx}].type=this.value">${typeOpts.replace(`>${d.type}<`, ` selected>${d.type}<`)}</select></td>
+      <td><select onchange="pickDoorStyle(${idx}, this.value)">${styleOpts}</select></td>
+      <td><select onchange="state.doors[${idx}].type=this.value">${typeOpts}</select></td>
       <td><input type="number" min="0" step="1" value="${d.qty}" oninput="state.doors[${idx}].qty=numOrZero(this.value); render();"></td>
       <td><input type="number" min="0" step="0.0625" value="${d.width}" oninput="state.doors[${idx}].width=numOrBlank(this.value);" placeholder="in"></td>
       <td><input type="number" min="0" step="0.0625" value="${d.height}" oninput="state.doors[${idx}].height=numOrBlank(this.value);" placeholder="in"></td>
-      <td><select onchange="state.doors[${idx}].finish=this.value; render();">${finishOpts.replace(`>${d.finish}<`, ` selected>${d.finish}<`)}</select></td>
-      <td><select onchange="state.doors[${idx}].sheen=this.value">${sheenOpts.replace(`>${d.sheen}<`, ` selected>${d.sheen}<`)}</select></td>
-      <td class="num"><input type="number" min="0" step="0.01" value="${(d.unitPrice||0).toFixed(2)}" oninput="state.doors[${idx}].unitPrice=numOrZero(this.value); render();" style="text-align:right;"></td>
+      <td><select${finDis} onchange="onFinishDoorChange(${idx}, this.value)">${finishOpts}</select></td>
+      <td><select${sheenDis} onchange="state.doors[${idx}].sheen=this.value; render();">${sheenOpts}</select></td>
+      <td class="num"><input type="number" min="0" step="0.01" value="${priceOrEmpty(d.unitPrice)}" placeholder="Decore quote" oninput="state.doors[${idx}].unitPrice=this.value===''?null:numOrZero(this.value); render();" style="text-align:right;"></td>
       <td class="num">${money(lineTotal)}</td>
       <td class="no-print"><button class="danger small" onclick="removeDoor('${d.id}')">✕</button></td>
     `;
     tbody.appendChild(tr);
   });
-}
-function pickDoorStyle(idx, key) {
-  state.doors[idx].styleKey = key;
-  render();
 }
 
 /* ---------- drawer boxes (Decore) ---------- */
@@ -2104,7 +2217,7 @@ function renderBoxes() {
 
   state.drawerBoxes.forEach((b, idx) => {
     const base = DRAWER_BOX_CATALOG[b.modelKey];
-    if (b.unitPrice == null && base) b.unitPrice = base.price;
+    if (b.unitPrice == null && base && base.price != null) b.unitPrice = base.price;
     const compOpts = compOptsBase.map(o => o.replace(`value="${b.componentId}"`, `value="${b.componentId}" selected`)).join("");
     const modelHtml = modelOpts.replace(`value="${b.modelKey}"`, `value="${b.modelKey}" selected`);
     const lineTotal = (Number(b.qty)||0) * (Number(b.unitPrice)||0);
@@ -2116,7 +2229,7 @@ function renderBoxes() {
       <td><input type="number" min="0" step="0.0625" value="${b.depth}"  oninput="state.drawerBoxes[${idx}].depth=numOrBlank(this.value);" placeholder="in"></td>
       <td><input type="number" min="0" step="0.0625" value="${b.height}" oninput="state.drawerBoxes[${idx}].height=numOrBlank(this.value);" placeholder="in"></td>
       <td><input type="number" min="0" step="1" value="${b.qty}" oninput="state.drawerBoxes[${idx}].qty=numOrZero(this.value); render();"></td>
-      <td class="num"><input type="number" min="0" step="0.01" value="${(b.unitPrice||0).toFixed(2)}" oninput="state.drawerBoxes[${idx}].unitPrice=numOrZero(this.value); render();" style="text-align:right;"></td>
+      <td class="num"><input type="number" min="0" step="0.01" value="${priceOrEmpty(b.unitPrice)}" placeholder="Decore quote" oninput="state.drawerBoxes[${idx}].unitPrice=this.value===''?null:numOrZero(this.value); render();" style="text-align:right;"></td>
       <td class="num">${money(lineTotal)}</td>
       <td class="no-print"><button class="danger small" onclick="removeBox('${b.id}')">✕</button></td>
     `;
@@ -2126,7 +2239,7 @@ function renderBoxes() {
 function pickBoxModel(idx, key) {
   state.drawerBoxes[idx].modelKey = key;
   const base = DRAWER_BOX_CATALOG[key];
-  state.drawerBoxes[idx].unitPrice = base ? base.price : 0;
+  state.drawerBoxes[idx].unitPrice = base && base.price != null ? base.price : null;
   render();
 }
 
@@ -2149,7 +2262,9 @@ function materialsSubtotal() {
     const effectiveQty = isSqft && m.L && m.W
       ? (Number(m.L) * Number(m.W) / 144)
       : (Number(m.qty) || 0);
-    return s + mat.price * effectiveQty;
+    const q = Number(m.quotedPrice);
+    const unit = (m.quotedPrice != null && m.quotedPrice !== "" && !isNaN(q)) ? q : 0;
+    return s + unit * effectiveQty;
   }, 0);
 }
 function hardwareSubtotal() {
