@@ -27,6 +27,9 @@
   const SUPABASE_URL = 'https://usdenbguhahvzmufwvgo.supabase.co';
   const SUPABASE_KEY = 'sb_publishable_f8ZfnDA_obVBoqasd7G5Nw_iYkiQ7bJ';
 
+  /** Used by utils/mapbox-address-autofill.js → Edge Function mapbox-geocode (MAPBOX_API secret). */
+  window.SaundersSupabaseConfig = { url: SUPABASE_URL, anonKey: SUPABASE_KEY };
+
   if (!window.supabase) {
     console.warn('[SaundersDB] Supabase CDN not loaded. DB features disabled.');
     window.SaundersDB = null;
