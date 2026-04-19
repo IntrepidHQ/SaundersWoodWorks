@@ -1,9 +1,10 @@
 /**
- * Mapbox Geocoding API — address autocomplete for plain HTML inputs.
+ * Mapbox Geocoding — address autocomplete for plain HTML inputs.
  *
- * Preferred: Supabase Edge Function `mapbox-geocode` (secret MAPBOX_API on the project).
- *   Requires window.SaundersSupabaseConfig from utils/supabase/client.js
- * Fallback: direct Geocoding from the browser using window.__MAPBOX_ACCESS_TOKEN (mapbox-config.js).
+ * Primary: Supabase Edge Function `mapbox-geocode` (secret MAPBOX_API).
+ *   Deploy: supabase functions deploy mapbox-geocode --project-ref YOUR_REF
+ * Fallback: direct browser calls with window.__MAPBOX_ACCESS_TOKEN (mapbox-config.js)
+ *   when the function is missing (404) or fails.
  *
  * API: https://docs.mapbox.com/api/search/geocoding/
  */
@@ -12,8 +13,10 @@
 
   const DEBOUNCE_MS = 280;
   const MIN_CHARS = 3;
-  /** Charleston / Lowcountry bias when using the Edge proxy (Mapbox `ip` would be the server, not the user). */
+  /** Lowcountry bias when using the Edge proxy (Mapbox `ip` would be the server). */
   const PROXY_DEFAULT_PROXIMITY = '-79.9311,32.7765';
+  /** Wider than `address` alone so partial queries still return useful rows. */
+  const DEFAULT_TYPES = 'address,place,locality,postcode';
 
   function normalizeToken(t) {
     if (t == null || typeof t !== 'string') return '';
@@ -29,21 +32,12 @@
   function resolveProximity(opts, useProxy) {
     if (opts.proximity === false) return null;
     if (opts.proximity && opts.proximity !== 'ip') return opts.proximity;
-    if (useProxy) return opts.proximity === 'ip' ? PROXY_DEFAULT_PROXIMITY : (opts.proximity || PROXY_DEFAULT_PROXIMITY);
-    return opts.proximity || 'ip';
-  }
-
-  function buildProxyUrl(query, proxyBase, opts) {
-    const u = new URL(proxyBase);
-    u.searchParams.set('q', query.trim());
-    u.searchParams.set('limit', String(opts.limit || 6));
-    u.searchParams.set('types', opts.types || 'address');
-    if (opts.country != null && opts.country !== '') {
-      u.searchParams.set('country', opts.country);
+    if (useProxy) {
+      return opts.proximity === 'ip'
+        ? PROXY_DEFAULT_PROXIMITY
+        : (opts.proximity || PROXY_DEFAULT_PROXIMITY);
     }
-    const prox = resolveProximity(opts, true);
-    if (prox) u.searchParams.set('proximity', prox);
-    return u.toString();
+    return opts.proximity || 'ip';
   }
 
   function buildUrl(query, token, opts) {
@@ -54,7 +48,7 @@
     u.searchParams.set('access_token', token);
     u.searchParams.set('autocomplete', 'true');
     u.searchParams.set('limit', String(opts.limit || 6));
-    u.searchParams.set('types', opts.types || 'address');
+    u.searchParams.set('types', opts.types || DEFAULT_TYPES);
     if (opts.country != null && opts.country !== '') {
       u.searchParams.set('country', opts.country);
     }
@@ -78,14 +72,28 @@
     return el;
   }
 
+  function buildProxyBody(q, geoOpts, useProxy) {
+    const prox = resolveProximity(geoOpts, useProxy);
+    const body = {
+      q: q.trim(),
+      limit: Number(geoOpts.limit) || 6,
+      types: geoOpts.types || DEFAULT_TYPES,
+    };
+    if (geoOpts.country != null && geoOpts.country !== '') {
+      body.country = geoOpts.country;
+    }
+    if (prox) body.proximity = prox;
+    return body;
+  }
+
   /**
    * @param {object} opts
-   * @param {string} [opts.token] — Mapbox pk token for direct mode (else window.__MAPBOX_ACCESS_TOKEN)
-   * @param {boolean} [opts.useSupabaseProxy=true] — use Edge Function mapbox-geocode when SaundersSupabaseConfig exists
-   * @param {string} [opts.inputSelector='[data-state="basics.address"]']
-   * @param {string} [opts.country='US'] — ISO 3166-1 alpha-2; set '' to disable
-   * @param {string} [opts.proximity='ip'] — bias results (omit by passing false); behind proxy defaults to Lowcountry coords
-   * @param {function(string):void} [opts.onApply] — called with place_name; default sets input + input event
+   * @param {string} [opts.token] — Mapbox pk token for direct fallback
+   * @param {boolean} [opts.useSupabaseProxy=true]
+   * @param {string} [opts.inputSelector]
+   * @param {string} [opts.country='US'] — set '' to omit
+   * @param {string|false} [opts.proximity]
+   * @param {function(string):void} [opts.onApply]
    */
   function initMapboxAddressAutofill(opts) {
     opts = opts || {};
@@ -104,13 +112,23 @@
       const hint = document.createElement('p');
       hint.className = 'mapbox-address-hint';
       hint.innerHTML =
-        'Address suggestions need the Mapbox key from Supabase secrets (<code>MAPBOX_API</code>) via the <code>mapbox-geocode</code> Edge Function, or a public token in <code>mapbox-config.js</code> for local dev. See <a href="https://supabase.com/docs/guides/functions/secrets" target="_blank" rel="noopener">Supabase secrets</a>.';
+        'Address search needs the <code>mapbox-geocode</code> Edge Function deployed (uses Supabase secret <code>MAPBOX_API</code>) or a public token in <code>mapbox-config.js</code>.';
       anchor.appendChild(hint);
       return;
     }
 
     const listbox = createListbox();
     anchor.appendChild(listbox);
+
+    let statusEl = anchor.querySelector('.mapbox-address-status');
+    if (!statusEl) {
+      statusEl = document.createElement('p');
+      statusEl.className = 'mapbox-address-status mapbox-address-hint';
+      statusEl.setAttribute('role', 'status');
+      statusEl.setAttribute('aria-live', 'polite');
+      statusEl.hidden = true;
+      anchor.appendChild(statusEl);
+    }
 
     const listId = listbox.id;
     input.setAttribute('autocomplete', 'off');
@@ -122,6 +140,12 @@
     let abortCtrl = null;
     let activeIndex = -1;
     let lastFeatures = [];
+
+    const setStatus = (msg, show) => {
+      if (!statusEl) return;
+      statusEl.textContent = msg || '';
+      statusEl.hidden = !show;
+    };
 
     const closeList = () => {
       listbox.hidden = true;
@@ -170,36 +194,123 @@
       input.setAttribute('aria-expanded', 'true');
     };
 
+    const fetchDirect = async (q, geoOpts, signal) => {
+      if (!token) return null;
+      const url = buildUrl(q, token, geoOpts);
+      const res = await fetch(url, { signal });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        console.warn('[Mapbox] direct geocode', res.status, data);
+        return null;
+      }
+      return data;
+    };
+
+    const fetchProxy = async (q, geoOpts, signal) => {
+      const c = global.SaundersSupabaseConfig;
+      const url = getSupabaseProxyUrl();
+      const body = buildProxyBody(q, geoOpts, true);
+
+      const db = global.SaundersDB;
+      if (db && typeof db.functions.invoke === 'function') {
+        try {
+          const { data, error } = await db.functions.invoke('mapbox-geocode', {
+            body,
+          });
+          if (
+            !error &&
+            data &&
+            typeof data === 'object' &&
+            Array.isArray(data.features)
+          ) {
+            return data;
+          }
+        } catch (err) {
+          console.warn('[Mapbox] functions.invoke', err);
+        }
+      }
+
+      const res = await fetch(url, {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${c.anonKey}`,
+          apikey: c.anonKey,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(body),
+        signal,
+      });
+      const data = await res.json().catch(() => ({}));
+      if (res.status === 404 || data.code === 'NOT_FOUND') {
+        return { __proxyMissing: true, data };
+      }
+      if (!res.ok) {
+        console.warn('[Mapbox] Edge Function', res.status, data);
+        return { __error: true, data };
+      }
+      return data;
+    };
+
     const runFetch = async (q) => {
       if (abortCtrl) abortCtrl.abort();
       abortCtrl = new AbortController();
+      const signal = abortCtrl.signal;
+
       const geoOpts = {
         limit: opts.limit,
-        types: opts.types,
+        types: opts.types || DEFAULT_TYPES,
         country: opts.country === undefined ? 'US' : opts.country,
         proximity: opts.proximity,
       };
-      let url;
-      const headers = {};
-      if (useProxy) {
-        const base = getSupabaseProxyUrl();
-        url = buildProxyUrl(q, base, geoOpts);
-        const c = global.SaundersSupabaseConfig;
-        headers.Authorization = `Bearer ${c.anonKey}`;
-        headers.apikey = c.anonKey;
-      } else {
-        url = buildUrl(q, token, geoOpts);
-      }
+
+      setStatus('', false);
+
       try {
-        const res = await fetch(url, { signal: abortCtrl.signal, headers });
-        if (!res.ok) throw new Error(res.statusText);
-        const data = await res.json();
+        let data = null;
+
+        if (useProxy) {
+          data = await fetchProxy(q, geoOpts, signal);
+          if (data && data.__proxyMissing) {
+            if (token) {
+              setStatus('Using browser Mapbox token (Edge Function not deployed).', true);
+            } else {
+              setStatus(
+                'Deploy Edge Function mapbox-geocode, or add a pk token to mapbox-config.js.',
+                true
+              );
+            }
+            data = await fetchDirect(q, geoOpts, signal);
+          } else if (data && data.__error) {
+            data = await fetchDirect(q, geoOpts, signal);
+          }
+        } else {
+          data = await fetchDirect(q, geoOpts, signal);
+        }
+
+        if (!data || signal.aborted) {
+          closeList();
+          return;
+        }
+
         const features = Array.isArray(data.features) ? data.features : [];
+        if (features.length) setStatus('', false);
+        else if (useProxy && !token) {
+          setStatus(
+            'No suggestions. Deploy mapbox-geocode + MAPBOX_API secret, or add token to mapbox-config.js.',
+            true
+          );
+        }
         renderSuggestions(features);
       } catch (e) {
         if (e.name === 'AbortError') return;
         console.warn('[Mapbox]', e);
-        closeList();
+        const direct = await fetchDirect(q, geoOpts, signal);
+        if (direct && Array.isArray(direct.features)) {
+          renderSuggestions(direct.features);
+        } else {
+          closeList();
+          setStatus('Address lookup failed. Check MAPBOX_API secret and that the function is deployed.', true);
+        }
       }
     };
 
@@ -208,6 +319,7 @@
       clearTimeout(debounceTimer);
       if (q.length < MIN_CHARS) {
         closeList();
+        setStatus('', false);
         return;
       }
       debounceTimer = setTimeout(() => runFetch(q), DEBOUNCE_MS);
@@ -248,7 +360,7 @@
     });
 
     input.addEventListener('blur', () => {
-      setTimeout(closeList, 180);
+      setTimeout(closeList, 260);
     });
 
     document.addEventListener('click', (ev) => {

@@ -1,0 +1,4 @@
+# Edge Functions — https://supabase.com/docs/guides/functions
+# New publishable keys (sb_publishable_…) are not JWTs; disable JWT gate for this public geocode proxy.
+[functions.mapbox-geocode]
+verify_jwt = false

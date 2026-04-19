@@ -1,24 +1,63 @@
 /**
- * Proxies Mapbox Geocoding (forward) so MAPBOX_API stays in Supabase secrets.
- * Secret name: MAPBOX_API (Dashboard → Project Settings → Edge Functions → Secrets,
- * or: supabase secrets set MAPBOX_API=pk....)
+ * Proxies Mapbox Geocoding so MAPBOX_API stays in Supabase secrets.
+ * Set secret: supabase secrets set MAPBOX_API=pk.your_token
+ * Deploy:    supabase functions deploy mapbox-geocode --project-ref YOUR_PROJECT_REF
  *
- * Query: ?q=...&limit=6&types=address&country=US&proximity=-79.93,32.77
+ * Supports GET (?q=…) and POST JSON { q, limit?, types?, country?, proximity? } for browser clients.
  */
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 
-const cors = {
+const cors: Record<string, string> = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers":
     "authorization, x-client-info, apikey, content-type",
+  "Access-Control-Allow-Methods": "GET, POST, HEAD, OPTIONS",
 };
+
+type GeoParams = {
+  q: string;
+  limit: string;
+  types: string;
+  country: string | null;
+  proximity: string | null;
+};
+
+function parseParams(req: Request, url: URL): Promise<GeoParams> {
+  if (req.method === "POST") {
+    return req.json().then((j: Record<string, unknown>) => ({
+      q: String(j.q ?? "").trim(),
+      limit: String(j.limit ?? "6"),
+      types: String(j.types ?? "address,place,locality,postcode"),
+      country: j.country != null && j.country !== ""
+        ? String(j.country)
+        : null,
+      proximity: j.proximity != null && j.proximity !== ""
+        ? String(j.proximity)
+        : null,
+    })).catch(() => ({
+      q: "",
+      limit: "6",
+      types: "address,place,locality,postcode",
+      country: null,
+      proximity: null,
+    }));
+  }
+  return Promise.resolve({
+    q: (url.searchParams.get("q") || "").trim(),
+    limit: url.searchParams.get("limit") || "6",
+    types: url.searchParams.get("types") ||
+      "address,place,locality,postcode",
+    country: url.searchParams.get("country"),
+    proximity: url.searchParams.get("proximity"),
+  });
+}
 
 Deno.serve(async (req: Request) => {
   if (req.method === "OPTIONS") {
     return new Response("ok", { headers: cors });
   }
 
-  if (req.method !== "GET" && req.method !== "HEAD") {
+  if (req.method !== "GET" && req.method !== "HEAD" && req.method !== "POST") {
     return new Response(JSON.stringify({ error: "Method not allowed" }), {
       status: 405,
       headers: { ...cors, "Content-Type": "application/json" },
@@ -30,7 +69,8 @@ Deno.serve(async (req: Request) => {
     return new Response(
       JSON.stringify({
         error: "MAPBOX_API is not set",
-        message: "Add the MAPBOX_API secret to this project (Edge Function secrets).",
+        message:
+          "Add the MAPBOX_API secret for Edge Functions (Dashboard → Edge Functions → Secrets).",
       }),
       {
         status: 500,
@@ -39,8 +79,10 @@ Deno.serve(async (req: Request) => {
     );
   }
 
-  const incoming = new URL(req.url);
-  const q = (incoming.searchParams.get("q") || "").trim();
+  const incomingUrl = new URL(req.url);
+  const params = await parseParams(req, incomingUrl);
+  const q = params.q;
+
   if (q.length < 3) {
     return new Response(JSON.stringify({ type: "FeatureCollection", features: [] }), {
       headers: { ...cors, "Content-Type": "application/json" },
@@ -52,18 +94,10 @@ Deno.serve(async (req: Request) => {
   );
   mapboxUrl.searchParams.set("access_token", mapboxToken.trim());
   mapboxUrl.searchParams.set("autocomplete", "true");
-  mapboxUrl.searchParams.set(
-    "limit",
-    incoming.searchParams.get("limit") || "6",
-  );
-  mapboxUrl.searchParams.set(
-    "types",
-    incoming.searchParams.get("types") || "address",
-  );
-  const country = incoming.searchParams.get("country");
-  if (country) mapboxUrl.searchParams.set("country", country);
-  const proximity = incoming.searchParams.get("proximity");
-  if (proximity) mapboxUrl.searchParams.set("proximity", proximity);
+  mapboxUrl.searchParams.set("limit", params.limit || "6");
+  mapboxUrl.searchParams.set("types", params.types || "address,place,locality,postcode");
+  if (params.country) mapboxUrl.searchParams.set("country", params.country);
+  if (params.proximity) mapboxUrl.searchParams.set("proximity", params.proximity);
 
   const res = await fetch(mapboxUrl.toString());
   const body = await res.text();
