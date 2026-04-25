@@ -1,0 +1,9 @@
+{
+  "rewrites": [
+    {
+      "source": "/(.*)",
+      "destination": "/saunders-strategy.html",
+      "has": [{ "type": "host", "value": "saunders.strategypresentation.com" }]
+    }
+  ]
+}
